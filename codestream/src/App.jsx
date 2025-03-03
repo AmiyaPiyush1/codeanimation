@@ -72,7 +72,7 @@ const App = () => {
           </div>
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "left")}></div>
-        <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>Visual Debugging Space1</div>
+        <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>Visual Debugging Space2</div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>Variable Space</div>
       </div>
