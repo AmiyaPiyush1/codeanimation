@@ -51,7 +51,7 @@ const App = () => {
     <div className="container">
       {/* Navbar */}
       <nav className="navbar">
-        <div className="logo">MyDebugger</div>
+        <div className="logo">CodeStream</div>
         <div className="nav-links">
           <a href="#">Home</a>
           <a href="#">About</a>
