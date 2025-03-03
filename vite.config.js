@@ -5,6 +5,6 @@ export default defineConfig({
     port: process.env.PORT || 5173,  // Use Render's assigned port
     host: '0.0.0.0',  // Allow external access
     strictPort: true,  // Ensure it doesn't try other ports
-    allowedHosts: ['codeanimation.onrender.com'], // Allow Render's host
+    allowedHosts: ['codeanimation.onrender.com', 'codestream-veow-onrender.com'], // Allow Render's host
   }
 });
