@@ -1,8 +1,0 @@
-{
-    "rewrite": [
-        {"sources": "/(.*)", "destination": "/"}
-    ], 
-    "build": {
-        "cache": false
-    }
-}
