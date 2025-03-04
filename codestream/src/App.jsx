@@ -1,10 +1,13 @@
 import React, { useState, useRef } from "react";
+import MonacoEditor from "@monaco-editor/react";
 import "./App.css";
 
 const App = () => {
   const [leftWidth, setLeftWidth] = useState(33.33);
   const [middleWidth, setMiddleWidth] = useState(33.33);
   const [rightWidth, setRightWidth] = useState(33.33);
+
+  const [code, setCode] = useState("// Write your code here...");
 
   const containerRef = useRef(null);
   const isResizing = useRef(false);
@@ -51,7 +54,9 @@ const App = () => {
     <div className="container">
       {/* Navbar */}
       <nav className="navbar">
-        <div className="logo">CodeStream</div>
+        <a href ="/" className="logo">
+          <img src="logo.png" alt="CodeStream" />
+        </a>
         <div className="nav-links">
           <a href="#">Home</a>
           <a href="#">About</a>
@@ -64,7 +69,18 @@ const App = () => {
       {/* Resizable Sections */}
       <div className="main-content" ref={containerRef}>
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
-          <textarea className="code-area" />
+          <MonacoEditor
+              className="editor"
+              language="javascript"
+              value={code}
+              onChange={(newCode) => setCode(newCode)}
+              options={{ fontSize: 14, minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+              roundedSelection: false,
+              cursorBlinking: "smooth", 
+              theme: "vs-light"}}
+            />
           <div className="buttons">
             <button>First</button>
             <button>Prev</button>

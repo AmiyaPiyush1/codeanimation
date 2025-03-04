@@ -4,6 +4,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  overflow-y: hidden;
 }
 
 body {
@@ -26,9 +27,8 @@ body {
   padding: 20px 15rem;
 }
 
-.logo {
-  font-size: 20px;
-  font-weight: 550;
+.logo img{
+  width: 11rem;
 }
 
 .nav-links {
@@ -77,8 +77,21 @@ body {
   flex-direction: column;
   border-radius: 1.1rem;
   margin-left: 0.5rem;
+  height: 100%;
+  width: 100%;
 }
 
+.editor {
+  flex-grow: 1;
+  height: 100%;
+  border: 1px solid #ccc;
+  padding: 1rem 0rem;
+}
+
+.current-line {
+  border-top-left-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+}
 .code-area {
   width: 100%;
   height: 300px;
@@ -111,7 +124,7 @@ button {
 }
 
 button:hover {
-  background-color: #fff;
+  background-color: #cee0ff;
   color: #3F79DA;
   border: 1px solid #3F79DA;
 }
@@ -124,8 +137,8 @@ button:hover {
 }
 
 #execute:hover {
-  background-color: #3F79DA;
-  color: #fff;
+  background-color: #c5daff;
+  color: #3F79DA;
 }
 
 /* Resizer */
@@ -136,7 +149,8 @@ button:hover {
   background: #fff;
   border-radius: 2rem;
   cursor: ew-resize;
-  height: 100%;
+  height: 98%;
+  margin-top: 0.5rem;
   position: relative;
   transition: all 0.15s ease-out;
 }
