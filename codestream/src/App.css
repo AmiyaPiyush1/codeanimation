@@ -1,4 +1,5 @@
-/* General Reset */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +7,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .container {
@@ -20,24 +21,25 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
-  color: white;
-  padding: 15px 20px;
+  background-color: #fff;
+  color: #000;
+  padding: 20px 15rem;
 }
 
 .logo {
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 550;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.2rem;
 }
 
 .nav-links a {
-  color: white;
+  color: #000;
   text-decoration: none;
   margin-left: 15px;
-}
-
-.nav-links a:hover {
-  text-decoration: underline;
 }
 
 /* Main Content Layout */
@@ -73,37 +75,59 @@ body {
   border: 1px solid #ccc;
   background: #fff;
   flex-grow: 1;
+  border-radius: 1.15rem;
   overflow-y: auto;
 }
 
 /* Buttons */
 .buttons {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  justify-content: space-around;
+  margin-top: 1rem;
 }
 
 button {
-  padding: 5px 10px;
-  border: none;
-  background: #333;
+  padding: 10px 30px;
+  border: 1px solid #fff;
+  background: #3F79DA;
   color: white;
   cursor: pointer;
+  font-size: 0.93rem;
+  border-radius: 2rem;
+  transition: all 0.15s ease-out;
 }
 
 button:hover {
-  background: #555;
+  background-color: #fff;
+  color: #3F79DA;
+  border: 1px solid #3F79DA;
+}
+
+#execute {
+  background-color: #fff;
+  color: #3F79DA;
+  border: 1px solid #3f78da;
+  transition: all 0.15s ease-out;
+}
+
+#execute:hover {
+  background-color: #3F79DA;
+  color: #fff;
 }
 
 /* Resizer */
 .resizer {
-  width: 5px;
-  background: #aaa;
+  width: 4px;
+  margin-left: 0.05rem;
+  margin-right: 0.05rem;
+  background: #fff;
+  border-radius: 2rem;
   cursor: ew-resize;
   height: 100%;
   position: relative;
+  transition: all 0.15s ease-out;
 }
 
 .resizer:hover {
-  background: #777;
+  background: #929292;
 }

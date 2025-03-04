@@ -51,11 +51,13 @@ const App = () => {
     <div className="container">
       {/* Navbar */}
       <nav className="navbar">
-        <div className="logo">MyDebugger</div>
+        <div className="logo">CodeStream</div>
         <div className="nav-links">
           <a href="#">Home</a>
           <a href="#">About</a>
           <a href="#">Contact</a>
+          <a href="#">Login</a>
+          <a href="#">Signup</a>
         </div>
       </nav>
 
@@ -66,7 +68,7 @@ const App = () => {
           <div className="buttons">
             <button>First</button>
             <button>Prev</button>
-            <button>Execute</button>
+            <button id="execute">Execute</button>
             <button>Next</button>
             <button>Last</button>
           </div>
