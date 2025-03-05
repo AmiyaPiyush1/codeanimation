@@ -152,6 +152,10 @@ body {
   margin-top: 0.85rem;
 }
 
+#visual-debugger {
+  display: flex;
+}
+
 button {
   padding: 8px 20px;
   border: none;

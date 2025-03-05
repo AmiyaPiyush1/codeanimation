@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import "./App.css";
 
@@ -6,7 +6,7 @@ const App = () => {
   const [leftWidth, setLeftWidth] = useState(33.33);
   const [middleWidth, setMiddleWidth] = useState(33.33);
   const [rightWidth, setRightWidth] = useState(33.33);
-
+  const [DebuggedData,setDebuggedData]=useState("");
   const [code, setCode] = useState("// Write your code here...");
 
   const containerRef = useRef(null);
@@ -49,6 +49,26 @@ const App = () => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   };
+
+
+  // for showing code in code debugging section
+  useEffect (()=>{
+    const showData = async ()=>{
+      try{
+        const response = await fetch("http://localhost:5000/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ problem: code }) // Sending editor's code
+        });
+        const data = await response.json();
+        setDebuggedData(data);
+      } catch(error){
+        console.error("Error executing:", error);
+        setDebuggedData({ error: "Execution failed" });
+      }
+    }
+    showData();
+  },[code])
 
   return (
     <div className="container">
@@ -113,7 +133,10 @@ const App = () => {
           </div>
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "left")}></div>
-        <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>Visual Debugging Section</div>
+        <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>Visual Debugging Section
+          <p>{JSON.stringify(DebuggedData, null, 2)}</p> {/* Displaying fetched data */}
+
+        </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>Variable Space</div>
       </div>
