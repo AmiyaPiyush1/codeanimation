@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-y: hidden;
 }
 
 body {
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
 }
 
 .container {
@@ -23,42 +23,92 @@ body {
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
-  color: #000;
-  padding: 20px 15rem;
+  padding: 15px 10%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.logo img{
-  width: 11rem;
+.search-bar {
+  display: none;
+}
+
+#checkbox {
+  display: none;
+}
+
+.toggle {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transform: scale(0.5);
+  transition-duration: .3s;
+}
+
+.bars {
+  width: 100%;
+  height: 4px;
+  background-color: rgb(0, 0, 0);
+  border-radius: 6rem;
+  transition-duration: .3s;
+}
+
+#checkbox:checked + .toggle .bars {
+  margin-left: 13px;
+}
+
+#checkbox:checked + .toggle #bar2 {
+  transform: rotate(135deg);
+  margin-left: 0;
+  transform-origin: center;
+  transition-duration: .3s;
+}
+
+#checkbox:checked + .toggle #bar1 {
+  transform: rotate(45deg);
+  transition-duration: .3s;
+  transform-origin: left center;
+}
+
+#checkbox:checked + .toggle #bar3 {
+  transform: rotate(-45deg);
+  transition-duration: .3s;
+  transform-origin: left center;
+}
+
+
+.logo img {
+  width: 10rem;
 }
 
 .nav-links {
   display: flex;
-  gap: 0.25rem;
+  gap: 1rem;
 }
 
 .nav-links a {
   color: #000;
-  border: 1px solid #fff;
   text-decoration: none;
-  padding: 6px 20px;
-  border-radius: 3rem;
-  transition: all 0.15s ease-out;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: background-color 0.3s;
 }
 
 .nav-links a:hover {
   background-color: #c5daff;
-  border-radius: 1rem;
-  border: 1px solid #3F79DA;
   color: #1e407c;
 }
 
-/* Main Content Layout */
+/* Main Content */
 .main-content {
   display: flex;
-  height: 100%;
+  height: calc(100vh - 60px);
   width: 100%;
   position: relative;
-  margin-bottom: 0.5rem;
 }
 
 /* Sections */
@@ -75,94 +125,99 @@ body {
 #code-editor {
   display: flex;
   flex-direction: column;
-  border-radius: 1.1rem;
-  margin-left: 0.5rem;
   height: 100%;
-  width: 100%;
 }
 
 .editor {
   flex-grow: 1;
   height: 100%;
   border: 1px solid #ccc;
-  padding: 1rem 0rem;
-}
-
-.current-line {
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-}
-.code-area {
-  width: 100%;
-  height: 300px;
-  resize: none;
   padding: 10px;
-  font-family: monospace;
-  border: 1px solid #ccc;
+  border-radius: 10px;
   background: #fff;
-  flex-grow: 1;
-  border-radius: 1rem;
-  overflow-y: auto;
 }
 
 /* Buttons */
 .buttons {
   display: flex;
-  justify-content: space-around;
-  margin-top: 1rem;
+  justify-content: space-evenly;
+  margin-top: 0.85rem;
 }
 
 button {
-  padding: 10px 30px;
-  border: 1px solid #fff;
+  padding: 8px 20px;
+  border: none;
   background: #3F79DA;
   color: white;
   cursor: pointer;
-  font-size: 0.93rem;
-  border-radius: 2rem;
-  transition: all 0.15s ease-out;
+  font-size: 14px;
+  border-radius: 20px;
+  transition: background 0.3s;
 }
 
 button:hover {
-  background-color: #cee0ff;
+  background: #cee0ff;
+  color: #3F79DA;
+}
+
+#execute {
+  background: #fff;
   color: #3F79DA;
   border: 1px solid #3F79DA;
 }
 
-#execute {
-  background-color: #fff;
-  color: #3F79DA;
-  border: 1px solid #3f78da;
-  transition: all 0.15s ease-out;
-}
-
 #execute:hover {
-  background-color: #c5daff;
-  color: #3F79DA;
+  background: #c5daff;
 }
 
 /* Resizer */
 .resizer {
-  width: 4px;
-  margin-left: 0.05rem;
-  margin-right: 0.05rem;
-  background: #fff;
-  border-radius: 2rem;
+  width: 5px;
+  background: #ddd;
   cursor: ew-resize;
-  height: 98%;
-  margin-top: 0.5rem;
-  position: relative;
-  transition: all 0.15s ease-out;
+  height: 100%;
+  border-radius: 2rem;
 }
 
 .resizer:hover {
-  background: #929292;
+  background: #999;
 }
 
-#visual-debugger, #variable-space {
-  border-radius: 1rem;
-}
 
-#variable-space {
-  margin-right: 0.5rem;
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 5%;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .search-bar {
+    display: block;
+  }
+
+  .nav-links a {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+
+  .main-content {
+    flex-direction: column;
+  }
+
+  .section {
+    width: 100% !important;
+    height: 33%;
+  }
+
+  .editor {
+    height: 98.5%;
+  }
+
+  .resizer {
+    height: 5px;
+    width: 100%;
+    cursor: ns-resize;
+  }
 }

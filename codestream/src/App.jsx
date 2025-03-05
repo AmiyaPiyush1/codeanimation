@@ -57,6 +57,15 @@ const App = () => {
         <a href ="/" className="logo">
           <img src="logo.png" alt="CodeStream" />
         </a>
+        <div className="search-bar">
+          <input type="checkbox" id="checkbox" />
+          <label for="checkbox" class="toggle">
+              <div class="bars" id="bar1"></div>
+              <div class="bars" id="bar2"></div>
+              <div class="bars" id="bar3"></div>
+          </label>
+        </div>
+        
         <div className="nav-links">
           <a href="#">Home</a>
           <a href="#">About</a>
