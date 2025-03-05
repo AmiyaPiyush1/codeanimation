@@ -96,10 +96,11 @@ body {
 .nav-links a {
   color: #000;
   text-decoration: none;
-  padding: 8px 16px;
+  padding: 6px 16px;
   border-radius: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   transition: background-color 0.3s;
   scale: 0.97;
