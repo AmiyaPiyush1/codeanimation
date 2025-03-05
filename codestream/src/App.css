@@ -80,6 +80,9 @@ body {
   transform-origin: left center;
 }
 
+.search-bar-menu {
+  display: none;
+}
 
 .logo img {
   width: 10rem;
@@ -87,7 +90,7 @@ body {
 
 .nav-links {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
 .nav-links a {
@@ -95,7 +98,11 @@ body {
   text-decoration: none;
   padding: 8px 16px;
   border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   transition: background-color 0.3s;
+  scale: 0.97;
 }
 
 .nav-links a:hover {
