@@ -9,6 +9,7 @@ const App = () => {
   const [DebuggedData,setDebuggedData]=useState("");
   const [code, setCode] = useState("// Write your code here...");
   const [Execute,setExecute]=useState(0);
+  const  [loader,setLoader]=useState(false);
 
   const containerRef = useRef(null);
   const isResizing = useRef(false);
@@ -60,7 +61,8 @@ const App = () => {
   // for showing code in code debugging section
   useEffect(() => {
     if (Execute === 0) return;
-    console.log("Executing API call", execute); // Debug log
+    setLoader(true);
+  
     const showData = async () => {
       try {
         const response = await fetch("http://localhost:5000/generate", {
@@ -68,17 +70,20 @@ const App = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ problem: code }),
         });
+  
         const data = await response.json();
         setDebuggedData(data);
       } catch (error) {
         console.error("Error executing:", error);
         setDebuggedData({ error: "Execution failed" });
+      } finally {
+        setLoader(false); // Ensuring loader stops after the API call completes
       }
     };
+  
     showData();
   }, [Execute]);
   
-
   return (
     <div className="container">
       {/* Navbar */}
@@ -113,7 +118,7 @@ const App = () => {
           <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Home</a>
           <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> About</a>
           <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Contact</a>
-          <a href="#">Loginned</a>
+          <a href="#">Login</a>
           <a href="#">Signup</a>
         </div>
       </nav>
@@ -144,8 +149,11 @@ const App = () => {
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "left")}></div>
         <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>Visual Debugging Section
-          <p>{JSON.stringify(DebuggedData, null, 2)}</p> {/* Displaying fetched data */}
-
+        {loader ? (
+            <div className="loader"></div> 
+          ) : (
+            <p>{JSON.stringify(DebuggedData, null, 2)}</p> 
+          )}
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>Variable Space</div>
