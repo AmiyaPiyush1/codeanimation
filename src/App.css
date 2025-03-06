@@ -225,6 +225,20 @@ body {
   display: flex;
 }
 
+.debug-output {
+  text-align: justify;
+}
+
+#visual-debugger {
+  overflow-y: auto; /* Enables scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE & Edge */
+}
+
+#visual-debugger::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 #variable-space {
   margin-right: 1.15rem;
 }
