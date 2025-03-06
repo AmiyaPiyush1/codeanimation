@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
 import "./App.css";
 
@@ -50,6 +51,19 @@ const App = () => {
     currentResizer.current = null;
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  // Loader animation variants
+  const loaderVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: { scale: 1, opacity: 1, transition: { duration: 0.3, ease: "easeOut" } }, // Zoom-in effect
+    exit: { scale: 0, opacity: 0, transition: { duration: 0.5, ease: "easeIn" } }, // Zoom-out effect
+  };
+
+  // Debugged Data animation variants
+  const dataVariants = {
+    hidden: { scale: 0.8, opacity: 0 },
+    visible: { scale: 1, opacity: 1, transition: { duration: 0.3, ease: "easeOut", delay: 0.1 } },
   };
 
   // for making the execute button send request
@@ -152,17 +166,31 @@ const App = () => {
         <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>
           <p>Visual Debugging Section</p>
           <br /><br />
-          {loader ? (
-            <div className="loader"></div>
-          ) : (
-            DebuggedData && (
-              <p className="debug-output">
+          
+          <AnimatePresence mode="wait">
+            {loader ? (
+              // Show loader with zoom-in effect
+              <motion.div
+                className="loader"
+                variants={loaderVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              />
+            ) : DebuggedData && (
+              // Show response data with zoom-in effect
+              <motion.p
+                className="debug-output"
+                variants={dataVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 {DebuggedData.error ? (
                   <span className="error">{DebuggedData.error}</span>
                 ) : (
                   <>
                     <strong>Problem Statement:</strong> {DebuggedData.problem_statement || "N/A"}{"\n\n"}
-                    <br></br><br />
+                    <br /><br />
                     <strong>Key Concepts:</strong> {DebuggedData.key_concepts || "N/A"}{"\n\n"}
                     <br /><br />
                     <strong>Approach:</strong> {DebuggedData.approach || "N/A"}{"\n\n"}
@@ -174,9 +202,9 @@ const App = () => {
                     <strong>Explanation:</strong> {DebuggedData.explanation || "N/A"}
                   </>
                 )}
-              </p>
-            )
-          )}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>Variable Space</div>
