@@ -183,6 +183,8 @@ body {
   height: calc(100vh - 60px);
   width: 100%;
   position: relative;
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
 }
 
 /* Sections */
