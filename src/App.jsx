@@ -65,7 +65,7 @@ const App = () => {
   
     const showData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/generate", {
+        const response = await fetch("http://localhost:3000/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ problem: code }),
@@ -148,11 +148,34 @@ const App = () => {
           </div>
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "left")}></div>
-        <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>Visual Debugging Section
-        {loader ? (
-            <div className="loader"></div> 
+        {/* Visual Debugger Section */}
+        <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>
+          <p>Visual Debugging Section</p>
+          <br /><br />
+          {loader ? (
+            <div className="loader"></div>
           ) : (
-            <p>{JSON.stringify(DebuggedData, null, 2)}</p> 
+            DebuggedData && (
+              <p className="debug-output">
+                {DebuggedData.error ? (
+                  <span className="error">{DebuggedData.error}</span>
+                ) : (
+                  <>
+                    <strong>Problem Statement:</strong> {DebuggedData.problem_statement || "N/A"}{"\n\n"}
+                    <br></br><br />
+                    <strong>Key Concepts:</strong> {DebuggedData.key_concepts || "N/A"}{"\n\n"}
+                    <br /><br />
+                    <strong>Approach:</strong> {DebuggedData.approach || "N/A"}{"\n\n"}
+                    <br /><br />
+                    <strong>Time Complexity:</strong> {DebuggedData.time_complexity || "N/A"}{"\n\n"}
+                    <br /><br />
+                    <strong>Code Solution:</strong>
+                    {"\n\n"}
+                    <strong>Explanation:</strong> {DebuggedData.explanation || "N/A"}
+                  </>
+                )}
+              </p>
+            )
           )}
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>

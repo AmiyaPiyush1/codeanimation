@@ -105,29 +105,70 @@ body {
   transition: background-color 0.3s;
   scale: 0.97;
 }
+
 .loader {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  position: relative;
 }
 
-.loader::after {
-  content: "";
-  width: 40px;
-  height: 40px;
-  border: 5px solid #3498db;
-  border-top: 5px solid transparent;
+.loader:before {
+  content: '';
+  width: 48px;
+  height: 5px;
+  background: #97bdff;
+  position: absolute;
+  top: 60px;
+  left: 0;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation: shadow324 0.5s linear infinite;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+.loader:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: #3F79DA;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  animation: jump7456 0.5s linear infinite;
+}
+
+@keyframes jump7456 {
+  15% {
+    border-bottom-right-radius: 3px;
   }
+
+  25% {
+    transform: translateY(9px) rotate(22.5deg);
+  }
+
+  50% {
+    transform: translateY(18px) scale(1, .9) rotate(45deg);
+    border-bottom-right-radius: 40px;
+  }
+
+  75% {
+    transform: translateY(9px) rotate(67.5deg);
+  }
+
   100% {
-    transform: rotate(360deg);
+    transform: translateY(0) rotate(90deg);
+  }
+}
+
+@keyframes shadow324 {
+
+  0%,
+    100% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(1.2, 1);
   }
 }
 
@@ -152,6 +193,7 @@ body {
   padding: 15px;
   background: #f9f9f9;
   overflow: auto;
+  border-radius: 0.8rem;
 }
 
 /* Code Editor */
@@ -179,6 +221,10 @@ body {
 
 #visual-debugger {
   display: flex;
+}
+
+#variable-space {
+  margin-right: 1.15rem;
 }
 
 button {
@@ -209,15 +255,19 @@ button:hover {
 
 /* Resizer */
 .resizer {
-  width: 5px;
-  background: #ddd;
+  width: 3.5px;
+  background: #fff;
   cursor: ew-resize;
-  height: 100%;
+  height: 97%;
+  margin-right: 0.1rem;
+  margin-left: 0.1rem;
+  margin-top: 0.6rem;
   border-radius: 2rem;
+  transition: all 0.3s ease-out;
 }
 
 .resizer:hover {
-  background: #999;
+  background: #aeaeae;
 }
 
 
