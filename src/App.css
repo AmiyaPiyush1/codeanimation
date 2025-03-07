@@ -201,11 +201,13 @@ body {
   position: relative;
   margin-bottom: 0.55rem;
   margin-left: 0.5rem;
+  overflow: auto;
 }
 
 /* Sections */
 .section {
   display: flex;
+  flex: 1;
   flex-direction: column;
   border: 1px solid #aaa;
   padding: 15px;

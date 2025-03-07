@@ -71,23 +71,7 @@ const App = () => {
   const handleExecute = useCallback(() => {
     setExecute(prev => prev + 1);
   }, []);
-
-  // for monaco editor theme
-  useEffect(() => {
-    monaco.editor.defineTheme("custom-dark-theme", {
-      base: "vs", // You can use "vs" for light themes
-      inherit: true,
-      rules: [],
-      colors: {
-        "editor.background": "#efefef", // Change this to your desired color
-        "editor.foreground": "#efefef"  // Optional: Set text color
-      }
-    });
   
-    monaco.editor.setTheme("custom-dark-theme");
-  }, []);
-  
-
   // for showing code in code debugging section
   useEffect(() => {
     if (Execute === 0) return;
@@ -177,7 +161,7 @@ const App = () => {
             colorDecorators: true,
             theme: "custom-dark-theme"
           }}
-          onMount={(editor) => {
+          onMount={(editor, monaco) => {
             monaco.editor.defineTheme("custom-dark-theme", {
               base: "vs",
               inherit: true,
