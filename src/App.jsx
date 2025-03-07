@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
+import * as monaco from 'monaco-editor';
 import "./App.css";
 
 const App = () => {
@@ -67,9 +68,24 @@ const App = () => {
   };
 
   // for making the execute button send request
-  const handleExecute = () => {
-    setExecute((prev) => prev + 1);
-  };
+  const handleExecute = useCallback(() => {
+    setExecute(prev => prev + 1);
+  }, []);
+
+  // for monaco editor theme
+  useEffect(() => {
+    monaco.editor.defineTheme("custom-dark-theme", {
+      base: "vs", // You can use "vs" for light themes
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": "#efefef", // Change this to your desired color
+        "editor.foreground": "#efefef"  // Optional: Set text color
+      }
+    });
+  
+    monaco.editor.setTheme("custom-dark-theme");
+  }, []);
   
 
   // for showing code in code debugging section
@@ -86,17 +102,24 @@ const App = () => {
         });
   
         const data = await response.json();
-        setDebuggedData(data);
+        setDebuggedData({
+          problem_statement: data.problem_statement || "No data available",
+          key_concepts: data.key_concepts || "No key concepts found",
+          approach: data.approach || "Approach not provided",
+          time_complexity: data.time_complexity || "N/A",
+          code_solution: data.code_solution || "No solution available",
+          explanation: data.explanation || "No explanation found",
+        });
       } catch (error) {
         console.error("Error executing:", error);
         setDebuggedData({ error: "Execution failed" });
       } finally {
-        setLoader(false); // Ensuring loader stops after the API call completes
+        setLoader(false);
       }
     };
   
     showData();
-  }, [Execute]);
+  }, [Execute, code]); // Added `code` to dependencies for fresh execution
   
   return (
     <div className="container">
@@ -139,19 +162,34 @@ const App = () => {
       {/* Resizable Sections */}
       <div className="main-content" ref={containerRef}>
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
-          <MonacoEditor
-              className="editor"
-              language="javascript"
-              value={code}
-              onChange={(newCode) => setCode(newCode)}
-              options={{ fontSize: 14, minimap: { enabled: false },
-              scrollBeyondLastLine: false,
-              automaticLayout: true,
-              roundedSelection: false,
-              cursorBlinking: "smooth", 
-              theme: "vs-light"}}
-              
-            />
+        <MonacoEditor
+          className="editor"
+          language="javascript"
+          value={code}
+          onChange={(newCode) => setCode(newCode)}
+          options={{
+            fontSize: 14,
+            minimap: { enabled: false },
+            scrollBeyondLastLine: false,
+            automaticLayout: true,
+            roundedSelection: false,
+            cursorBlinking: "smooth",
+            colorDecorators: true,
+            theme: "custom-dark-theme"
+          }}
+          onMount={(editor) => {
+            monaco.editor.defineTheme("custom-dark-theme", {
+              base: "vs",
+              inherit: true,
+              rules: [],
+              colors: {
+                "editor.background": "#efefef",
+                "editor.foreground": "#222222"
+              }
+            });
+            monaco.editor.setTheme("custom-dark-theme");
+          }}
+        />
           <div className="buttons">
             <button>First</button>
             <button>Prev</button>

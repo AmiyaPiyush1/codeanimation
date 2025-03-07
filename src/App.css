@@ -9,6 +9,7 @@
 body {
   font-family: 'Montserrat', sans-serif;
   overflow: hidden;
+  background-color: #efefef;
 }
 
 .container {
@@ -22,7 +23,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
+  background-color: transparent;
   padding: 15px 10%;
 }
 
@@ -208,7 +209,7 @@ body {
   flex-direction: column;
   border: 1px solid #aaa;
   padding: 15px;
-  background: #f9f9f9;
+  background: transparent;
   overflow: auto;
   border-radius: 0.8rem;
 }
@@ -226,7 +227,7 @@ body {
   border: 1px solid #aaa;
   padding: 10px;
   border-radius: 10px;
-  background: #fff;
+  background: transparent;
 }
 
 /* Buttons */
@@ -275,7 +276,7 @@ button:hover {
 }
 
 #execute {
-  background: #fff;
+  background: transparent;
   color: #3F79DA;
   border: 1px solid #3F79DA;
 }
@@ -287,7 +288,7 @@ button:hover {
 /* Resizer */
 .resizer {
   width: 3.5px;
-  background: #fff;
+  background: transparent;
   cursor: ew-resize;
   height: 97%;
   margin-right: 0.1rem;
