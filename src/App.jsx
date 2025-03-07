@@ -117,8 +117,7 @@ const App = () => {
         <div className="search-bar-menu">
           <div className="profile-section">
             <img src="profile.png" alt="Profile" />
-            <div className="profile-name">John Doe</div
-          >
+            <div className="profile-name">John Doe</div>
           </div>
           <div className="options-section">
             <a href="#">Explore</a>
@@ -129,9 +128,9 @@ const App = () => {
         </div>
         
         <div className="nav-links">
-          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Home</a>
-          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> About</a>
-          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Contact</a>
+          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-house"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>&nbsp;Home</a>
+          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>&nbsp; About</a>
+          <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>&nbsp; Contact</a>
           <a href="#">Login</a>
           <a href="#">Signup</a>
         </div>
@@ -168,43 +167,76 @@ const App = () => {
           <br /><br />
           
           <AnimatePresence mode="wait">
-            {loader ? (
-              // Show loader with zoom-in effect
+  {loader ? (
+    <motion.div
+      className="loader"
+      variants={loaderVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    />
+  ) : DebuggedData && (
+    <motion.div
+      className="debug-output"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={{
+        hidden: { opacity: 0 },
+        visible: {
+          opacity: 1,
+          transition: { staggerChildren: 0.2 } // Stagger sections
+        },
+      }}
+    >
+      {[
+        { label: "Problem Statement", value: DebuggedData.problem_statement },
+        { label: "Key Concepts", value: DebuggedData.key_concepts },
+        { label: "Approach", value: DebuggedData.approach },
+        { label: "Time Complexity", value: DebuggedData.time_complexity },
+        { label: "Code Solution", value: DebuggedData.code_solution },
+        { label: "Explanation", value: DebuggedData.explanation }
+      ].map((item, index) => (
+        item.value && (
+          <motion.div
+            key={index}
+            className="debug-section"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 } // Stagger each line inside the section
+              },
+            }}
+          >
+            <motion.div
+              className="section-title"
+              variants={{
+                hidden: { y: 20, scale: 0.8, opacity: 0 },
+                visible: { y: 0, scale: 1, opacity: 1, transition: { duration: 0.3 } }
+              }}
+            >
+              <strong>{item.label}:</strong>
+            </motion.div>
+            {item.value.split("\n").map((line, lineIndex) => (
               <motion.div
-                className="loader"
-                variants={loaderVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              />
-            ) : DebuggedData && (
-              // Show response data with zoom-in effect
-              <motion.p
-                className="debug-output"
-                variants={dataVariants}
-                initial="hidden"
-                animate="visible"
+                key={lineIndex}
+                className="debug-line"
+                variants={{
+                  hidden: { y: 20, scale: 0.9, opacity: 0 }, // Bottom to top effect
+                  visible: { y: 0, scale: 1, opacity: 1, transition: { duration: 0.25 }, ease: "easeOut" }
+                }}
               >
-                {DebuggedData.error ? (
-                  <span className="error">{DebuggedData.error}</span>
-                ) : (
-                  <>
-                    <strong>Problem Statement:</strong> {DebuggedData.problem_statement || "N/A"}{"\n\n"}
-                    <br /><br />
-                    <strong>Key Concepts:</strong> {DebuggedData.key_concepts || "N/A"}{"\n\n"}
-                    <br /><br />
-                    <strong>Approach:</strong> {DebuggedData.approach || "N/A"}{"\n\n"}
-                    <br /><br />
-                    <strong>Time Complexity:</strong> {DebuggedData.time_complexity || "N/A"}{"\n\n"}
-                    <br /><br />
-                    <strong>Code Solution:</strong>
-                    {"\n\n"}
-                    <strong>Explanation:</strong> {DebuggedData.explanation || "N/A"}
-                  </>
-                )}
-              </motion.p>
-            )}
-          </AnimatePresence>
+                {line}
+              </motion.div>
+            ))}
+      <br /> {/* Added break after each section */}
+    </motion.div>
+  )
+))}
+    </motion.div>
+  )}
+</AnimatePresence>
         </div>
         <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>Variable Space</div>
