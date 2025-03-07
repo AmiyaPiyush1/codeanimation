@@ -96,13 +96,13 @@ body {
   color: #000;
   text-decoration: none;
   display: flex;
-  padding-bottom: 0.35rem;
-  margin-top: 0.35rem;
+  padding-bottom: -0.15rem;
+  margin-bottom: 0.1rem;
   align-items: center;
   justify-content: space-between;
   transition: background-size 0.2s ease-out, color 0.2s ease-out;
   scale: 0.97;
-  background: linear-gradient(to right, #005eff 50%, #005eff 100%);
+  background: linear-gradient(to right, #005eff 0%, #005eff 100%);
   background-size: 0% 1px;
   background-repeat: no-repeat;
   background-position: center bottom;
@@ -111,6 +111,19 @@ body {
 .nav-links a:hover {
   background-size: 100% 1px;
   color: #005eff;
+}
+
+#login {
+  background: #005eff;
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  margin-bottom: 2px;
+  transition: background 0.3s ease-out;
+}
+
+#login:hover {
+  background: #3F79DA;
 }
 
 .loader {
@@ -185,7 +198,7 @@ body {
   height: calc(100vh - 60px);
   width: 100%;
   position: relative;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.55rem;
   margin-left: 0.5rem;
 }
 
