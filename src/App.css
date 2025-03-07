@@ -207,7 +207,6 @@ body {
 /* Sections */
 .section {
   display: flex;
-  flex: 1;
   flex-direction: column;
   border: 1px solid #aaa;
   padding: 15px;
@@ -241,6 +240,9 @@ body {
 
 #visual-debugger {
   display: flex;
+  font-size: 0.95rem;
+  color: rgba(0,0,0,0.7);
+  line-height: 1.5rem;
 }
 
 .debug-output {
@@ -249,6 +251,7 @@ body {
 
 #visual-debugger {
   overflow-y: auto; /* Enables scrolling */
+  height: auto;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */
 }
