@@ -82,7 +82,7 @@ const App = () => {
         const response = await fetch("http://localhost:3000/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ problem: code }),
+          body: JSON.stringify({ problem: code }), // `code` is used here but not in dependencies
         });
   
         const data = await response.json();
@@ -103,7 +103,7 @@ const App = () => {
     };
   
     showData();
-  }, [Execute, code]); // Added `code` to dependencies for fresh execution
+  }, [Execute]); // ✅ Now it only triggers when `Execute` changes, not `code`
   
   return (
     <div className="container">
