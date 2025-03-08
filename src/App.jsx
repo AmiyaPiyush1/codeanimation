@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
-import * as monaco from 'monaco-editor';
 import "./App.css";
 
 const App = () => {
