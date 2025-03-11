@@ -21,6 +21,7 @@
     "react-dom": "^19.0.0",
     "react-flow": "^1.0.3",
     "reactflow": "^11.11.4",
+    "uuid": "^11.1.0",
     "vercel": "^25.2.0"
   },
   "devDependencies": {

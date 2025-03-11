@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
+import { v4 as uuidv4 } from "uuid";
 import ReactFlow, {
   Controls,
   Background,
   MarkerType,
+  applyNodeChanges
 } from "reactflow";
 import dagre from "dagre"; // For automatic node layout
 import "reactflow/dist/style.css";
@@ -22,6 +24,11 @@ const App = () => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    []
+  );
+
   const handleExecute = useCallback(async () => {
     setLoader(true);
   
@@ -33,13 +40,35 @@ const App = () => {
       });
   
       const data = await response.json();
-      const newOutput = data.loop.split("\n").filter(Boolean);
-      setDebuggedQueue(newOutput);
   
-      const newNodes = newOutput.map((line, index) => ({
-        id: `${index}`,
+      let extractedData = [];
+  
+      if (Array.isArray(data.loop)) {
+        extractedData = data.loop.flatMap((step, stepIndex) =>
+          Object.entries(step)
+            .filter(([key]) => key.toLowerCase() !== "json")
+            .map(([key, value]) => `Step ${stepIndex + 1} → ${key}: ${value}`)
+        );
+      } else if (typeof data.loop === "object") {
+        extractedData = Object.entries(data.loop)
+          .filter(([key]) => key.toLowerCase() !== "json")
+          .map(([key, value]) => `${key}: ${value}`);
+      } else if (typeof data.loop === "string") {
+        extractedData = data.loop
+          .replace(/```json|```/g, "")
+          .replace(/[{}[\],"]/g, "")
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line);
+      }
+      setDebuggedQueue(extractedData);
+  
+      // Create React Flow nodes with unique IDs
+      const newNodes = extractedData.map((line, index) => ({
+        id: `${index}`, // Ensuring unique ID
         data: { label: line },
-        position: { x: 0, y: index * 100 },
+        position: { x: 100, y: index * 100 },
+        draggable: true,
         style: {
           border: "2px solid #555",
           padding: 10,
@@ -54,26 +83,23 @@ const App = () => {
         },
       }));
   
-      const newEdges = newOutput.slice(1).map((_, index) => ({
+      // Create React Flow edges with valid marker type
+      const newEdges = extractedData.slice(1).map((_, index) => ({
         id: `e${index}-${index + 1}`,
         source: `${index}`,
         target: `${index + 1}`,
         animated: true,
+        type: "smoothstep",
         style: { stroke: "#555", strokeWidth: 2 },
         markerEnd: {
-          type: MarkerType.ArrowClosed,
+          type: MarkerType.ArrowClosed, // ✅ Ensure correct marker type
           width: 15,
           height: 15,
         },
       }));
   
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-        newNodes,
-        newEdges
-      );
-  
-      setNodes(layoutedNodes);
-      setEdges(layoutedEdges);
+      setNodes(newNodes);
+      setEdges(newEdges);
     } catch (error) {
       console.error("Execution Error:", error);
     } finally {
@@ -86,21 +112,22 @@ const App = () => {
     const graph = new dagre.graphlib.Graph();
     graph.setGraph({ rankdir: "TB" }); // Top to Bottom layout
     graph.setDefaultEdgeLabel(() => ({}));
-
-    nodes.forEach((node) => graph.setNode(node.id, { width: 150, height: 50 }));
+  
+    nodes.forEach((node) => graph.setNode(node.id, { width: 180, height: 50 }));
     edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
-
+  
     dagre.layout(graph);
-
-    const newNodes = nodes.map((node) => ({
-      ...node,
-      position: {
-        x: graph.node(node.id).x,
-        y: graph.node(node.id).y,
-      },
-    }));
-
-    return { nodes: newNodes, edges };
+  
+    return {
+      nodes: nodes.map((node) => ({
+        ...node,
+        position: {
+          x: graph.node(node.id).x,
+          y: graph.node(node.id).y,
+        },
+      })),
+      edges,
+    };
   };
 
   useEffect(() => {
@@ -114,24 +141,34 @@ const App = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ problem: code }),
         });
-  
+    
         const data = await response.json();
-        
-        // Split into lines and filter out unwanted elements
-        const newOutput = data.loop
-          .split("\n")
-          .map((line) => line.trim()) // Trim spaces
-          .filter((line) => {
-            return (
-              line.length > 2 && // Avoid single characters
-              !line.match(/^[\[\]{}"]+$/) && // Remove isolated JSON characters
-              !line.match(/^(\d+[:,]*)+$/) // Remove array-like structures
-            );
-          }); // Filter out unwanted characters
-  
-        setDebuggedQueue(newOutput);
-  
-        const newNodes = newOutput.map((line, index) => ({
+        console.log("RAW API RESPONSE:", JSON.stringify(data, null, 2));
+    
+        let extractedData = [];
+    
+        if (Array.isArray(data.loop)) {
+          extractedData = data.loop.flatMap((item) =>
+            Object.entries(item)
+              .filter(([key]) => key !== "json") // Remove "json" key if it exists
+              .map(([key, value]) => `${key}: ${JSON.stringify(value)}`) // Format key-value pairs
+          );
+        } else if (typeof data.loop === "object") {
+          extractedData = Object.entries(data.loop)
+            .filter(([key]) => key !== "json")
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`);
+        } else if (typeof data.loop === "string") {
+          extractedData = data.loop
+            .replace(/[\[\]{}]/g, "") // Remove unwanted JSON characters
+            .split("\n")
+            .filter((line) => line.trim());
+        }
+    
+        console.log("Filtered Output:", extractedData);
+    
+        setDebuggedQueue(extractedData);
+    
+        const newNodes = extractedData.map((line, index) => ({
           id: `${index}`,
           data: { label: line },
           position: { x: 0, y: index * 100 },
@@ -148,8 +185,8 @@ const App = () => {
               : "#FFD3B6",
           },
         }));
-  
-        const newEdges = newOutput.slice(1).map((_, index) => ({
+    
+        const newEdges = extractedData.slice(1).map((_, index) => ({
           id: `e${index}-${index + 1}`,
           source: `${index}`,
           target: `${index + 1}`,
@@ -161,14 +198,9 @@ const App = () => {
             height: 15,
           },
         }));
-  
-        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-          newNodes,
-          newEdges
-        );
-  
-        setNodes(layoutedNodes);
-        setEdges(layoutedEdges);
+    
+        setNodes(newNodes);
+        setEdges(newEdges);
       } catch (error) {
         console.error("Execution Error:", error);
       } finally {
@@ -229,7 +261,12 @@ const App = () => {
                 exit={{ scale: 0, opacity: 0, transition: { duration: 0.5 } }}
               />
             ) : (
-              <ReactFlow nodes={nodes} edges={edges} fitView>
+              <ReactFlow 
+                nodes={nodes} 
+                edges={edges} 
+                onNodesChange={onNodesChange} 
+                fitView
+              >
                 <Controls />
                 <Background variant="dots" gap={12} size={1} />
               </ReactFlow>

@@ -12,6 +12,10 @@ body {
   background-color: #efefef;
 }
 
+.react-flow__panel {
+  display: none;
+}
+
 /* Common style for loop lines */
 .condition, .increment, .assignment {
   font-family: monospace;
