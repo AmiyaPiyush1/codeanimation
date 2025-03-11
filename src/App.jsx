@@ -1,79 +1,59 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
-import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  MarkerType,
+} from "reactflow";
+import dagre from "dagre"; // For automatic node layout
 import "reactflow/dist/style.css";
 import "./App.css";
 
 const App = () => {
-  // Layout states for resizable sections
   const [leftWidth, setLeftWidth] = useState(33.33);
   const [middleWidth, setMiddleWidth] = useState(33.33);
   const [rightWidth, setRightWidth] = useState(33.33);
 
-  // States for code, debug output and loader
   const [debuggedQueue, setDebuggedQueue] = useState([]);
   const [code, setCode] = useState("// Write your code here...");
-  const [Execute, setExecute] = useState(0);
-  const [executeFlag, setExecuteFlag] = useState(false);
+  const [execute, setExecute] = useState(0);
   const [loader, setLoader] = useState(false);
-
-  // React Flow states for nodes and edges
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 
-  const containerRef = useRef(null);
-  const isResizing = useRef(false);
-  const currentResizer = useRef(null);
-
-  // Handlers for resizing the layout
-  const handleMouseDown = (event, resizer) => {
-    isResizing.current = true;
-    currentResizer.current = resizer;
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
-
-  const handleMouseMove = (event) => {
-    if (!isResizing.current || !containerRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-    let newLeftWidth, newMiddleWidth, newRightWidth;
-    if (currentResizer.current === "left") {
-      newLeftWidth =
-        ((event.clientX - containerRect.left) / containerRect.width) * 100;
-      newMiddleWidth = 100 - newLeftWidth - rightWidth;
-      if (newLeftWidth > 10 && newMiddleWidth > 10) {
-        setLeftWidth(newLeftWidth);
-        setMiddleWidth(newMiddleWidth);
-      }
-    } else if (currentResizer.current === "right") {
-      newMiddleWidth =
-        ((event.clientX - containerRect.left) / containerRect.width) * 100 -
-        leftWidth;
-      newRightWidth = 100 - leftWidth - newMiddleWidth;
-      if (newMiddleWidth > 10 && newRightWidth > 10) {
-        setMiddleWidth(newMiddleWidth);
-        setRightWidth(newRightWidth);
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    isResizing.current = false;
-    currentResizer.current = null;
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
-
-  // Execute handler to trigger data fetch and flowchart update
   const handleExecute = useCallback(() => {
     setExecute((prev) => prev + 1);
   }, []);
 
+  // DAGRE (for automatic layout)
+  const getLayoutedElements = (nodes, edges) => {
+    const graph = new dagre.graphlib.Graph();
+    graph.setGraph({ rankdir: "TB" }); // Top to Bottom layout
+    graph.setDefaultEdgeLabel(() => ({}));
+
+    nodes.forEach((node) => graph.setNode(node.id, { width: 150, height: 50 }));
+    edges.forEach((edge) => graph.setEdge(edge.source, edge.target));
+
+    dagre.layout(graph);
+
+    const newNodes = nodes.map((node) => ({
+      ...node,
+      position: {
+        x: graph.node(node.id).x,
+        y: graph.node(node.id).y,
+      },
+    }));
+
+    return { nodes: newNodes, edges };
+  };
+
   useEffect(() => {
-    if (Execute === 0) return;
+    if (execute === 0) return;
     setLoader(true);
-    const showData = async () => {
+
+    const fetchExecutionData = async () => {
       try {
         const response = await fetch("http://localhost:3000/generate", {
           method: "POST",
@@ -81,51 +61,59 @@ const App = () => {
           body: JSON.stringify({ problem: code }),
         });
         const data = await response.json();
-        // Split the response into non-empty lines
         const newOutput = data.loop.split("\n").filter(Boolean);
         setDebuggedQueue(newOutput);
 
-        // Create a node for each debug line
         const newNodes = newOutput.map((line, index) => ({
           id: `${index}`,
           data: { label: line },
-          position: { x: 100, y: index * 100 },
+          position: { x: 0, y: index * 100 },
           style: {
-            border: "1px solid #777",
+            border: "2px solid #555",
             padding: 10,
-            borderRadius: 5,
+            borderRadius: 8,
+            fontSize: 14,
+            boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.2)",
             backgroundColor: line.includes("i++")
-              ? "#e8f5e9"
+              ? "#DFF2BF"
               : line.includes("i<n")
-              ? "#e0f7fa"
-              : "#fff3e0",
+              ? "#BDE0FE"
+              : "#FFD3B6",
           },
         }));
 
-        // Create sequential edges connecting the nodes
         const newEdges = newOutput.slice(1).map((_, index) => ({
           id: `e${index}-${index + 1}`,
           source: `${index}`,
           target: `${index + 1}`,
           animated: true,
           style: { stroke: "#555", strokeWidth: 2 },
+          markerEnd: {
+            type: MarkerType.ArrowClosed,
+            width: 15,
+            height: 15,
+          },
         }));
 
-        setNodes(newNodes);
-        setEdges(newEdges);
+        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+          newNodes,
+          newEdges
+        );
+
+        setNodes(layoutedNodes);
+        setEdges(layoutedEdges);
       } catch (error) {
-        console.error("Error executing:", error);
+        console.error("Execution Error:", error);
       } finally {
         setLoader(false);
       }
     };
 
-    showData();
-  }, [Execute, code]);
+    fetchExecutionData();
+  }, [execute, code]);
 
   return (
     <div className="container">
-      {/* Navbar */}
       <nav className="navbar">
         <a href="/" className="logo">
           <img src="logo.png" alt="CodeStream" />
@@ -133,13 +121,13 @@ const App = () => {
         <div className="nav-links">
           <a href="#">Explore</a>
           <a href="#">Problems</a>
-          <a href="#" id="login">Sign in</a>
+          <a href="#" id="login">
+            Sign in
+          </a>
         </div>
       </nav>
 
-      {/* Main Content Area */}
-      <div className="main-content" ref={containerRef}>
-        {/* Code Editor Section */}
+      <div className="main-content">
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
           <MonacoEditor
             className="editor"
@@ -156,15 +144,14 @@ const App = () => {
           <div className="buttons">
             <button>First</button>
             <button>Prev</button>
-            <button id="execute" onClick={handleExecute}>Execute</button>
+            <button id="execute" onClick={handleExecute}>
+              Execute
+            </button>
             <button>Next</button>
             <button>Last</button>
           </div>
         </div>
 
-        <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "left")}></div>
-
-        {/* Visual Debugger Flowchart Section */}
         <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>
           <AnimatePresence mode="wait">
             {loader ? (
@@ -176,17 +163,18 @@ const App = () => {
               />
             ) : (
               <ReactFlow nodes={nodes} edges={edges} fitView>
-                <MiniMap />
+                <MiniMap
+                  nodeStrokeColor={(n) => (n.style.backgroundColor ? n.style.backgroundColor : "#ddd")}
+                  nodeColor={(n) => n.style.backgroundColor || "#eee"}
+                  nodeBorderRadius={8}
+                />
                 <Controls />
-                <Background />
+                <Background variant="dots" gap={12} size={1} />
               </ReactFlow>
             )}
           </AnimatePresence>
         </div>
 
-        <div className="resizer" onMouseDown={(e) => handleMouseDown(e, "right")}></div>
-
-        {/* Variable Space Section */}
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>
           Variable Space
         </div>
