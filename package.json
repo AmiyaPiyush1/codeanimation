@@ -12,10 +12,14 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "axios": "^1.8.1",
+    "dotenv": "^16.4.7",
     "framer-motion": "^12.4.10",
+    "js-interpreter": "^6.0.0",
     "monaco-editor": "^0.52.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-flow": "^1.0.3",
+    "reactflow": "^11.11.4",
     "vercel": "^25.2.0"
   },
   "devDependencies": {

@@ -12,6 +12,32 @@ body {
   background-color: #efefef;
 }
 
+/* Common style for loop lines */
+.condition, .increment, .assignment {
+  font-family: monospace;
+  margin: 4px 0;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* Style for the loop condition line */
+.condition {
+  background-color: #e0f7fa;
+  color: #006064;
+}
+
+/* Style for the loop increment line */
+.increment {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+/* Style for the loop assignment line */
+.assignment {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -27,63 +53,6 @@ body {
   padding: 15px 10%;
 }
 
-.search-bar {
-  display: none;
-}
-
-#checkbox {
-  display: none;
-}
-
-.toggle {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transform: scale(0.5);
-  transition-duration: .3s;
-}
-
-.bars {
-  width: 100%;
-  height: 4px;
-  background-color: rgb(0, 0, 0);
-  border-radius: 6rem;
-  transition-duration: .3s;
-}
-
-#checkbox:checked + .toggle .bars {
-  margin-left: 13px;
-}
-
-#checkbox:checked + .toggle #bar2 {
-  transform: rotate(135deg);
-  margin-left: 0;
-  transform-origin: center;
-  transition-duration: .3s;
-}
-
-#checkbox:checked + .toggle #bar1 {
-  transform: rotate(45deg);
-  transition-duration: .3s;
-  transform-origin: left center;
-}
-
-#checkbox:checked + .toggle #bar3 {
-  transform: rotate(-45deg);
-  transition-duration: .3s;
-  transform-origin: left center;
-}
-
-.search-bar-menu {
-  display: none;
-}
-
 .logo img {
   width: 10rem;
 }
@@ -96,22 +65,8 @@ body {
 .nav-links a {
   color: #000;
   text-decoration: none;
-  display: flex;
-  padding-bottom: -0.15rem;
-  margin-bottom: 0.1rem;
-  align-items: center;
-  justify-content: space-between;
-  transition: background-size 0.2s ease-out, color 0.2s ease-out;
-  scale: 0.97;
-  background: linear-gradient(to right, #005eff 0%, #005eff 100%);
-  background-size: 0% 1px;
-  background-repeat: no-repeat;
-  background-position: center bottom;
-}
-
-.nav-links a:hover {
-  background-size: 100% 1px;
-  color: #005eff;
+  padding: 6px 12px;
+  transition: background 0.2s;
 }
 
 #login {
@@ -119,14 +74,9 @@ body {
   color: #fff;
   padding: 8px 20px;
   border-radius: 20px;
-  margin-bottom: 2px;
-  transition: background 0.2s ease-out;
 }
 
-#login:hover {
-  background: #3F79DA;
-}
-
+/* Loader */
 .loader {
   width: 48px;
   height: 48px;
@@ -162,32 +112,25 @@ body {
   15% {
     border-bottom-right-radius: 3px;
   }
-
   25% {
     transform: translateY(9px) rotate(22.5deg);
   }
-
   50% {
     transform: translateY(18px) scale(1, .9) rotate(45deg);
     border-bottom-right-radius: 40px;
   }
-
   75% {
     transform: translateY(9px) rotate(67.5deg);
   }
-
   100% {
     transform: translateY(0) rotate(90deg);
   }
 }
 
 @keyframes shadow324 {
-
-  0%,
-    100% {
+  0%, 100% {
     transform: scale(1, 1);
   }
-
   50% {
     transform: scale(1.2, 1);
   }
@@ -199,8 +142,7 @@ body {
   height: calc(100vh - 60px);
   width: 100%;
   position: relative;
-  margin-bottom: 0.55rem;
-  margin-left: 0.5rem;
+  margin: 0.5rem;
   overflow: auto;
 }
 
@@ -215,7 +157,7 @@ body {
   border-radius: 0.8rem;
 }
 
-/* Code Editor */
+/* Code Editor Section */
 #code-editor {
   display: flex;
   flex-direction: column;
@@ -236,32 +178,6 @@ body {
   display: flex;
   justify-content: space-evenly;
   margin-top: 0.85rem;
-}
-
-#visual-debugger {
-  display: flex;
-  font-size: 0.95rem;
-  color: rgba(0,0,0,0.7);
-  line-height: 1.5rem;
-}
-
-.debug-output {
-  text-align: justify;
-}
-
-#visual-debugger {
-  overflow-y: auto; /* Enables scrolling */
-  height: auto;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE & Edge */
-}
-
-#visual-debugger::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-#variable-space {
-  margin-right: 1.15rem;
 }
 
 button {
@@ -296,49 +212,34 @@ button:hover {
   background: transparent;
   cursor: ew-resize;
   height: 97%;
-  margin-right: 0.1rem;
-  margin-left: 0.1rem;
+  margin: 0 0.1rem;
   margin-top: 0.6rem;
   border-radius: 2rem;
-  transition: all 0.3s ease-out;
+  transition: background 0.3s ease-out;
 }
 
 .resizer:hover {
   background: #aeaeae;
 }
 
-
+/* Responsive styles */
 @media (max-width: 768px) {
   .navbar {
     padding: 10px 5%;
   }
-
   .nav-links {
     display: none;
   }
-
-  .search-bar {
-    display: block;
-  }
-
-  .nav-links a {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-
   .main-content {
     flex-direction: column;
   }
-
   .section {
     width: 100% !important;
     height: 33%;
   }
-
   .editor {
     height: 98.5%;
   }
-
   .resizer {
     height: 5px;
     width: 100%;
