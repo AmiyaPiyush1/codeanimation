@@ -34,14 +34,47 @@ const applyDagreLayout = (nodes, edges) => {
 };
 
 const App = () => {
-  const [leftWidth] = useState(33.33);
-  const [middleWidth] = useState(33.33);
-  const [rightWidth] = useState(33.33);
+  const [leftWidth, setLeftWidth] = useState(33.33);
+  const [middleWidth, setMiddleWidth] = useState(33.33);
+  const [rightWidth, setRightWidth] = useState(33.33);
   const [debuggedQueue, setDebuggedQueue] = useState([]);
   const [code, setCode] = useState("// Write your code here...");
   const [loader, setLoader] = useState(false);
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
+  const [dragging, setDragging] = useState(null);
+
+  const handleMouseDown = (section) => (e) => {
+    setDragging({ section, startX: e.clientX });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!dragging) return;
+    const { section, startX } = dragging;
+    const dx = e.clientX - startX;
+    const totalWidth = window.innerWidth;
+    const percentChange = (dx / totalWidth) * 100;
+    
+    if (section === "left") {
+      setLeftWidth((prev) => Math.max(10, prev + percentChange));
+      setMiddleWidth((prev) => Math.max(10, prev - percentChange));
+    } else if (section === "middle") {
+      setMiddleWidth((prev) => Math.max(10, prev + percentChange));
+      setRightWidth((prev) => Math.max(10, prev - percentChange));
+    }
+    setDragging({ ...dragging, startX: e.clientX });
+  };
+
+  const handleMouseUp = () => setDragging(null);
+
+  useEffect(() => {
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragging]);
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -163,6 +196,8 @@ const App = () => {
           </div>
         </div>
 
+        <div className="resizer" onMouseDown={handleMouseDown("left")}></div>
+
         <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>
           <AnimatePresence mode="wait">
             {loader ? (
@@ -186,6 +221,7 @@ const App = () => {
           </AnimatePresence>
         </div>
 
+        <div className="resizer" onMouseDown={handleMouseDown("middle")}></div>
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>
           Variable Space
         </div>
