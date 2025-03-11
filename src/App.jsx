@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MonacoEditor from "@monaco-editor/react";
 import ReactFlow, {
-  MiniMap,
   Controls,
   Background,
   MarkerType,
@@ -23,9 +22,64 @@ const App = () => {
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
 
-  const handleExecute = useCallback(() => {
-    setExecute((prev) => prev + 1);
-  }, []);
+  const handleExecute = useCallback(async () => {
+    setLoader(true);
+  
+    try {
+      const response = await fetch("http://localhost:3000/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem: code }),
+      });
+  
+      const data = await response.json();
+      const newOutput = data.loop.split("\n").filter(Boolean);
+      setDebuggedQueue(newOutput);
+  
+      const newNodes = newOutput.map((line, index) => ({
+        id: `${index}`,
+        data: { label: line },
+        position: { x: 0, y: index * 100 },
+        style: {
+          border: "2px solid #555",
+          padding: 10,
+          borderRadius: 8,
+          fontSize: 14,
+          boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.2)",
+          backgroundColor: line.includes("i++")
+            ? "#DFF2BF"
+            : line.includes("i<n")
+            ? "#BDE0FE"
+            : "#FFD3B6",
+        },
+      }));
+  
+      const newEdges = newOutput.slice(1).map((_, index) => ({
+        id: `e${index}-${index + 1}`,
+        source: `${index}`,
+        target: `${index + 1}`,
+        animated: true,
+        style: { stroke: "#555", strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 15,
+          height: 15,
+        },
+      }));
+  
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        newNodes,
+        newEdges
+      );
+  
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
+    } catch (error) {
+      console.error("Execution Error:", error);
+    } finally {
+      setLoader(false);
+    }
+  }, [code]);
 
   // DAGRE (for automatic layout)
   const getLayoutedElements = (nodes, edges) => {
@@ -52,7 +106,7 @@ const App = () => {
   useEffect(() => {
     if (execute === 0) return;
     setLoader(true);
-
+  
     const fetchExecutionData = async () => {
       try {
         const response = await fetch("http://localhost:3000/generate", {
@@ -60,10 +114,23 @@ const App = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ problem: code }),
         });
+  
         const data = await response.json();
-        const newOutput = data.loop.split("\n").filter(Boolean);
+        
+        // Split into lines and filter out unwanted elements
+        const newOutput = data.loop
+          .split("\n")
+          .map((line) => line.trim()) // Trim spaces
+          .filter((line) => {
+            return (
+              line.length > 2 && // Avoid single characters
+              !line.match(/^[\[\]{}"]+$/) && // Remove isolated JSON characters
+              !line.match(/^(\d+[:,]*)+$/) // Remove array-like structures
+            );
+          }); // Filter out unwanted characters
+  
         setDebuggedQueue(newOutput);
-
+  
         const newNodes = newOutput.map((line, index) => ({
           id: `${index}`,
           data: { label: line },
@@ -81,7 +148,7 @@ const App = () => {
               : "#FFD3B6",
           },
         }));
-
+  
         const newEdges = newOutput.slice(1).map((_, index) => ({
           id: `e${index}-${index + 1}`,
           source: `${index}`,
@@ -94,12 +161,12 @@ const App = () => {
             height: 15,
           },
         }));
-
+  
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
           newNodes,
           newEdges
         );
-
+  
         setNodes(layoutedNodes);
         setEdges(layoutedEdges);
       } catch (error) {
@@ -108,7 +175,7 @@ const App = () => {
         setLoader(false);
       }
     };
-
+  
     fetchExecutionData();
   }, [execute, code]);
 
@@ -163,11 +230,6 @@ const App = () => {
               />
             ) : (
               <ReactFlow nodes={nodes} edges={edges} fitView>
-                <MiniMap
-                  nodeStrokeColor={(n) => (n.style.backgroundColor ? n.style.backgroundColor : "#ddd")}
-                  nodeColor={(n) => n.style.backgroundColor || "#eee"}
-                  nodeBorderRadius={8}
-                />
                 <Controls />
                 <Background variant="dots" gap={12} size={1} />
               </ReactFlow>
