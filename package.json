@@ -12,6 +12,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
     "axios": "^1.8.1",
+    "customnode": "^1.0.0",
     "dagre": "^0.8.5",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.4.10",
