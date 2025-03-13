@@ -67,17 +67,13 @@ const App = () => {
     setLanguage(detectLanguage(code));
   }, [code]);
 
-  const handleEditorDidMount = (editor, monaco) => {
+  const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
-    monaco.editor.setModelLanguage(editor.getModel(), language);
   };
 
   useEffect(() => {
     if (editorRef.current) {
-      const model = editorRef.current.getModel();
-      if (model) {
-        monaco.editor.setModelLanguage(model, language);
-      }
+      editorRef.current.getModel()?.setLanguage(language);
     }
   }, [language]);
 
@@ -203,7 +199,7 @@ const App = () => {
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
             <MonacoEditor
               className="editor"
-              language="{language}"
+              language={language}
               value={code}
               onChange={(newCode) => setCode(newCode)}
               options={{
