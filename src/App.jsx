@@ -11,14 +11,17 @@ import dagre from "dagre";
 import Navbar from "./Nav.jsx";
 import "reactflow/dist/style.css";
 import "./App.css";
-import "./Nav.css"
+import "./Nav.css";
 
+// Initialize dagre for layout
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setGraph({ rankdir: "TB" });
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const applyDagreLayout = (nodes, edges) => {
-  nodes.forEach((node) => dagreGraph.setNode(node.id, { width: 180, height: 50 }));
+  nodes.forEach((node) =>
+    dagreGraph.setNode(node.id, { width: 180, height: 50 })
+  );
   edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
 
   dagre.layout(dagreGraph);
@@ -35,6 +38,7 @@ const applyDagreLayout = (nodes, edges) => {
   };
 };
 
+// Detect language based on code contents
 const detectLanguage = (code) => {
   if (/^\s*#include\s+[<"]/.test(code) || /\bint\s+main\s*\(/.test(code)) {
     return "cpp";
@@ -47,10 +51,11 @@ const detectLanguage = (code) => {
   } else if (/\bSELECT\b.*\bFROM\b/i.test(code) || /\bINSERT\s+INTO\b/i.test(code)) {
     return "sql";
   }
-  return "plaintext"; // Default fallback
+  return "plaintext";
 };
 
 const App = () => {
+  // Layout and state variables
   const [leftWidth, setLeftWidth] = useState(33.33);
   const [middleWidth, setMiddleWidth] = useState(33.33);
   const [rightWidth, setRightWidth] = useState(33.33);
@@ -63,6 +68,7 @@ const App = () => {
   const [language, setLanguage] = useState("plaintext");
   const editorRef = useRef(null);
 
+  // Update language when code changes
   useEffect(() => {
     setLanguage(detectLanguage(code));
   }, [code]);
@@ -77,6 +83,7 @@ const App = () => {
     }
   }, [language]);
 
+  // Handle resizing by mouse events
   const handleMouseDown = (section) => (e) => {
     setDragging({ section, startX: e.clientX });
   };
@@ -114,11 +121,12 @@ const App = () => {
     []
   );
 
+  // Execute and fetch the API response
   const handleExecute = useCallback(async () => {
     setLoader(true);
 
     try {
-      const response = await fetch("http://localhost:3000/generate", {
+      const response = await fetch("http://localhost:5000/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem: code }),
@@ -127,46 +135,76 @@ const App = () => {
       const data = await response.json();
       let extractedData = [];
 
-      if (Array.isArray(data.loop)) {
-        extractedData = data.loop.flatMap((step, index) =>
-          Object.entries(step)
-            .filter(([key]) => key.toLowerCase() !== "json")
-            .map(([key, value]) => `Step ${index + 1} → ${key}: ${value}`)
-        );
-      } else if (typeof data.loop === "object") {
-        extractedData = Object.entries(data.loop)
-          .filter(([key]) => key.toLowerCase() !== "json")
-          .map(([key, value]) => `${key}: ${value}`);
-      } else if (typeof data.loop === "string") {
-        extractedData = data.loop
+      // Process the content (works if content is string with newline separation)
+      if (typeof data.content === "string") {
+        extractedData = data.content
           .replace(/```json|```/g, "")
           .replace(/[{}[\],"]/g, "")
           .split("\n")
           .map((line) => line.trim())
           .filter((line) => line);
+      } else if (Array.isArray(data.content)) {
+        extractedData = data.content;
       }
 
       setDebuggedQueue(extractedData);
 
-      const newNodes = extractedData.map((line, index) => ({
-        id: `${index}`,
-        data: { label: line },
-        position: { x: 100, y: index * 100 },
-        draggable: true,
-        style: {
-          border: "2px solid #555",
-          padding: 10,
-          borderRadius: 8,
-          fontSize: 14,
-          boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.2)",
-          backgroundColor: line.includes("i++")
+      // Create nodes with animation. For sorting, we add a motion.div wrapper.
+      const newNodes = extractedData.map((line, index) => {
+        let backgroundColor;
+        if (data.type === "sorting") {
+          // Determine background color for sorting steps based on keywords
+          if (line.toLowerCase().includes("merge sort")) {
+            backgroundColor = "#AED581"; // Greenish for algorithm name
+          } else if (line.toLowerCase().includes("divide")) {
+            backgroundColor = "#81D4FA"; // Blueish for divide step
+          } else if (line.toLowerCase().includes("merge")) {
+            backgroundColor = "#FFAB91"; // Orangeish for merging step
+          } else if (line.toLowerCase().includes("example")) {
+            backgroundColor = "#CE93D8"; // Purpleish for example details
+          } else {
+            backgroundColor = "#FFD3B6"; // Default color for sorting
+          }
+        } else {
+          // For loop operations (existing logic)
+          backgroundColor = line.includes("i++")
             ? "#DFF2BF"
             : line.includes("i<n")
             ? "#BDE0FE"
-            : "#FFD3B6",
-        },
-      }));
+            : "#FFD3B6";
+        }
 
+        // Wrap the label in motion.div if it's sorting, to animate appearance.
+        const label = data.type === "sorting" ? (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5, delay: index * 0.2 }}
+          >
+            {line}
+          </motion.div>
+        ) : (
+          line
+        );
+
+        return {
+          id: `${index}`,
+          data: { label },
+          position: { x: 100, y: index * 100 },
+          draggable: true,
+          style: {
+            border: "2px solid #555",
+            padding: 10,
+            borderRadius: 8,
+            fontSize: 14,
+            boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.2)",
+            backgroundColor: backgroundColor,
+          },
+        };
+      });
+
+      // Create edges between consecutive nodes
       const newEdges = extractedData.slice(1).map((_, index) => ({
         id: `e${index}-${index + 1}`,
         source: `${index}`,
@@ -193,23 +231,24 @@ const App = () => {
 
   return (
     <div className="container">
-      <Navbar/>
+      <Navbar />
 
       <div className="main-content">
+        {/* Code Editor Section */}
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
-            <MonacoEditor
-              className="editor"
-              language={language}
-              value={code}
-              onChange={(newCode) => setCode(newCode)}
-              options={{
-                fontSize: 14,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
-              }}
-              onMount={handleEditorDidMount}
-            />
+          <MonacoEditor
+            className="editor"
+            language={language}
+            value={code}
+            onChange={(newCode) => setCode(newCode)}
+            options={{
+              fontSize: 14,
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+            }}
+            onMount={handleEditorDidMount}
+          />
           <div className="buttons">
             <button>First</button>
             <button>Prev</button>
@@ -221,6 +260,7 @@ const App = () => {
 
         <div className="resizer" onMouseDown={handleMouseDown("left")}></div>
 
+        {/* Visual Debugger Section */}
         <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>
           <AnimatePresence mode="wait">
             {loader ? (
@@ -245,6 +285,8 @@ const App = () => {
         </div>
 
         <div className="resizer" onMouseDown={handleMouseDown("middle")}></div>
+
+        {/* Variable Space Section */}
         <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>
           Variable Space
         </div>
