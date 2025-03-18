@@ -222,13 +222,37 @@ const VisualDebugger = () => {
 
   // Execute and fetch the API response
   const handleExecute = useCallback(async () => {
-    setLoader(true);
+  setLoader(true);
 
-    try {
+  try {
+      const detectedLang = detectLanguage(code);
+      if (detectedLang === "plaintext") {
+          setNodes([
+              {
+                  id: "error",
+                  data: { label: "Syntax Error: Unrecognized programming language." },
+                  position: { x: 200, y: 200 },
+                  draggable: false,
+                  style: {
+                      border: "2px solid red",
+                      backgroundColor: "#FFCDD2",
+                      padding: 10,
+                      borderRadius: 8,
+                      fontSize: 14,
+                      fontWeight: "bold",
+                      color: "#B71C1C",
+                  },
+              },
+          ]);
+          setEdges([]);
+          setLoader(false);
+          return;
+      }
+
       const response = await fetch("http://localhost:3000/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ problem: code }),
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ problem: code }),
       });
 
       const data = await response.json();
