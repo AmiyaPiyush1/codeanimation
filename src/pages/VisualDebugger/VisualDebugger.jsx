@@ -86,17 +86,16 @@ const VisualDebugger = () => {
         if (nodes.length > 0 && nodes[currentStep]) {
             const activeNode = nodes[currentStep];
             
-            // Get the viewport dimensions
-            const section = document.getElementById("visual-debugger");
-            if (!section) return;
-
-            const { width: sectionWidth, height: sectionHeight } = section.getBoundingClientRect();
+            // Apply manual adjustments to X and Y positions
+            const adjustedX = activeNode.position.x + 80; // Adjust X position
+            const adjustedY = activeNode.position.y + 80; // Adjust Y position
             
-            // Adjust centering to prevent nodes from going out of view
-            const adjustedX = activeNode.position.x - sectionWidth / 150 + 80;
-            const adjustedY = activeNode.position.y - sectionHeight / 150 + 100;
-
-            setCenter(adjustedX, adjustedY, { zoom: 1.5 });
+            // Smooth transition to the adjusted node position
+            setCenter(adjustedX, adjustedY, {
+                zoom: 1.25,
+                duration: 500, // Smooth transition duration
+                easing: (t) => t * (2 - t), // Ease-out effect
+            });
         }
     }, [currentStep, nodes, setCenter]);
 
