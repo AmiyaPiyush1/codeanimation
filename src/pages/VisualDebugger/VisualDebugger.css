@@ -1,0 +1,222 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  background-color: #efefef;
+}
+
+.react-flow__panel {
+  display: none;
+}
+
+/* Common style for loop lines */
+.condition, .increment, .assignment {
+  font-family: monospace;
+  margin: 4px 0;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* Style for the loop condition line */
+.condition {
+  background-color: #e0f7fa;
+  color: #006064;
+}
+
+/* Style for the loop increment line */
+.increment {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+/* Style for the loop assignment line */
+.assignment {
+  background-color: #fff3e0;
+  color: #e65100;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Loader */
+.loader {
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  position: relative;
+}
+
+.loader:before {
+  content: '';
+  width: 48px;
+  height: 5px;
+  background: #97bdff;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  border-radius: 50%;
+  animation: shadow324 0.5s linear infinite;
+}
+
+.loader:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: #3F79DA;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  animation: jump7456 0.5s linear infinite;
+}
+
+@keyframes jump7456 {
+  15% {
+    border-bottom-right-radius: 3px;
+  }
+  25% {
+    transform: translateY(9px) rotate(22.5deg);
+  }
+  50% {
+    transform: translateY(18px) scale(1, .9) rotate(45deg);
+    border-bottom-right-radius: 40px;
+  }
+  75% {
+    transform: translateY(9px) rotate(67.5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(90deg);
+  }
+}
+
+@keyframes shadow324 {
+  0%, 100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.2, 1);
+  }
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  height: 91vh;
+  position: relative;
+  margin: 0.5rem;
+  overflow: auto;
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #aaa;
+  padding: 15px;
+  background: transparent;
+  overflow: auto;
+  border-radius: 0.8rem;
+}
+
+/* Code Editor Section */
+#code-editor {
+  display: flex;
+  flex-direction: column;
+}
+
+.editor {
+  flex-grow: 1;
+  border: 1px solid #aaa;
+  padding: 10px;
+  border-radius: 10px;
+  background: transparent;
+}
+
+/* Buttons */
+.buttons {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 0.85rem;
+}
+
+button {
+  padding: 8px 25px;
+  border: none;
+  background: #3F79DA;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 20px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background: #cee0ff;
+  color: #3F79DA;
+}
+
+#execute {
+  background: transparent;
+  color: #3F79DA;
+  border: 1px solid #3F79DA;
+}
+
+#execute:hover {
+  background: #c5daff;
+}
+
+/* Resizer */
+.resizer {
+  width: 3.5px;
+  background: transparent;
+  cursor: ew-resize;
+  height: 97%;
+  margin: 0 0.1rem;
+  margin-top: 0.6rem;
+  border-radius: 2rem;
+  transition: background 0.3s ease-out;
+}
+
+.resizer:hover {
+  background: #aeaeae;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 5%;
+  }
+  .nav-links {
+    display: none;
+  }
+  .main-content {
+    flex-direction: column;
+  }
+  .section {
+    width: 100% !important;
+    height: 33%;
+  }
+  .editor {
+    height: 98.5%;
+  }
+  .resizer {
+    height: 5px;
+    width: 100%;
+    cursor: ns-resize;
+  }
+}
+
+.highlight-line {
+  background-color: rgba(255, 220, 100, 0.4) !important;
+  border-left: 3px solid orange;
+}

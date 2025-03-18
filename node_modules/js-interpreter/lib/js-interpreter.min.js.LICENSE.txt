@@ -1,0 +1,11 @@
+/**
+ * @license
+ * Copyright 2012 Marijn Haverbeke
+ * SPDX-License-Identifier: MIT
+ */
+
+/**
+ * @license
+ * Copyright 2013 Neil Fraser
+ * SPDX-License-Identifier: Apache-2.0
+ */
