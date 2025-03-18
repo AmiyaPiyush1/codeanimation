@@ -303,19 +303,7 @@ const VisualDebugger = () => {
             : "#FFD3B6";
         }
 
-        // Wrap the label in motion.div if it's sorting, to animate appearance.
-        const label = data.type === "sorting" ? (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.5, delay: index * 0.2 }}
-          >
-            {line}
-          </motion.div>
-        ) : (
-          line
-        );
+        const label = line;
 
         return {
           id: `${index}`,
