@@ -132,12 +132,15 @@ body {
 #code-editor {
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 .editor {
   flex-grow: 1;
   border: 1px solid #aaa;
   padding: 10px;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
   border-radius: 10px;
   background: transparent;
 }

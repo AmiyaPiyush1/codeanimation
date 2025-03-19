@@ -354,16 +354,44 @@ const VisualDebugger = () => {
       <div className="main-content">
         {/* Code Editor Section */}
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
-          <MonacoEditor
+        <MonacoEditor
             className="editor"
             language={language}
             value={code}
             onChange={(newCode) => setCode(newCode)}
             options={{
-              fontSize: 14,
-              minimap: { enabled: false },
+              fontSize: 14, // Increase font size for better readability
+              minimap: { enabled: false, scale: 1, side: "right" }, // Improve minimap visibility
               scrollBeyondLastLine: false,
               automaticLayout: true,
+              padding: { top: 0, bottom: 0, left: 0, right: 0 },
+              quickSuggestions: { other: true, comments: true, strings: true }, 
+              suggestOnTriggerCharacters: true,
+              inlineSuggest: true, // Enable inline suggestions
+              wordWrap: "on", // Enable word wrapping
+              folding: true, // Enable code folding
+              smoothScrolling: true, // Smooth scrolling for better experience
+              tabSize: 2, // Set tab size for better readability
+              renderWhitespace: "all", // Show all whitespaces
+              overviewRulerBorder: false, // Remove ruler border for cleaner UI
+              autoClosingBrackets: "always", // Auto close brackets
+              autoClosingQuotes: "always", // Auto close quotes
+              matchBrackets: "always", // Highlight matching brackets
+              cursorStyle: "line-thin",
+              cursorBlinking: "smooth", // Smoother cursor blinking
+              cursorSmoothCaretAnimation: "on", // Smooth cursor movement
+              suggestSelection: "recentlyUsed", // Improve suggestion selection
+              parameterHints: { enabled: true }, // Show function parameter hints
+              glyphMargin: false, // Enable glyph margin for debugging indicators
+              lightbulb: { enabled: true }, // Show code action lightbulbs
+              formatOnType: true, // Auto-format code while typing
+              formatOnPaste: true, // Auto-format on paste
+              bracketPairColorization: { enabled: true }, // Colorize matching brackets
+              stickyScroll: { enabled: true }, // Enable sticky scroll for better navigation
+              lineNumbersMinChars: 3,
+            }}
+            beforeMount={(monaco) => {
+              monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
             }}
             onMount={handleEditorDidMount}
           />
