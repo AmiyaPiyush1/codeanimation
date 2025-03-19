@@ -12,7 +12,7 @@ const Signup = () => {
     try {
       await axios.post("http://localhost:3000/signup", { email, password });
       alert("Signup Successful! Please login.");
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       alert("Signup Failed");
     }
