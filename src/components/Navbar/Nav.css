@@ -57,6 +57,7 @@
     border-radius: 20px;
     transform: scale(0.95);
     transition: all 0.2s ease-out;
+    font-family: 'Montserrat', sans-serif;
   }
   
   #login:hover, #logout:hover {
