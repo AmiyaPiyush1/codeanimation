@@ -8,6 +8,7 @@ import Login from "./pages/Auth/Login";
 import Signup from "./pages/Auth/Signup";
 import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
 import "./App.css";
+import Mergesort from "./pages/Sort/Mergesort.jsx";
 
 const Layout = () => {
   const location = useLocation();
@@ -21,6 +22,7 @@ const Layout = () => {
         <Route path="/debugger" element={<ProtectedRoute><VisualDebugger /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/debugger/mergesort" element={<Mergesort />}/>
       </Routes>
       {!hideFooterRoutes.includes(location.pathname) && <Footer />}
     </>

@@ -9,6 +9,7 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowProvider
 } from "reactflow";
+import { useNavigate } from "react-router-dom";
 import dagre from "dagre";
 import "reactflow/dist/style.css";
 import "./VisualDebugger.css";
@@ -19,13 +20,9 @@ dagreGraph.setGraph({ rankdir: "TB" });
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
 const applyDagreLayout = (nodes, edges) => {
-  nodes.forEach((node) =>
-    dagreGraph.setNode(node.id, { width: 180, height: 50 })
-  );
+  nodes.forEach((node) => dagreGraph.setNode(node.id, { width: 180, height: 50 }));
   edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
-
   dagre.layout(dagreGraph);
-
   return {
     nodes: nodes.map((node) => ({
       ...node,
@@ -67,7 +64,18 @@ const VisualDebugger = () => {
   const [dragging, setDragging] = useState(null);
   const [language, setLanguage] = useState("plaintext");
   const [currentStep, setCurrentStep] = useState(0);
+  const [topic, setTopic] = useState(null);
   const editorRef = useRef(null);
+
+  // Initialize navigation
+  const navigate = useNavigate();
+
+  // Redirect if the topic returned by the API contains "merge sort"
+  useEffect(() => {
+    if (topic && topic.topic && topic.topic.toLowerCase().includes("merge sort")) {
+      navigate("/debugger/mergesort");
+    }
+  }, [topic, navigate]);
 
   // Update language when code changes
   useEffect(() => {
@@ -83,24 +91,22 @@ const VisualDebugger = () => {
     const { setCenter } = useReactFlow();
 
     useEffect(() => {
-        if (nodes.length > 0 && nodes[currentStep]) {
-            const activeNode = nodes[currentStep];
-            
-            // Apply manual adjustments to X and Y positions
-            const adjustedX = activeNode.position.x + 80; // Adjust X position
-            const adjustedY = activeNode.position.y + 80; // Adjust Y position
-            
-            // Smooth transition to the adjusted node position
-            setCenter(adjustedX, adjustedY, {
-                zoom: 1.25,
-                duration: 500, // Smooth transition duration
-                easing: (t) => t * (2 - t), // Ease-out effect
-            });
-        }
+      if (nodes.length > 0 && nodes[currentStep]) {
+        const activeNode = nodes[currentStep];
+        // Apply manual adjustments to X and Y positions
+        const adjustedX = activeNode.position.x + 80;
+        const adjustedY = activeNode.position.y + 80;
+        // Smooth transition to the adjusted node position
+        setCenter(adjustedX, adjustedY, {
+          zoom: 1.25,
+          duration: 500,
+          easing: (t) => t * (2 - t),
+        });
+      }
     }, [currentStep, nodes, setCenter]);
 
     return null;
-};
+  };
 
   useEffect(() => {
     if (editorRef.current) {
@@ -119,7 +125,6 @@ const VisualDebugger = () => {
     const dx = e.clientX - startX;
     const totalWidth = window.innerWidth;
     const percentChange = (dx / totalWidth) * 100;
-    
     if (section === "left") {
       setLeftWidth((prev) => Math.max(10, prev + percentChange));
       setMiddleWidth((prev) => Math.max(10, prev - percentChange));
@@ -148,20 +153,20 @@ const VisualDebugger = () => {
 
   const handleNext = () => {
     if (currentStep < debuggedQueue.length - 1) {
-      setCurrentStep(currentStep + 1); // Just move the highlight
+      setCurrentStep(currentStep + 1);
     }
   };
-  
+
   const handlePrev = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1); // Just move the highlight
+      setCurrentStep(currentStep - 1);
     }
   };
-  
+
   const handleFirst = () => {
     setCurrentStep(0);
   };
-  
+
   const handleLast = () => {
     setCurrentStep(debuggedQueue.length - 1);
   };
@@ -179,86 +184,80 @@ const VisualDebugger = () => {
 
       // Reapply layout for better visual arrangement
       const layouted = applyDagreLayout(updatedNodes, edges);
-      
       return layouted.nodes;
     });
   }, [currentStep, edges]);
 
   useEffect(() => {
     if (!editorRef.current || debuggedQueue.length === 0) return;
-  
     const editor = editorRef.current;
     const model = editor.getModel();
     if (!model) return;
-  
-    const lineNumber = debuggedQueue[currentStep]?.line || 1; // Default to line 1
-  
+    const lineNumber = debuggedQueue[currentStep]?.line || 1;
     console.log("Current Step:", currentStep);
     console.log("Highlighting Line:", lineNumber);
-  
     // Remove previous decorations
-    editorRef.current.decorations = editor.deltaDecorations(
-      editorRef.current.decorations || [],
-      []
-    );
-  
+    editorRef.current.decorations = editor.deltaDecorations(editorRef.current.decorations || [], []);
     // Apply new decoration for highlighting
-    editorRef.current.decorations = editor.deltaDecorations(
-      [],
-      [
-        {
-          range: new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber)),
-          options: {
-            isWholeLine: true,
-            className: "highlight-line",
-          },
+    editorRef.current.decorations = editor.deltaDecorations([], [
+      {
+        range: new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber)),
+        options: {
+          isWholeLine: true,
+          className: "highlight-line",
         },
-      ]
-    );
-  
-    // Ensure smooth scrolling to the highlighted line
-    editor.revealLineInCenter(lineNumber);
+      },
+    ]);
+    editor.revealLineInCenter(lineNumber); 
   }, [currentStep, debuggedQueue]);
 
-  // Execute and fetch the API response
+  // Execute and fetch the API responses
   const handleExecute = useCallback(async () => {
-  setLoader(true);
-
-  try {
+    setLoader(true);
+    localStorage.setItem("code", code);
+    try {
       const detectedLang = detectLanguage(code);
       if (detectedLang === "plaintext") {
-          setNodes([
-              {
-                  id: "error",
-                  data: { label: "Syntax Error: Unrecognized programming language." },
-                  position: { x: 200, y: 200 },
-                  draggable: false,
-                  style: {
-                      border: "2px solid red",
-                      backgroundColor: "#FFCDD2",
-                      padding: 10,
-                      borderRadius: 8,
-                      fontSize: 14,
-                      fontWeight: "bold",
-                      color: "#B71C1C",
-                  },
-              },
-          ]);
-          setEdges([]);
-          setLoader(false);
-          return;
+        setNodes([
+          {
+            id: "error",
+            data: { label: "Syntax Error: Unrecognized programming language." },
+            position: { x: 200, y: 200 },
+            draggable: false,
+            style: {
+              border: "2px solid red",
+              backgroundColor: "#FFCDD2",
+              padding: 10,
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: "bold",
+              color: "#B71C1C",
+            },
+          },
+        ]);
+        setEdges([]);
+        setLoader(false);
+        return;
       }
 
-      const response = await fetch("http://localhost:3000/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ problem: code }),
+      // Fetch topic from the debugger API
+      const response1 = await fetch("http://localhost:5000/debugger", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem: code }),
       });
+      const data1 = await response1.json();
+      setTopic(data1);
 
+      // Fetch debugging details from the generate API
+      const response = await fetch("http://localhost:5000/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem: code }),
+      });
       const data = await response.json();
       let extractedData = [];
 
-      // Process the content (works if content is string with newline separation)
       if (typeof data.content === "string") {
         extractedData = data.content
           .replace(/```json|```/g, "")
@@ -273,38 +272,33 @@ const VisualDebugger = () => {
       setDebuggedQueue(
         extractedData.map((line, index) => ({
           text: line,
-          line: index + 1, // Assign correct line numbers
+          line: index + 1,
         }))
       );
       setCurrentStep(0);
 
-      // Create nodes with animation. For sorting, we add a motion.div wrapper.
       const newNodes = extractedData.map((line, index) => {
         let backgroundColor;
         if (data.type === "sorting") {
-          // Determine background color for sorting steps based on keywords
           if (line.toLowerCase().includes("merge sort")) {
-            backgroundColor = "#AED581"; // Greenish for algorithm name
+            backgroundColor = "#AED581";
           } else if (line.toLowerCase().includes("divide")) {
-            backgroundColor = "#81D4FA"; // Blueish for divide step
+            backgroundColor = "#81D4FA";
           } else if (line.toLowerCase().includes("merge")) {
-            backgroundColor = "#FFAB91"; // Orangeish for merging step
+            backgroundColor = "#FFAB91";
           } else if (line.toLowerCase().includes("example")) {
-            backgroundColor = "#CE93D8"; // Purpleish for example details
+            backgroundColor = "#CE93D8";
           } else {
-            backgroundColor = "#FFD3B6"; // Default color for sorting
+            backgroundColor = "#FFD3B6";
           }
         } else {
-          // For loop operations (existing logic)
           backgroundColor = line.includes("i++")
             ? "#DFF2BF"
             : line.includes("i<n")
             ? "#BDE0FE"
             : "#FFD3B6";
         }
-
         const label = line;
-
         return {
           id: `${index}`,
           data: { label },
@@ -321,7 +315,6 @@ const VisualDebugger = () => {
         };
       });
 
-      // Create edges between consecutive nodes
       const newEdges = extractedData.slice(1).map((_, index) => ({
         id: `e${index}-${index + 1}`,
         source: `${index}`,
@@ -337,57 +330,55 @@ const VisualDebugger = () => {
       }));
 
       const layoutedElements = applyDagreLayout(newNodes, newEdges);
-      setDebuggedQueue(layoutedElements.nodes); // Store all nodes
-      setNodes(layoutedElements.nodes); // Show only the first node initially
+      setDebuggedQueue(layoutedElements.nodes);
+      setNodes(layoutedElements.nodes);
       setEdges(layoutedElements.edges);
-      setCurrentStep(0); // Reset traversal step
+      setCurrentStep(0);
     } catch (error) {
       console.error("Execution Error:", error);
     } finally {
       setLoader(false);
     }
   }, [code]);
-
   return (
     <div className="container">
-
       <div className="main-content">
         {/* Code Editor Section */}
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
-        <MonacoEditor
+          <MonacoEditor
             className="editor"
             language={language}
             value={code}
             onChange={(newCode) => setCode(newCode)}
             options={{
-              fontSize: 14, // Increase font size for better readability
-              minimap: { enabled: false, scale: 1, side: "right" }, // Improve minimap visibility
+              fontSize: 14,
+              minimap: { enabled: false, scale: 1, side: "right" },
               scrollBeyondLastLine: false,
               automaticLayout: true,
               padding: { top: 0, bottom: 0, left: 0, right: 0 },
-              quickSuggestions: { other: true, comments: true, strings: true }, 
+              quickSuggestions: { other: true, comments: true, strings: true },
               suggestOnTriggerCharacters: true,
-              inlineSuggest: true, // Enable inline suggestions
-              wordWrap: "on", // Enable word wrapping
-              folding: true, // Enable code folding
-              smoothScrolling: true, // Smooth scrolling for better experience
-              tabSize: 2, // Set tab size for better readability
-              renderWhitespace: "all", // Show all whitespaces
-              overviewRulerBorder: false, // Remove ruler border for cleaner UI
-              autoClosingBrackets: "always", // Auto close brackets
-              autoClosingQuotes: "always", // Auto close quotes
-              matchBrackets: "always", // Highlight matching brackets
+              inlineSuggest: true,
+              wordWrap: "on",
+              folding: true,
+              smoothScrolling: true,
+              tabSize: 2,
+              renderWhitespace: "all",
+              overviewRulerBorder: false,
+              autoClosingBrackets: "always",
+              autoClosingQuotes: "always",
+              matchBrackets: "always",
               cursorStyle: "line-thin",
-              cursorBlinking: "smooth", // Smoother cursor blinking
-              cursorSmoothCaretAnimation: "on", // Smooth cursor movement
-              suggestSelection: "recentlyUsed", // Improve suggestion selection
-              parameterHints: { enabled: true }, // Show function parameter hints
-              glyphMargin: false, // Enable glyph margin for debugging indicators
-              lightbulb: { enabled: true }, // Show code action lightbulbs
-              formatOnType: true, // Auto-format code while typing
-              formatOnPaste: true, // Auto-format on paste
-              bracketPairColorization: { enabled: true }, // Colorize matching brackets
-              stickyScroll: { enabled: true }, // Enable sticky scroll for better navigation
+              cursorBlinking: "smooth",
+              cursorSmoothCaretAnimation: "on",
+              suggestSelection: "recentlyUsed",
+              parameterHints: { enabled: true },
+              glyphMargin: false,
+              lightbulb: { enabled: true },
+              formatOnType: true,
+              formatOnPaste: true,
+              bracketPairColorization: { enabled: true },
+              stickyScroll: { enabled: true },
               lineNumbersMinChars: 3,
             }}
             beforeMount={(monaco) => {
@@ -418,16 +409,11 @@ const VisualDebugger = () => {
               />
             ) : (
               <ReactFlowProvider>
-              <ReactFlow 
-                nodes={nodes}
-                edges={edges} 
-                onNodesChange={onNodesChange} 
-                fitView
-              >
-                <FlowController currentStep={currentStep} nodes={nodes} />
-                <Controls />
-                <Background variant="dots" gap={12} size={1} />
-              </ReactFlow>
+                <ReactFlow nodes={nodes} edges={edges} onNodesChange={onNodesChange} fitView>
+                  <FlowController currentStep={currentStep} nodes={nodes} />
+                  <Controls />
+                  <Background variant="dots" gap={12} size={1} />
+                </ReactFlow>
               </ReactFlowProvider>
             )}
           </AnimatePresence>
