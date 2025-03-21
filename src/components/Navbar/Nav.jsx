@@ -30,7 +30,7 @@ const Navbar = () => {
   return (
       <nav className="navbar">
         <Link to="/" className="logo">
-          <img src="logo.png" alt="CodeStream" />
+          <img src="/logo.png" alt="CodeStream" />
         </Link>
         <div className="nav-links">
           <Link to="/">

@@ -12,7 +12,7 @@ import Mergesort from "./pages/Sort/Mergesort.jsx";
 
 const Layout = () => {
   const location = useLocation();
-  const hideFooterRoutes = ["/debugger"];
+  const hideFooterRoutes = ["/debugger", "/debugger/mergesort"];
 
   return (
     <>

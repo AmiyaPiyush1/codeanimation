@@ -241,7 +241,7 @@ const VisualDebugger = () => {
       }
 
       // Fetch topic from the debugger API
-      const response1 = await fetch("http://localhost:5000/debugger", {
+      const response1 = await fetch("http://localhost:3000/debugger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem: code }),
@@ -250,7 +250,7 @@ const VisualDebugger = () => {
       setTopic(data1);
 
       // Fetch debugging details from the generate API
-      const response = await fetch("http://localhost:5000/generate", {
+      const response = await fetch("http://localhost:3000/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem: code }),
