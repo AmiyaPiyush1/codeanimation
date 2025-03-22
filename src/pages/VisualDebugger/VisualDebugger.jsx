@@ -75,6 +75,9 @@ const VisualDebugger = () => {
     if (topic && topic.topic && topic.topic.toLowerCase().includes("merge sort")) {
       navigate("/debugger/mergesort");
     }
+    if (topic && topic.topic && topic.topic.toLowerCase().includes("bubble sort")) {
+      navigate("/debugger/bubblesort");
+    }
   }, [topic, navigate]);
 
   // Update language when code changes

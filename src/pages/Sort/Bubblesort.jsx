@@ -11,7 +11,7 @@ import "reactflow/dist/style.css";
 import "./sort.css";
 import { useNavigate } from "react-router-dom";
 
-const Mergesort = () => {
+const Bubblesort = () => {
   // Layout and state variables
   const [leftWidth, setLeftWidth] = useState(33.33);
   const [middleWidth, setMiddleWidth] = useState(33.33);
@@ -25,8 +25,8 @@ const Mergesort = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [language, setLanguage] = useState("plaintext");
   const editorRef = useRef(null);
-  const [result,setResult] = useState();
-  const [topic, setTopic] = useState(null);
+  const [result, setResult] = useState();
+  const [topic,setTopic] = useState(null);
   const navigate = useNavigate();
   // Generic language detection based on code content
   const detectLanguage = (code) => {
@@ -88,28 +88,28 @@ const Mergesort = () => {
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     []
   );
-  useEffect(() => {
-      if (topic && topic.topic && topic.topic.toLowerCase().includes("bubble sort")) {
-        navigate("/debugger/bubblesort");
-      }
-    }, [topic, navigate]);
-  
 
+  useEffect(() => {
+        if (topic && topic.topic && topic.topic.toLowerCase().includes("merge sort")) {
+          navigate("/debugger/mergesort");
+        }
+      }, [topic, navigate]);
+    
   // Execute code and fetch debugging steps from the API
   const handleExecute = async () => {
     localStorage.setItem("code", code);
     const response1 = await fetch("http://localhost:5000/debugger", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ problem: code }),
-    });
-    const data1 = await response1.json();
-    setTopic(data1);
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem: code }),
+      });
+      const data1 = await response1.json();
+      setTopic(data1);
     setLoading(true);
     try {
       const detectedLang = detectLanguage(code);
       if (detectedLang !== "plaintext") {
-        const response = await fetch("http://localhost:5000/debugger/mergesort", {
+        const response = await fetch("http://localhost:5000/debugger/bubblesort", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ problem: code }),
@@ -152,7 +152,7 @@ const Mergesort = () => {
             className="editor"
             language={language}
             value={code}
-            onChange={setCode}
+            onChange={(value) => setCode(value || "")}
             options={{
               fontSize: 14,
               minimap: { enabled: false },
@@ -210,4 +210,4 @@ const Mergesort = () => {
   );
 };
 
-export default Mergesort;
+export default Bubblesort;
