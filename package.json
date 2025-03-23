@@ -1,0 +1,43 @@
+{
+  "name": "codestream",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@react-oauth/google": "^0.12.1",
+    "axios": "^1.8.4",
+    "customnode": "^1.0.0",
+    "dagre": "^0.8.5",
+    "dotenv": "^16.4.7",
+    "framer-motion": "^12.4.10",
+    "js-interpreter": "^6.0.0",
+    "jwt-decode": "^4.0.0",
+    "monaco-editor": "^0.52.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-flow": "^1.0.3",
+    "react-monaco-editor": "^0.58.0",
+    "react-router-dom": "^7.3.0",
+    "reactflow": "^11.11.4",
+    "uuid": "^11.1.0",
+    "vercel": "^25.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "vite": "^6.2.0"
+  }
+}

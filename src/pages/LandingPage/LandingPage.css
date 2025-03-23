@@ -1,0 +1,36 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    text-align: center;
+    background-color: transparent;
+}
+
+.home-container h1 {
+    margin-bottom: 10px;
+}
+
+.home-container p {
+    margin-bottom: 20px;
+}
+
+.home-container button {
+    background: #3F79DA;
+    color: #FFF;
+    padding: 0.7rem 1.3rem;
+    border-radius: 3rem;
+    border: 1px solid #3F79DA;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.05rem;
+    transition: background 0.2s ease-out;
+}
+  
+.home-container button:hover {
+    background: #c5daff;
+    color: #3F79DA;
+}

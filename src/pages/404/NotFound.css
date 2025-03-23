@@ -1,0 +1,149 @@
+.main a {
+    text-decoration: none;
+}
+
+/*=============== HEADER & NAV ===============*/
+.header {
+  background-color: transparent;
+}
+
+/*=============== HOME ===============*/
+.home {
+  background-color: var(--first-color);
+  padding: 8vw 0 20rem;
+  display: grid;
+}
+
+.home__container {
+  display: grid;
+  align-content: center;
+  row-gap: 2rem;
+  column-gap: 15vw;
+}
+
+.home__data {
+  text-align: center;
+}
+
+.home__title {
+  font-size: 4vw;
+  margin: .75rem 0;
+}
+
+.home__subtitle {
+    font-weight: 700;
+    font-size: 1.5vw;
+}
+
+.home__button {
+  margin-top: 2rem;
+  display: inline-block;
+  background-color: #3F79DA;
+  color: #fff;
+  padding: .80rem 1.5rem;
+  border-radius: 3rem;
+  transition: .4s;
+}
+
+.home__button:hover {
+  box-shadow: 0 4px 12px hsla(38, 69%, 8%, .2);
+}
+
+.home__img img {
+  width: 230px;
+  animation: floaty 1.8s infinite alternate;
+}
+
+.home__img {
+  justify-self: center;
+}
+
+.home__shadow {
+  width: 130px;
+  height: 24px;
+  background-color: hsla(38, 21%, 19%, .16);
+  margin: 0 auto;
+  border-radius: 50%;
+  filter: blur(7px);
+  animation: shadow 1.8s infinite alternate;
+}
+
+/* Animate ghost */
+@keyframes floaty {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(15px);
+  }
+}
+
+@keyframes shadow {
+  0% {
+    transform: scale(1, 1);
+  }
+  100% {
+    transform: scale(.85, .85);
+  }
+}
+
+/*=============== BREAKPOINTS ===============*/
+/* For small devices */
+@media screen and (max-width: 320px) {
+  .home {
+    padding-top: 7rem;
+  }
+}
+
+/* For medium devices */
+@media screen and (min-width: 767px) {
+  .nav {
+    height: calc(var(--header-height) + 1.5rem);
+  }
+  .nav__toggle, 
+  .nav__close {
+    display: none;
+  }
+  .nav__list {
+    flex-direction: row;
+    column-gap: 3.5rem;
+  }
+}
+
+/* For large devices */
+@media screen and (min-width: 1024px) {
+  .home__container {
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    column-gap: 13rem;
+  }
+  .home__data {
+    text-align: initial;
+  }
+  .home__img img {
+    width: 400px;
+  }
+  .home__shadow {
+    width: 250px;
+    height: 40px;
+  }
+}
+
+@media screen and (min-width: 1048px) {
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* For 2K resolutions (2048 x 1152, 2048 x 1536) */
+@media screen and (min-width: 2048px) {
+  .home {
+    height: initial;
+    row-gap: 4rem;
+  }
+}
+
+/* For 4K resolutions (3840 x 2160, 4096 x 2160) */
+@media screen and (min-width: 3840px) {
+}

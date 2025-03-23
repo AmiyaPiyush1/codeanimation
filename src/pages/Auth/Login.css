@@ -1,0 +1,88 @@
+/* Login.css */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login-box {
+  background-color: transparent;
+  padding: 4vh 2vw;
+  border-radius: 1.5rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: bounceIn 0.45s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    scale: 0; 
+    opacity: 0;
+  }
+
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+.login-box h2 {
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 1.5rem;
+  font-size: 16px;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: #faf9f6;
+  font-size: 16px;
+  border: none;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease-out;
+}
+
+.login-box button:hover {
+  background: #0056d7;
+}
+
+.login-box button:disabled {
+  background: gray;
+  cursor: not-allowed;
+}
+
+.login-box .error-message {
+  color: red;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.login-box .signup-link {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.login-box .signup-link a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.login-box .signup-link a:hover {
+  text-decoration: underline;
+}
