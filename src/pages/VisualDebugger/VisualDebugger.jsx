@@ -229,60 +229,76 @@ const handleShare = async () => {
   }
 };
 
-// Smoothly toggle full-screen mode for the Monaco editor with Escape key support
-const handleFullscreen = () => {
-  const editorSection = document.getElementById("code-editor");
+const handleFullscreen = (id) => {
+  const editorSection = document.getElementById(id);
   if (!editorSection) return;
 
-  // Escape key handler to exit fullscreen
+  // Check if in fullscreen mode
+  const isFullscreen = () => !!document.fullscreenElement;
+
+  // Get section position
+  const getPositionClass = () => {
+    const rect = editorSection.getBoundingClientRect();
+    const screenWidth = window.innerWidth;
+    const sectionCenter = rect.left + rect.width / 2;
+
+    if (sectionCenter < screenWidth * 0.33) {
+      return "fullscreen-left";  // Section is in the left third of the screen
+    } else if (sectionCenter > screenWidth * 0.66) {
+      return "fullscreen-right"; // Section is in the right third of the screen
+    } else {
+      return "fullscreen-center"; // Section is in the middle third
+    }
+  };
+
+  // Handle fullscreen change
+  const handleFullscreenChange = () => {
+    if (!isFullscreen()) {
+      editorSection.classList.remove("fullscreen-active", "fullscreen-left", "fullscreen-center", "fullscreen-right");
+      setFullscreen(false);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    }
+  };
+
+  // Escape key handler
   const handleKeyDown = (e) => {
     if (e.key === "Escape") {
       exitFullscreen();
     }
   };
 
-  // Ensure proper handling of fullscreen changes
-  const handleFullscreenChange = () => {
-    if (!document.fullscreenElement) {
-      // If fullscreen is exited, clean up and remove the class
-      editorSection.classList.remove("fullscreen-active");
-      setFullscreen(false);
-      document.removeEventListener("keydown", handleKeyDown);
+  // Enter fullscreen with animation based on position
+  const enterFullscreen = () => {
+    if (editorSection.requestFullscreen) {
+      editorSection.requestFullscreen()
+        .then(() => {
+          const positionClass = getPositionClass(); // Get the appropriate animation class
+          setTimeout(() => {
+            editorSection.classList.add("fullscreen-active", positionClass);
+            setFullscreen(true);
+          }, 300);
+
+          // Add event listeners
+          document.addEventListener("keydown", handleKeyDown);
+          document.addEventListener("fullscreenchange", handleFullscreenChange);
+        })
+        .catch((err) => console.error("Error enabling fullscreen:", err));
+    } else {
+      console.error("Fullscreen API not supported");
     }
   };
 
-  // Enter fullscreen and add listeners
-  const enterFullscreen = () => {
-    editorSection.requestFullscreen().then(() => {
-      // Smooth transition
-      setTimeout(() => {
-        editorSection.classList.add("fullscreen-active");
-        setFullscreen(true);
-      }, 300);
-
-      // Listen for escape key and fullscreen changes
-      document.addEventListener("keydown", handleKeyDown);
-      document.addEventListener("fullscreenchange", handleFullscreenChange);
-    }).catch((err) => {
-      console.error("Error enabling fullscreen:", err);
-    });
-  };
-
-  // Exit fullscreen and clean up listeners
+  // Exit fullscreen
   const exitFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch((err) => {
-        console.error("Error exiting fullscreen:", err);
-      });
+    if (isFullscreen() && document.exitFullscreen) {
+      document.exitFullscreen()
+        .catch((err) => console.error("Error exiting fullscreen:", err));
     }
   };
 
   // Toggle fullscreen state
-  if (!document.fullscreenElement) {
-    enterFullscreen();
-  } else {
-    exitFullscreen();
-  }
+  isFullscreen() ? exitFullscreen() : enterFullscreen();
 };
 
   const handleNext = () => {
@@ -538,7 +554,7 @@ const handleFullscreen = () => {
                 )}
               </button>
               
-              <button className="editor-button" onClick={handleFullscreen}>
+              <button className="editor-button" onClick={() => handleFullscreen("code-editor")}>
                 {fullscreen ? (
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>                
                 ) : (
@@ -617,6 +633,13 @@ const handleFullscreen = () => {
 
         {/* Visual Debugger Section */}
         <div className="section" id="visual-debugger" style={{ width: `${middleWidth}%` }}>
+          <button className="editor-button" id="react-flow-fullscreen" onClick={() => handleFullscreen("visual-debugger")}>
+            {fullscreen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></svg>                
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-maximize"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+            )}              
+          </button>
           <AnimatePresence mode="wait">
             {loader ? (
               <motion.div

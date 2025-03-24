@@ -112,7 +112,8 @@ body {
 .main-content {
   display: flex;
   height: 91vh;
-  position: relative;
+  position: absolute;
+  width: 100%;
   margin: 0.5rem;
   overflow: auto;
 }
@@ -126,6 +127,14 @@ body {
   background: transparent;
   overflow: auto;
   border-radius: 0.8rem;
+}
+
+#visual-debugger {
+  background-color: #fff;
+}
+
+#variable-space {
+  margin-right: 1rem;
 }
 
 /* Code Editor Section */
@@ -199,6 +208,16 @@ body {
 
 .editor-button:hover svg {
   color: #3F79DA;
+}
+
+#react-flow-fullscreen {
+  position: relative;
+  left: 1rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: -0.5rem;
+  margin-right: 0.55rem;
+  margin-left: auto;
 }
 
 /* Buttons */
