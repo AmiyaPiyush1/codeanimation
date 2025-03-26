@@ -42,11 +42,11 @@ body {
   color: #e65100;
 }
 
-.container {
+/* .container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
+} */
 
 /* Loader */
 .loader {
@@ -115,7 +115,7 @@ body {
   position: absolute;
   width: 100%;
   margin: 0.5rem;
-  overflow: auto;
+  overflow: hidden;
 }
 
 /* Sections */
@@ -145,7 +145,11 @@ body {
   padding-top: 0;
   background-color: #FFF;
   transform: scale(1);
-  transition: transform 0.3s ease, width 0.5s ease, height 0.5s ease;
+  transition: transform 0.5s ease-out;
+}
+
+.slider {
+  display: none;
 }
 
 /* Custom border for Monaco Editor lines */
@@ -227,26 +231,41 @@ body {
   margin-top: 0.85rem;
 }
 
-button {
-  padding: 8px 25px;
+.buttons button {
+  padding: 0.4rem 1.25rem;
   border: none;
   background: #3F79DA;
   color: #FFFAFA;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 14px;
   border-radius: 20px;
-  transition: background 0.3s;
+  transition: background 0.3s ease-out;
 }
 
-button:hover {
+.buttons button:hover {
   background: #cee0ff;
   color: #3F79DA;
 }
 
 #execute {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: transparent;
   color: #3F79DA;
   border: 1px solid #3F79DA;
+}
+
+.rotate-animation {
+  animation: rotateAnimation 1.5s ease infinite;
+}
+
+@keyframes rotateAnimation {
+	from {transform: rotateY(45deg);}
+	to {transform: rotateY(225deg);}
 }
 
 #execute:hover {

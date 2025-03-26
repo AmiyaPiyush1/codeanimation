@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, transform } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";  // Importing useNavigate if you're using React Router
 import MonacoEditor from "@monaco-editor/react";
 import ReactFlow, {
@@ -13,31 +13,47 @@ import ReactFlow, {
 import axios from "axios";
 import dagre from "dagre";
 import "reactflow/dist/style.css";
-import "../../pages/VisualDebugger/VisualDebugger.css";
+import "./VisualDebuggerBoiler.css";
 
-// Initialize dagre for layout
 const dagreGraph = new dagre.graphlib.Graph();
-dagreGraph.setGraph({ rankdir: "TB" });
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-const applyDagreLayout = (nodes, edges) => {
-  nodes.forEach((node) =>
-    dagreGraph.setNode(node.id, { width: 180, height: 50 })
-  );
-  edges.forEach((edge) => dagreGraph.setEdge(edge.source, edge.target));
+dagreGraph.setGraph({
+  rankdir: "TB", // Can be dynamically changed ("TB", "LR", "RL", "BT")
+  nodesep: 50,  // Spacing between nodes
+  ranksep: 100, // Spacing between ranks
+  marginx: 20,  
+  marginy: 20,
+});
 
+const applyDagreLayout = (nodes, edges, layoutOptions = {}) => {
+  const { rankdir = "TB", nodesep = 50, ranksep = 100 } = layoutOptions;
+
+  // Update graph layout properties dynamically
+  dagreGraph.setGraph({ rankdir, nodesep, ranksep, marginx: 20, marginy: 20 });
+  
+  // Add nodes to the graph with dynamic sizing
+  nodes.forEach((node) => {
+    const width = node.width || 150; // Default width
+    const height = node.height || 60; // Default height
+    dagreGraph.setNode(node.id, { width, height });
+  });
+
+  // Add edges to the graph
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target, { weight: edge.weight || 1 });
+  });
+
+  // Compute layout
   dagre.layout(dagreGraph);
 
-  return {
-    nodes: nodes.map((node) => ({
-      ...node,
-      position: {
-        x: dagreGraph.node(node.id).x,
-        y: dagreGraph.node(node.id).y,
-      },
-    })),
-    edges,
-  };
+  // Update node positions with computed layout
+  const positionedNodes = nodes.map((node) => {
+    const { x, y } = dagreGraph.node(node.id);
+    return { ...node, position: { x, y } };
+  });
+
+  return { nodes: positionedNodes, edges };
 };
 
 const VisualDebuggerBoiler = () => {
@@ -101,7 +117,7 @@ if (userCode) {
 useEffect(() => {
 if (!hasRun.current && code) {
   const executeButton = document.querySelector('#execute'); // Target the execute button
-  if (executeButton) {
+  if (executeButton && location.pathname !== "/debugger") {
     executeButton.click(); // Simulate the button click
   }
   hasRun.current = true; // Mark as executed
@@ -161,18 +177,19 @@ useEffect(() => {
   }
 }, [language]);
 
-// Handle resizing by mouse events
 const handleMouseDown = (section) => (e) => {
+  e.preventDefault(); // Prevents unwanted text selection
   setDragging({ section, startX: e.clientX });
 };
 
 const handleMouseMove = (e) => {
   if (!dragging) return;
+
   const { section, startX } = dragging;
   const dx = e.clientX - startX;
   const totalWidth = window.innerWidth;
   const percentChange = (dx / totalWidth) * 100;
-  
+
   if (section === "left") {
     setLeftWidth((prev) => Math.max(10, prev + percentChange));
     setMiddleWidth((prev) => Math.max(10, prev - percentChange));
@@ -180,20 +197,25 @@ const handleMouseMove = (e) => {
     setMiddleWidth((prev) => Math.max(10, prev + percentChange));
     setRightWidth((prev) => Math.max(10, prev - percentChange));
   }
-  setDragging({ ...dragging, startX: e.clientX });
+
+  setDragging({ section, startX: e.clientX }); // Update dragging position
 };
 
-const handleMouseUp = () => setDragging(null);
+const handleMouseUp = () => {
+  setDragging(null);
+};
 
 useEffect(() => {
   document.addEventListener("mousemove", handleMouseMove);
   document.addEventListener("mouseup", handleMouseUp);
+  
   return () => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   };
-}, [dragging]);
+}, [dragging]); // `dragging` needs to be in dependency for smooth updates
 
+// Handle React Flow node changes
 const onNodesChange = useCallback(
   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
   []
@@ -220,8 +242,8 @@ const copyToClipboard = async () => {
       await navigator.clipboard.writeText(code);
       setCopied(true);
 
-      // Reset to original icon after 2 seconds
-      setTimeout(() => setCopied(false), 2000);
+      // Reset to original icon after 1 seconds
+      setTimeout(() => setCopied(false), 1000);
     } catch (err) {
       console.error("Failed to copy code: ", err);
     }
@@ -244,44 +266,44 @@ if (editorRef.current) {
 }
 };
 
-// Share code in different formats
 const handleShare = async () => {
-if (!editorRef.current) return;
+  if (!editorRef.current) return;
 
-const code = editorRef.current.getValue();
-const language = detectLanguage(code);
-
-try {
+  const code = editorRef.current.getValue();
+  const language = detectLanguage(code) || "txt";
+  const fileName = `code-snippet.${language}`;
   const shareText = `Check out this code snippet (${language.toUpperCase()}):\n\n${code}`;
   const shareFile = new Blob([code], { type: "text/plain" });
-  const fileName = `code-snippet.${language}`;
+  const fileObject = new File([shareFile], fileName, { type: "text/plain" });
 
   // Share data object
   const shareData = {
     title: "Shared Code",
     text: shareText,
-    url: "https://your-code-share-platform.com", // Replace with your platform
-    files: [new File([shareFile], fileName)],
+    files: [fileObject],
   };
 
-  // Attempt to use the Web Share API if available
-  if (navigator.canShare && navigator.canShare(shareData)) {
-    await navigator.share(shareData);
-  } else {
-    // Fallback: Copy code and provide download link
+  try {
+    // Use Web Share API if supported
+    if (navigator.canShare && navigator.canShare(shareData)) {
+      await navigator.share(shareData);
+      return;
+    }
+
+    // Fallback: Copy text to clipboard
     await navigator.clipboard.writeText(shareText);
 
-    // Auto-download the code snippet
+    // Auto-download the code snippet file
     const downloadLink = document.createElement("a");
     downloadLink.href = URL.createObjectURL(shareFile);
     downloadLink.download = fileName;
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+
+  } catch (error) {
+    console.error("Error sharing code:", error);
   }
-} catch (error) {
-  console.error("Error sharing code: ", error);
-}
 };
 
 // Smoothly toggle full-screen mode for the Monaco editor with Escape key support
@@ -473,116 +495,183 @@ const identifyProblemAndRoute = useCallback(async (code) => {
 // Execute and fetch the API response
 const handleExecute = useCallback(async () => {
   setLoader(true);
-  localStorage.setItem('code', code);
+  localStorage.setItem("code", code);
 
-try {
+  try {
     const detectedLang = detectLanguage(code);
     if (detectedLang === "plaintext") {
-        setNodes([
-            {
-                id: "error",
-                data: { label: "Syntax Error: Unrecognized programming language." },
-                position: { x: 200, y: 200 },
-                draggable: false,
-                style: {
-                    border: "2px solid red",
-                    backgroundColor: "#FFCDD2",
-                    padding: 10,
-                    borderRadius: 8,
-                    fontSize: 14,
-                    fontWeight: "bold",
-                    color: "#B71C1C",
-                },
-            },
-        ]);
-        setEdges([]);
-        setLoader(false);
-        return;
+      setNodes([
+        {
+          id: "error",
+          data: { label: "Syntax Error: Unrecognized programming language." },
+          position: { x: 200, y: 200 },
+          draggable: false,
+          style: {
+            border: "2px solid red",
+            backgroundColor: "#FFCDD2",
+            padding: 10,
+            borderRadius: 8,
+            fontSize: 14,
+            fontWeight: "bold",
+            color: "#B71C1C",
+          },
+        },
+      ]);
+      setEdges([]);
+      setLoader(false);
+      return;
     }
 
     await identifyProblemAndRoute(code);
     if (location.pathname === `/debugger/${problemType}/${specificType}`) {
-          try {
-            const response = await fetch(`http://localhost:3000/debugger/${problemType}/${specificType}`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ problem: "Your Code Here" }),
-            });
-  
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
-  
-            const data = await response.json();
-            let extractedData = [];
-  
-            if (typeof data.content === "string") {
-              extractedData = data.content
-                .replace(/```json|```/g, "")
-                .replace(/[{}[\],"]/g, "")
-                .split("\n")
-                .map((line) => line.trim())
-                .filter((line) => line);
-            } else if (Array.isArray(data.content)) {
-              extractedData = data.content;
-            }
-  
-            setDebuggedQueue(
-              extractedData.map((line, index) => ({
-                text: line,
-                line: index + 1,
-              }))
-            );
-            setCurrentStep(0);
-  
-            const newNodes = extractedData.map((line, index) => {
-              let backgroundColor;
-              if (data.type === "sorting") {
-                if (line.toLowerCase().includes("merge sort")) backgroundColor = "#AED581";
-                else if (line.toLowerCase().includes("divide")) backgroundColor = "#81D4FA";
-                else if (line.toLowerCase().includes("merge")) backgroundColor = "#FFAB91";
-                else if (line.toLowerCase().includes("example")) backgroundColor = "#CE93D8";
-                else backgroundColor = "#FFD3B6";
-              } else {
-                backgroundColor = line.includes("i++") ? "#DFF2BF" : line.includes("i<n") ? "#BDE0FE" : "#FFD3B6";
-              }
-  
-              return {
-                id: `${index}`,
-                data: { label: line },
-                position: { x: 100, y: index * 100 },
-                draggable: true,
-                style: {
-                  border: "2px solid #555",
-                  padding: 10,
-                  borderRadius: 8,
-                  fontSize: 14,
-                  boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.2)",
-                  backgroundColor: backgroundColor,
-                },
-              };
-            });
-  
-            const newEdges = extractedData.slice(1).map((_, index) => ({
-              id: `e${index}-${index + 1}`,
-              source: `${index}`,
-              target: `${index + 1}`,
-              animated: true,
-              type: "smoothstep",
-              style: { stroke: "#555", strokeWidth: 2 },
-              markerEnd: {
-                type: MarkerType.ArrowClosed,
-                width: 15,
-                height: 15,
-              },
-            }));
-  
-            const layoutedElements = applyDagreLayout(newNodes, newEdges);
-            setDebuggedQueue(layoutedElements.nodes);
-            setNodes(layoutedElements.nodes);
-            setEdges(layoutedElements.edges);
-            setCurrentStep(0);
-          } catch (error) {
-            console.error("Error fetching merge sort data:", error);
+      try {
+        const response = await fetch(
+          `http://localhost:3000/debugger/${problemType}/${specificType}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ problem: code }),
           }
+        );
+
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+        const data = await response.json();
+
+        if (!data.inputArray || !data.steps) {
+          throw new Error("Invalid response format from backend.");
+        }
+
+        const { inputArray, steps } = data;
+        let nodes = [];
+        let edges = [];
+        let nodeId = 0;
+
+        const nodeWidth = 60;
+        const nodeHeight = 40;
+        const levelGap = 70;
+
+        // Step 1: Create the Divide Tree (Top-down)
+        const createDivideTree = (arr, x, y, level = 0) => {
+          if (arr.length === 1) {
+            // Leaf node
+            const id = `node-${nodeId++}`;
+            nodes.push({
+              id,
+              data: { label: `${arr[0]}` },
+              position: { x, y },
+              draggable: false,
+              style: {
+                width: nodeWidth,
+                height: nodeHeight,
+                border: "2px solid #333",
+                backgroundColor: "#FFD700",
+                borderRadius: 5,
+                fontSize: 16,
+                fontWeight: "bold",
+                textAlign: "center",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            });
+            return id;
+          }
+
+          const mid = Math.floor(arr.length / 2);
+          const parentId = `node-${nodeId++}`;
+          nodes.push({
+            id: parentId,
+            data: { label: arr.join(", ") },
+            position: { x, y },
+            draggable: false,
+            style: {
+              width: nodeWidth * arr.length,
+              height: nodeHeight,
+              border: "2px solid #000",
+              backgroundColor: "#ADD8E6",
+              borderRadius: 5,
+              fontSize: 14,
+              fontWeight: "bold",
+              textAlign: "center",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            },
+          });
+
+          // Increase y position to move children downward
+          const nextY = y + levelGap;
+          const leftId = createDivideTree(
+            arr.slice(0, mid),
+            x - 80 / (level + 1),
+            nextY,
+            level + 1
+          );
+          const rightId = createDivideTree(
+            arr.slice(mid),
+            x + 80 / (level + 1),
+            nextY,
+            level + 1
+          );
+
+          // Connect edges from parent to children
+          edges.push({
+            id: `edge-${parentId}-${leftId}`,
+            source: parentId,
+            target: leftId,
+          });
+          edges.push({
+            id: `edge-${parentId}-${rightId}`,
+            source: parentId,
+            target: rightId,
+          });
+
+          return parentId;
+        };
+
+        // Step 2: Create Merging Phase (Bottom-up)
+        const createMergeSteps = (steps) => {
+          const previousMerges = {}; // Store previous merges with proper structure
+      
+          steps.forEach((step, index) => {
+              const [stepName, leftKey, rightKey, merged] = step;
+      
+              console.log(`🔍 Step ${index}:`, step);
+      
+              if (!stepName.includes("Merge")) return;
+      
+              // Ensure all required elements exist
+              if (!leftKey || !rightKey || !merged) {
+                  console.warn(`🚨 Step ${index} is invalid. Expected [MergeX, left, right, merged]`, step);
+                  return;
+              }
+      
+              // Retrieve left and right subarrays
+              const left = Array.isArray(leftKey) ? leftKey : previousMerges[leftKey]?.merged;
+              const right = Array.isArray(rightKey) ? rightKey : previousMerges[rightKey]?.merged;
+      
+              if (!Array.isArray(left) || !Array.isArray(right)) {
+                  console.warn(`🚨 Skipping step ${index}: Invalid left or right reference`, { left, right, leftKey, rightKey });
+                  return;
+              }
+      
+              console.log(`✅ Merging`, { left, right, merged });
+      
+              // Store the merge step properly
+              previousMerges[stepName] = { left, right, merged };
+          });
+      };
+
+        // Start from full array at top
+        createDivideTree(inputArray, 300, 50);
+        createMergeSteps(steps);
+
+        setNodes(nodes);
+        setEdges(edges);
+      } catch (error) {
+        console.error("Error fetching merge sort data:", error);
+      }
     }
   } catch (error) {
     console.error("Execution Error:", error);
@@ -594,12 +683,13 @@ try {
   }
 }, [code, identifyProblemAndRoute]);
 
+
   return (
     <div className="container">
 
       <div className="main-content">
         {/* Code Editor Section */}
-        <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
+        <div className="section" id="code-editor" style={{ width: `${leftWidth}%`}}>
             <div className="monaco-editor-toolbar">
               <button className="editor-button" onClick={handleShare}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>              
@@ -633,7 +723,7 @@ try {
               
               <button className="editor-button" onClick={copyToClipboard}>
                 {copied ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard-check"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard-check" style={{ transform: "scale(1.15)" }}><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
                 ) : (
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard">
                     <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
@@ -654,6 +744,7 @@ try {
             <MonacoEditor
                 className="editor"
                 language={language}
+                placeholder="Write your code here..."
                 value={code}
                 onChange={handleChange}
                 options={{
@@ -669,7 +760,7 @@ try {
                   folding: true, // Enable code folding
                   smoothScrolling: true, // Smooth scrolling for better experience
                   tabSize: 2, // Set tab size for better readability
-                  renderWhitespace: "all", // Show all whitespaces
+                  // renderWhitespace: "all", // Show all whitespaces
                   overviewRulerBorder: false, // Remove ruler border for cleaner UI
                   autoClosingBrackets: "always", // Auto close brackets
                   autoClosingQuotes: "always", // Auto close quotes
@@ -706,14 +797,33 @@ try {
                 }}
                 onMount={handleEditorDidMount}
               />
+              {!code && (
+                <div style={{ position: "absolute", top: "4rem", left: "4.2rem", fontFamily: "Fira Code, monospace",
+                  fontSize: 14, }}>
+                  // Write your code here
+                </div>
+              )}
           <div className="buttons">
-            <button onClick={handleFirst} disabled={currentStep === 0}>First</button>
-            <button onClick={handlePrev} disabled={currentStep === 0}>Prev</button>
+            <button className="back" onClick={handleFirst} disabled={currentStep === 0} >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevrons-left"><path d="m11 17-5-5 5-5"/><path d="m18 17-5-5 5-5"/></svg>
+              &nbsp;First
+              </button>
+            <button className="back" onClick={handlePrev} disabled={currentStep === 0}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+              &nbsp;Prev
+              </button>
             <button id="execute" onClick={location.pathname === "/debugger" ? handleExecute : toggleProcess}>
-                {isRunning ? "Stop" : "Execute"}
+                {isRunning ? "Stop" : "Execute"} &nbsp;
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-code ${isRunning ? "rotate-animation" : ""}`}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
             </button>
-            <button onClick={handleNext} disabled={currentStep >= debuggedQueue.length - 1}>Next</button>
-            <button onClick={handleLast} disabled={currentStep === debuggedQueue.length}>Last</button>
+            <button onClick={handleNext} disabled={currentStep >= debuggedQueue.length - 1} className="forward">
+            Next&nbsp;
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            <button onClick={handleLast} disabled={currentStep === debuggedQueue.length} className="forward">
+              Last&nbsp;
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevrons-right"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>
+              </button>
           </div>
         </div>
 

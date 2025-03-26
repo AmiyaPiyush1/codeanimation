@@ -6,6 +6,9 @@ import ProtectedRoute from "./components/Auth/ProtectedRoute.jsx";
 import ErrorBoundary from "./components/Common/ErrorBoundary.jsx"; // Error handling component
 import MergeSort from "../src/pages/Sort/MergeSort.jsx";
 import BubbleSort from "../src/pages/Sort/BubbleSort.jsx";
+import InsertionSort from "./pages/Sort/InsertionSort.jsx";
+import QuickSort from "./pages/Sort/QuickSort.jsx";
+import SelectionSort from "./pages/Sort/SelectionSort.jsx";
 import "./App.css";
 
 // 🔹 Lazy Load Pages for Performance Optimization
@@ -20,8 +23,13 @@ const routesConfig = [
   { path: "/login", element: <Login />, protected: false },
   { path: "/signup", element: <Signup />, protected: false },
   { path: "/debugger", element: <VisualDebugger />, protected: true },
+
+  // Sorting Algorithms
   { path: "/debugger/sorting/mergesort", element: <MergeSort />, protected: true},
   { path: "/debugger/sorting/bubblesort", element: <BubbleSort />, protected: true},
+  { path: "/debugger/sorting/insertionsort", element: <InsertionSort />, protected: true},
+  { path: "/debugger/sorting/quicksort", element: <QuickSort />, protected: true},
+  { path: "/debugger/sorting/selectionsort", element: <SelectionSort />, protected: true},
 ];
 
 const Layout = () => {
