@@ -8,7 +8,7 @@ import ReactFlow, {
   MarkerType,
   applyNodeChanges,
   useReactFlow,
-  ReactFlowProvider
+  ReactFlowProvider,
 } from "reactflow";
 import axios from "axios";
 import dagre from "dagre";
@@ -80,8 +80,9 @@ const location = useLocation();
 const editorRef = useRef(null);
 const hasRun = useRef(false);
 const processRef = useRef(null);
-
+const [sortedArray,setsortedArray]= useState();
 const {problemType, specificType} = location.state || {};
+
 
 // Detect language based on code contents
 const detectLanguage = (code) => {
@@ -381,7 +382,26 @@ isFullscreen() ? exitFullscreen() : enterFullscreen();
 
 const handleNext = () => {
   if (currentStep < debuggedQueue.length - 1) {
-    setCurrentStep(currentStep + 1); // Just move the highlight
+    const nextStep = currentStep + 1;
+    setCurrentStep(nextStep);
+    const step = debuggedQueue[nextStep];
+    console.log(`Step ${nextStep + 1}:`, step);
+
+    // Update the nodes to highlight the one that was processed in this step.
+    setNodes(prevNodes =>
+      prevNodes.map(node => {
+        // If this node was processed in the current debug step, add a highlighted class.
+        if (node.id === step.processedNode) {
+          return {
+            ...node,
+            className: `${node.className} highlighted-node`, // add highlighted styling
+          };
+        }
+        return node;
+      })
+    );
+  } else {
+    console.log("No more steps to display.");
   }
 };
 
@@ -498,6 +518,7 @@ const handleExecute = useCallback(async () => {
   localStorage.setItem("code", code);
 
   try {
+    // 1. Detect Language
     const detectedLang = detectLanguage(code);
     if (detectedLang === "plaintext") {
       setNodes([
@@ -506,25 +527,21 @@ const handleExecute = useCallback(async () => {
           data: { label: "Syntax Error: Unrecognized programming language." },
           position: { x: 200, y: 200 },
           draggable: false,
-          style: {
-            border: "2px solid red",
-            backgroundColor: "#FFCDD2",
-            padding: 10,
-            borderRadius: 8,
-            fontSize: 14,
-            fontWeight: "bold",
-            color: "#B71C1C",
-          },
-        },
+          className: "error-node", // Use CSS class to style error node
+        }
       ]);
       setEdges([]);
       setLoader(false);
       return;
     }
 
+    // 2. Identify problem type and route based on `code`
     await identifyProblemAndRoute(code);
+
+    // 3. Ensure we are on the correct path before fetching
     if (location.pathname === `/debugger/${problemType}/${specificType}`) {
       try {
+        // 4. POST the code to your backend
         const response = await fetch(
           `http://localhost:3000/debugger/${problemType}/${specificType}`,
           {
@@ -534,141 +551,141 @@ const handleExecute = useCallback(async () => {
           }
         );
 
-        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
 
+        // 5. Parse the backend response
         const data = await response.json();
+        // Expected structure: { inputArray, sortedArray, mergeSortTable }
+        const { inputArray, sortedArray, mergeSortTable } = data;
 
-        if (!data.inputArray || !data.steps) {
+        if (!inputArray || !sortedArray || !mergeSortTable) {
           throw new Error("Invalid response format from backend.");
         }
 
-        const { inputArray, steps } = data;
-        let nodes = [];
-        let edges = [];
-        let nodeId = 0;
+        // 6. Build Nodes & Edges from mergeSortTable
+        const backendNodes = mergeSortTable.nodes;
+        const backendEdges = mergeSortTable.edges;
 
-        const nodeWidth = 60;
-        const nodeHeight = 40;
-        const levelGap = 70;
+        // Compute a level (y-position) for each node based on the DAG dependencies.
+        // First, compute in-degrees.
+        const inDegree = {};
+        backendNodes.forEach((node) => {
+          inDegree[node.id] = 0;
+        });
+        backendEdges.forEach((edge) => {
+          inDegree[edge.target] = (inDegree[edge.target] || 0) + 1;
+        });
 
-        // Step 1: Create the Divide Tree (Top-down)
-        const createDivideTree = (arr, x, y, level = 0) => {
-          if (arr.length === 1) {
-            // Leaf node
-            const id = `node-${nodeId++}`;
-            nodes.push({
-              id,
-              data: { label: `${arr[0]}` },
-              position: { x, y },
-              draggable: false,
-              style: {
-                width: nodeWidth,
-                height: nodeHeight,
-                border: "2px solid #333",
-                backgroundColor: "#FFD700",
-                borderRadius: 5,
-                fontSize: 16,
-                fontWeight: "bold",
-                textAlign: "center",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            });
-            return id;
+        // Nodes with in-degree 0 start at level 0.
+        const levelMap = {}; // map of nodeId -> level
+        const queue = [];
+        backendNodes.forEach((node) => {
+          if (inDegree[node.id] === 0) {
+            levelMap[node.id] = 0;
+            queue.push(node.id);
           }
+        });
 
-          const mid = Math.floor(arr.length / 2);
-          const parentId = `node-${nodeId++}`;
-          nodes.push({
-            id: parentId,
-            data: { label: arr.join(", ") },
-            position: { x, y },
-            draggable: false,
-            style: {
-              width: nodeWidth * arr.length,
-              height: nodeHeight,
-              border: "2px solid #000",
-              backgroundColor: "#ADD8E6",
-              borderRadius: 5,
-              fontSize: 14,
-              fontWeight: "bold",
-              textAlign: "center",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+        // Prepare an array to store each debug step of the level calculation.
+        const debugSteps = [];
+
+        // Propagate levels: each child gets parent's level + 1.
+        while (queue.length > 0) {
+          const currentId = queue.shift();
+          backendEdges.forEach((edge) => {
+            if (edge.source === currentId) {
+              const newLevel = levelMap[currentId] + 1;
+              if (levelMap[edge.target] === undefined || newLevel > levelMap[edge.target]) {
+                levelMap[edge.target] = newLevel;
+              }
+              // Only add the target to the queue if it isn't already present.
+              if (!queue.includes(edge.target)) {
+                queue.push(edge.target);
+              }
+            }
+          });
+          // After processing this node, save a snapshot of the current state.
+          debugSteps.push({
+            processedNode: currentId,
+            currentLevelMap: { ...levelMap },
+            remainingQueue: [...queue],
+          });
+        }
+        // Save the debug steps to state so they can be accessed by handleNext.
+        setDebuggedQueue(debugSteps);
+        console.log("Debug Steps:", debugSteps);
+
+        // Group nodes by level for horizontal positioning.
+        const levelNodes = {};
+        backendNodes.forEach((node) => {
+          const lvl = levelMap[node.id] || 0;
+          if (!levelNodes[lvl]) levelNodes[lvl] = [];
+          levelNodes[lvl].push(node);
+        });
+
+        // Create new nodes with calculated positions.
+        const newNodes = [];
+        const newEdges = [];
+        const levelGap = 100; // vertical spacing between levels
+        const nodeGap = 120;  // horizontal spacing between nodes on same level
+
+        Object.keys(levelNodes).forEach((lvlStr) => {
+          const lvl = Number(lvlStr);
+          const nodesAtLevel = levelNodes[lvl];
+          nodesAtLevel.forEach((node, idx) => {
+            let nodeClass = "default-node";
+            if (node.id.includes("_merge")) {
+              nodeClass = "merge-node";
+            } else if (node.id.includes("_div")) {
+              nodeClass = "div-node";
+            }
+            newNodes.push({
+              id: node.id,
+              data: { label: `${node.id}: ${JSON.stringify(node.state)}` },
+              position: { x: idx * nodeGap, y: lvl * levelGap },
+              draggable: false,
+              className: nodeClass, // CSS class will control border, background, etc.
+            });
+          });
+        });
+
+        // Create new edges with moving animation and arrow markers.
+        backendEdges.forEach((edge) => {
+          newEdges.push({
+            id: `${edge.source}-${edge.target}`,
+            source: edge.source,
+            target: edge.target,
+            animated: true,
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              width: 20,
+              height: 20,
+              color: "#000", // Arrow color; can be styled in CSS as well
             },
+            className: "custom-edge", // Use CSS to add further styling if needed
           });
+        });
 
-          // Increase y position to move children downward
-          const nextY = y + levelGap;
-          const leftId = createDivideTree(
-            arr.slice(0, mid),
-            x - 80 / (level + 1),
-            nextY,
-            level + 1
-          );
-          const rightId = createDivideTree(
-            arr.slice(mid),
-            x + 80 / (level + 1),
-            nextY,
-            level + 1
-          );
+        // Optionally, add a final node to show the sorted array.
+        const maxLevel = Math.max(...Object.values(levelMap));
+        newNodes.push({
+          id: "sortedArray",
+          data: { label: `Sorted Array: ${JSON.stringify(sortedArray)}` },
+          position: { x: 100, y: (maxLevel + 1) * levelGap },
+          draggable: false,
+          className: "sorted-array-node",
+        });
 
-          // Connect edges from parent to children
-          edges.push({
-            id: `edge-${parentId}-${leftId}`,
-            source: parentId,
-            target: leftId,
-          });
-          edges.push({
-            id: `edge-${parentId}-${rightId}`,
-            source: parentId,
-            target: rightId,
-          });
+        console.log("Input Array:", inputArray);
+        console.log("Sorted Array:", sortedArray);
+        console.log("Nodes:", newNodes);
+        console.log("Edges:", newEdges);
 
-          return parentId;
-        };
-
-        // Step 2: Create Merging Phase (Bottom-up)
-        const createMergeSteps = (steps) => {
-          const previousMerges = {}; // Store previous merges with proper structure
-      
-          steps.forEach((step, index) => {
-              const [stepName, leftKey, rightKey, merged] = step;
-      
-              console.log(`🔍 Step ${index}:`, step);
-      
-              if (!stepName.includes("Merge")) return;
-      
-              // Ensure all required elements exist
-              if (!leftKey || !rightKey || !merged) {
-                  console.warn(`🚨 Step ${index} is invalid. Expected [MergeX, left, right, merged]`, step);
-                  return;
-              }
-      
-              // Retrieve left and right subarrays
-              const left = Array.isArray(leftKey) ? leftKey : previousMerges[leftKey]?.merged;
-              const right = Array.isArray(rightKey) ? rightKey : previousMerges[rightKey]?.merged;
-      
-              if (!Array.isArray(left) || !Array.isArray(right)) {
-                  console.warn(`🚨 Skipping step ${index}: Invalid left or right reference`, { left, right, leftKey, rightKey });
-                  return;
-              }
-      
-              console.log(`✅ Merging`, { left, right, merged });
-      
-              // Store the merge step properly
-              previousMerges[stepName] = { left, right, merged };
-          });
-      };
-
-        // Start from full array at top
-        createDivideTree(inputArray, 300, 50);
-        createMergeSteps(steps);
-
-        setNodes(nodes);
-        setEdges(edges);
+        // 8. Update React state to show nodes & edges in the UI
+        setNodes(newNodes);
+        setEdges(newEdges);
       } catch (error) {
         console.error("Error fetching merge sort data:", error);
       }
@@ -680,10 +697,16 @@ const handleExecute = useCallback(async () => {
     setExecute(true);
     setIsRunning(false);
     setIsPaused(false);
+    // Reset current debug step (so that next button starts from the first saved step)
+    setCurrentStep(-1);
   }
-}, [code, identifyProblemAndRoute]);
-
-
+}, [
+  code,
+  identifyProblemAndRoute,
+  location.pathname,
+  problemType,
+  specificType,
+]);
   return (
     <div className="container">
 
