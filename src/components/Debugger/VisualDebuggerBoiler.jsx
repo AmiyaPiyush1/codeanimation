@@ -80,9 +80,8 @@ const location = useLocation();
 const editorRef = useRef(null);
 const hasRun = useRef(false);
 const processRef = useRef(null);
-const [sortedArray,setsortedArray]= useState();
 const {problemType, specificType} = location.state || {};
-
+const [Trace,setTrace] = useState();
 
 // Detect language based on code contents
 const detectLanguage = (code) => {
@@ -385,25 +384,22 @@ const handleNext = () => {
     const nextStep = currentStep + 1;
     setCurrentStep(nextStep);
     const step = debuggedQueue[nextStep];
-    console.log(`Step ${nextStep + 1}:`, step);
 
-    // Update the nodes to highlight the one that was processed in this step.
+    // Update nodes: Remove previous highlights and apply only to the current ones
     setNodes(prevNodes =>
-      prevNodes.map(node => {
-        // If this node was processed in the current debug step, add a highlighted class.
-        if (node.id === step.processedNode) {
-          return {
-            ...node,
-            className: `${node.className} highlighted-node`, // add highlighted styling
-          };
-        }
-        return node;
-      })
+      prevNodes.map(node => ({
+        ...node,
+        className:
+          node.id === step.processedNode || step.childNodes.includes(node.id)
+            ? `${node.className} highlighted-node`
+            : node.className.replace(" highlighted-node", ""),
+      }))
     );
   } else {
     console.log("No more steps to display.");
   }
 };
+
 
 const handlePrev = () => {
   if (currentStep > 0) {
@@ -558,8 +554,8 @@ const handleExecute = useCallback(async () => {
         // 5. Parse the backend response
         const data = await response.json();
         // Expected structure: { inputArray, sortedArray, mergeSortTable }
-        const { inputArray, sortedArray, mergeSortTable } = data;
-
+        const { inputArray, sortedArray, mergeSortTable, executionTrace } = data;
+        setTrace(executionTrace);
         if (!inputArray || !sortedArray || !mergeSortTable) {
           throw new Error("Invalid response format from backend.");
         }
@@ -594,6 +590,12 @@ const handleExecute = useCallback(async () => {
         // Propagate levels: each child gets parent's level + 1.
         while (queue.length > 0) {
           const currentId = queue.shift();
+
+          // Determine child nodes for the current node
+          const childNodes = backendEdges
+            .filter(edge => edge.source === currentId)
+            .map(edge => edge.target);
+
           backendEdges.forEach((edge) => {
             if (edge.source === currentId) {
               const newLevel = levelMap[currentId] + 1;
@@ -606,17 +608,17 @@ const handleExecute = useCallback(async () => {
               }
             }
           });
-          // After processing this node, save a snapshot of the current state.
+
+          // Save a snapshot of the current step including the child nodes.
           debugSteps.push({
             processedNode: currentId,
+            childNodes, // store child nodes for highlighting later
             currentLevelMap: { ...levelMap },
             remainingQueue: [...queue],
           });
         }
         // Save the debug steps to state so they can be accessed by handleNext.
         setDebuggedQueue(debugSteps);
-        console.log("Debug Steps:", debugSteps);
-
         // Group nodes by level for horizontal positioning.
         const levelNodes = {};
         backendNodes.forEach((node) => {
@@ -678,10 +680,6 @@ const handleExecute = useCallback(async () => {
           className: "sorted-array-node",
         });
 
-        console.log("Input Array:", inputArray);
-        console.log("Sorted Array:", sortedArray);
-        console.log("Nodes:", newNodes);
-        console.log("Edges:", newEdges);
 
         // 8. Update React state to show nodes & edges in the UI
         setNodes(newNodes);
@@ -707,6 +705,7 @@ const handleExecute = useCallback(async () => {
   problemType,
   specificType,
 ]);
+
   return (
     <div className="container">
 
@@ -889,9 +888,29 @@ const handleExecute = useCallback(async () => {
         <div className="resizer" onMouseDown={handleMouseDown("middle")}></div>
 
         {/* Variable Space Section */}
-        <div className="section" id="variable-space" style={{ width: `${rightWidth}%` }}>
-          Variable Space
-        </div>
+        <div
+  className="section"
+  id="variable-space"
+  style={{
+    width: `${rightWidth}%`,
+    padding: "10px",
+    backgroundColor: "#f7f7f7",
+    borderRadius: "5px",
+    fontFamily: "monospace",
+    overflowX: "auto"
+  }}
+>
+  {Trace && Array.isArray(Trace) && Trace[currentStep] ? (
+    <div>
+      <h3>Step {currentStep}</h3>
+      <pre>{JSON.stringify(Trace[currentStep], null, 2)}</pre>
+    </div>
+  ) : (
+    <p>Variable Space</p>
+  )}
+</div>
+
+
       </div>
     </div>
   );
