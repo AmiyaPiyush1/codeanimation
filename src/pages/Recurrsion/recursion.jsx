@@ -9,14 +9,13 @@ import ReactFlow, {
   useReactFlow,
   ReactFlowProvider,
 } from "reactflow";
-import axios from "axios";
 import dagre from "dagre";
 import "reactflow/dist/style.css";
-import "./BubbleSort.css";
+import "./recursion.css";
 
+// Set up the dagre graph for layout.
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
-
 dagreGraph.setGraph({
   rankdir: "TB",
   nodesep: 50,
@@ -44,8 +43,28 @@ const applyDagreLayout = (nodes, edges, layoutOptions = {}) => {
   return { nodes: positionedNodes, edges };
 };
 
-const BubbleSort = () => {
-  // Layout and state variables
+const FlowController = ({ currentStep, nodes, trace }) => {
+  const { setCenter } = useReactFlow();
+  useEffect(() => {
+    const activeTrace = trace[currentStep];
+    if (activeTrace && activeTrace.nodeId) {
+      const activeNode = nodes.find((n) => n.id === activeTrace.nodeId);
+      if (activeNode) {
+        const adjustedX = activeNode.position.x + 80;
+        const adjustedY = activeNode.position.y + 80;
+        setCenter(adjustedX, adjustedY, {
+          zoom: 1.25,
+          duration: 500,
+          easing: (t) => t * (2 - t),
+        });
+      }
+    }
+  }, [currentStep, nodes, trace, setCenter]);
+  return null;
+};
+
+const RecursionDebugger = () => {
+  // State and layout widths.
   const [leftWidth, setLeftWidth] = useState(33.33);
   const [middleWidth, setMiddleWidth] = useState(33.33);
   const [rightWidth, setRightWidth] = useState(33.33);
@@ -54,7 +73,7 @@ const BubbleSort = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [isReadOnly, setIsReadOnly] = useState(false);
-  const [debuggedQueue, setDebuggedQueue] = useState([]);
+  const [trace, setTrace] = useState([]);
   const [code, setCode] = useState('');
   const [loader, setLoader] = useState(false);
   const [nodes, setNodes] = useState([]);
@@ -65,8 +84,7 @@ const BubbleSort = () => {
   const location = useLocation();
   const editorRef = useRef(null);
   const hasRun = useRef(false);
-  const { problemType, specificType } = location.state || {};
-  const [Trace, setTrace] = useState();
+  const [selectedTrace, setSelectedTrace] = useState(null);
 
   const detectLanguage = (code) => {
     if (/^\s*#include\s+[<"]/.test(code) || /\bint\s+main\s*\(/.test(code)) {
@@ -85,10 +103,9 @@ const BubbleSort = () => {
 
   const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
-    editorRef.current.decorations = []; // Initialize decorations
+    editorRef.current.decorations = [];
   };
 
-  // Get code from localStorage on mount
   useEffect(() => {
     const userCode = localStorage.getItem('code');
     if (userCode) {
@@ -107,7 +124,6 @@ const BubbleSort = () => {
     }
   }, [code, location.pathname]);
 
-  // Update localStorage and language when code changes
   useEffect(() => {
     if (code === '') {
       localStorage.removeItem('code');
@@ -124,29 +140,6 @@ const BubbleSort = () => {
       console.error('Monaco editor value is undefined');
     }
   };
-
-  const FlowController = ({ currentStep, nodes }) => {
-    const { setCenter } = useReactFlow();
-    useEffect(() => {
-      if (nodes.length > 0 && nodes[currentStep]) {
-        const activeNode = nodes[currentStep];
-        const adjustedX = activeNode.position.x + 80;
-        const adjustedY = activeNode.position.y + 80;
-        setCenter(adjustedX, adjustedY, {
-          zoom: 1.25,
-          duration: 500,
-          easing: (t) => t * (2 - t),
-        });
-      }
-    }, [currentStep, nodes, setCenter]);
-    return null;
-  };
-
-  useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.getModel()?.setLanguage(language);
-    }
-  }, [language]);
 
   const handleMouseDown = (section) => (e) => {
     e.preventDefault();
@@ -307,75 +300,179 @@ const BubbleSort = () => {
     isFullscreen() ? exitFullscreen() : enterFullscreen();
   };
 
-  // Execution function for bubble sort branch
+  // Execution function that builds nodes and edges with default (light) style.
   const handleExecute = async () => {
     setLoader(true);
+    setIsRunning(true);
     try {
-      const response = await fetch("http://localhost:3000/debugger/sorting/bubblesort", {
+      const response = await fetch("http://localhost:3000/debugger/recursion/main", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ problem: code }),
+        body: JSON.stringify({ problem: code, language: language, input: "" }),
       });
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
       }
-      const responseData = await response.json();
-      let responseContent = responseData.content.trim();
-  
-      // Remove markdown code fences if they exist
-      if (responseContent.startsWith("```json")) {
-        responseContent = responseContent
-          .replace(/^```json\s*/, "")
-          .replace(/\s*```$/, "");
+      const steps = await response.json();
+      // Expected steps format: { event: "call"/"return", func, depth, args, value, note? }
+      const nodeDataById = {};
+      const newEdges = [];
+      const callStack = [];
+      let currentY = 0;
+      const colorPalette = ["#FFD700", "#ADFF2F", "#87CEFA", "#FFB6C1", "#FFA07A", "#E6E6FA"];
+
+      for (let i = 0; i < steps.length; i++) {
+        const { event, func, depth, args, value, note } = steps[i];
+        if (event === "call") {
+          const nodeId = `step-${i}`;
+          steps[i].nodeId = nodeId;
+          // Store parent id if exists.
+          if (callStack.length > 0) {
+            steps[i].parentId = callStack[callStack.length - 1];
+          }
+          const defaultNodeStyle = {
+            border: "2px solid #333",
+            borderRadius: "8px",
+            padding: "10px",
+            background: colorPalette[depth % colorPalette.length],
+            boxShadow: "3px 3px 6px rgba(0,0,0,0.1)",
+          };
+          nodeDataById[nodeId] = {
+            id: nodeId,
+            func,
+            args,
+            depth,
+            returnValue: null,
+            yPos: currentY,
+            defaultStyle: defaultNodeStyle,
+          };
+          if (callStack.length > 0) {
+            const parentId = callStack[callStack.length - 1];
+            newEdges.push({
+              id: `edge-call-${parentId}-${nodeId}`,
+              source: parentId,
+              target: nodeId,
+              type: "straight",
+              label: "call",
+              style: { stroke: "#007bff", strokeWidth: 2 },
+              markerEnd: { type: "arrowclosed", color: "#007bff" },
+              defaultStyle: { stroke: "#007bff", strokeWidth: 2 },
+              animated: false,
+            });
+          }
+          callStack.push(nodeId);
+          currentY += 150;
+        } else if (event === "return") {
+          const childId = callStack.pop();
+          if (!childId) continue;
+          steps[i].nodeId = childId;
+          if (callStack.length > 0) {
+            const parentId = callStack[callStack.length - 1];
+            steps[i].parentId = parentId;
+            newEdges.push({
+              id: `edge-return-${childId}-${parentId}`,
+              source: childId,
+              target: parentId,
+              type: "smoothstep",
+              label: value !== undefined ? `return ${value}` : "return",
+              style: { stroke: "#28a745", strokeWidth: 2 },
+              markerEnd: { type: "arrowclosed", color: "#28a745" },
+              sourcePosition: "right",
+              targetPosition: "right",
+              defaultStyle: { stroke: "#28a745", strokeWidth: 2 },
+              animated: false,
+            });
+          }
+          if (value !== undefined) {
+            nodeDataById[childId].returnValue = value;
+          }
+          if (note) {
+            steps[i].note = note;
+          }
+        }
       }
-  
-      const bubbleSortData = JSON.parse(responseContent);
-      const steps = bubbleSortData.steps || [];
-  
-      // Build nodes based on the steps
-      const newNodes = steps.map((step, index) => ({
-        id: `step-${index}`,
-        data: {
-          label: `Pass: ${step.pass}\nArray: ${JSON.stringify(step.array)}\nSwaps: ${JSON.stringify(step.swaps)}`
-        },
-        position: { x: 50, y: index * 100 },
-        draggable: false,
-        className: "default-node",
-      }));
-  
-      // Append final sorted array node
-      newNodes.push({
-        id: "final",
-        data: { label: `Final Array: ${JSON.stringify(bubbleSortData.finalArray)}` },
-        position: { x: 50, y: steps.length * 100 },
-        draggable: false,
-        className: "sorted-array-node",
+      const newNodes = Object.values(nodeDataById).map((nodeData) => {
+        const { id, func, args, depth, returnValue, yPos, defaultStyle } = nodeData;
+        const argString = args ? Object.values(args).join(", ") : "";
+        const nodeLabel = returnValue
+          ? `${func}(${argString}) => ${returnValue}`
+          : `${func}(${argString})`;
+        return {
+          id,
+          data: { label: nodeLabel },
+          position: { x: depth * 50, y: yPos },
+          style: defaultStyle,
+          defaultStyle,
+        };
       });
-  
-      // Update state with new nodes and steps for navigation
       setNodes(newNodes);
-      setDebuggedQueue(steps);
+      setEdges(newEdges);
+      setTrace(steps);
+      setCurrentStep(0);
     } catch (error) {
-      console.error("Error fetching bubble sort data:", error);
+      console.error("Error fetching recursion data:", error);
     } finally {
       setLoader(false);
       setIsRunning(false);
     }
   };
-  
+
+  // Updated handleNext: only update the edge connected to the active node.
   const handleNext = () => {
-    if (currentStep < debuggedQueue.length - 1) {
+    if (currentStep < trace.length - 1) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
-      // Optionally, update node highlighting based on the new step
+      const activeTrace = trace[nextStep];
+      const activeNodeId = activeTrace.nodeId;
+      // Determine the active edge id based on event type.
+      let activeEdgeId = "";
+      if (activeTrace.event === "call" && activeTrace.parentId) {
+        activeEdgeId = `edge-call-${activeTrace.parentId}-${activeNodeId}`;
+      } else if (activeTrace.event === "return" && activeTrace.parentId) {
+        activeEdgeId = `edge-return-${activeNodeId}-${activeTrace.parentId}`;
+      }
+      // Update nodes: active node darkened; others default.
       setNodes((prevNodes) =>
-        prevNodes.map((node) => ({
-          ...node,
-          className: node.id === `step-${nextStep}` || (debuggedQueue[nextStep].childNodes && debuggedQueue[nextStep].childNodes.includes(node.id))
-            ? `${node.className} highlighted-node`
-            : node.className.replace(" highlighted-node", ""),
-        }))
+        prevNodes.map((node) =>
+          node.id === activeNodeId
+            ? { ...node, style: { ...node.style, border: "2px solid #000", background: "#ccc" } }
+            : { ...node, style: node.defaultStyle || node.style }
+        )
       );
+      // Update edges: only the edge with id activeEdgeId is animated and darkened.
+      setEdges((prevEdges) =>
+        prevEdges.map((edge) => {
+          if (edge.id === activeEdgeId) {
+            if (edge.label && edge.label.toLowerCase().includes("call")) {
+              return {
+                ...edge,
+                animated: true,
+                style: { ...edge.style, stroke: "#0056b3", strokeWidth: 2 },
+              };
+            }
+            if (edge.label && edge.label.toLowerCase().includes("return")) {
+              return {
+                ...edge,
+                animated: true,
+                style: { ...edge.style, stroke: "#196F3D", strokeWidth: 2 },
+              };
+            }
+            return edge;
+          } else {
+            return { ...edge, animated: false, style: edge.defaultStyle || edge.style };
+          }
+        })
+      );
+      // Update variable space.
+      const displayData = {
+        step: nextStep,
+        event: activeTrace.event,
+        function: activeTrace.func,
+        arguments: activeTrace.args ? activeTrace.args : "None",
+        returnValue: activeTrace.value !== undefined ? activeTrace.value : "N/A",
+        note: activeTrace.note ? activeTrace.note : "",
+      };
+      setSelectedTrace(displayData);
     } else {
       console.log("No more steps to display.");
     }
@@ -392,7 +489,7 @@ const BubbleSort = () => {
   };
 
   const handleLast = () => {
-    setCurrentStep(debuggedQueue.length - 1);
+    setCurrentStep(trace.length - 1);
   };
 
   return (
@@ -402,7 +499,6 @@ const BubbleSort = () => {
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
           <div className="monaco-editor-toolbar">
             <button className="editor-button" onClick={handleShare}>
-              {/* Share Icon */}
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-share-2">
                 <circle cx="18" cy="5" r="3" />
                 <circle cx="6" cy="12" r="3" />
@@ -413,7 +509,6 @@ const BubbleSort = () => {
             </button>
             <button className="editor-button" onClick={toggleReadOnly}>
               {isReadOnly ? (
-                // Unlock Icon
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil-off">
                   <path d="m10 10-6.157 6.162a2 2 0 0 0-.5.833l-1.322 4.36a.5.5 0 0 0 .622.624l4.358-1.323a2 2 0 0 0 .83-.5L14 13.982" />
                   <path d="m12.829 7.172 4.359-4.346a1 1 0 1 1 3.986 3.986l-4.353 4.353" />
@@ -421,7 +516,6 @@ const BubbleSort = () => {
                   <path d="m2 2 20 20" />
                 </svg>
               ) : (
-                // Lock Icon
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pencil">
                   <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
                   <path d="m15 5 4 4" />
@@ -434,61 +528,32 @@ const BubbleSort = () => {
                 <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
               </svg>
             </button>
-            <button className="editor-button" onClick={location.pathname === "/debugger" ? handleExecute : () => { isRunning ? setIsRunning(false) : handleExecute(); }}>
-              {isRunning ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pause">
-                  <rect x="14" y="4" width="4" height="16" rx="1" />
-                  <rect x="6" y="4" width="4" height="16" rx="1" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-play">
-                  <polygon points="6 3 20 12 6 21 6 3" />
-                </svg>
-              )}
-            </button>
-            <button className="editor-button" onClick={handleRedo}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-redo">
-                <path d="M21 7v6h-6" />
-                <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+            <button className="editor-button" id="execute" onClick={() => { isRunning ? setIsRunning(false) : handleExecute(); }}>
+              {isRunning ? "Stop" : "Execute"}&nbsp;
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-code ${isRunning ? "rotate-animation" : ""}`}>
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
               </svg>
             </button>
-            <button className="editor-button" onClick={copyToClipboard}>
-              {copied ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard-check" style={{ transform: "scale(1.15)" }}>
-                  <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                  <path d="m9 14 2 2 4-4" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clipboard">
-                  <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                </svg>
-              )}
+            <button onClick={handleNext} disabled={currentStep >= trace.length - 1} className="forward">
+              Next&nbsp;
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
             </button>
-            <button className="editor-button" onClick={() => handleFullscreen("code-editor")}>
-              {fullscreen ? (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-minimize">
-                  <path d="M8 3v3a2 2 0 0 1-2 2H3" />
-                  <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
-                  <path d="M3 16h3a2 2 0 0 1 2 2v3" />
-                  <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
-                </svg>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-maximize">
-                  <path d="M8 3H5a2 2 0 0 0-2 2v3" />
-                  <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
-                  <path d="M3 16v3a2 2 0 0 0 2 2h3" />
-                  <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
-                </svg>
-              )}
+            <button onClick={handleLast} disabled={currentStep === trace.length} className="forward">
+              Last&nbsp;
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevrons-right">
+                <path d="m6 17 5-5-5-5" />
+                <path d="m13 17 5-5-5-5" />
+              </svg>
             </button>
           </div>
 
           <MonacoEditor
             className="editor"
             language={language}
-            placeholder="Write your code here..."
+            placeholder="Write your recursion code here..."
             value={code}
             onChange={handleChange}
             options={{
@@ -530,7 +595,7 @@ const BubbleSort = () => {
                 rules: [],
                 colors: {
                   "editor.background": "#FFFFFF",
-                  "editor.lineHighlightBorder": "#FF5733"
+                  "editor.lineHighlightBorder": "#FF5733",
                 },
               });
               monaco.editor.setTheme("customTheme");
@@ -545,7 +610,7 @@ const BubbleSort = () => {
               fontFamily: "Fira Code, monospace",
               fontSize: 14,
             }}>
-              // Write your code here
+              // Write your recursion code here
             </div>
           )}
           <div className="buttons">
@@ -562,20 +627,20 @@ const BubbleSort = () => {
               </svg>
               &nbsp;Prev
             </button>
-            <button id="execute" onClick={location.pathname === "/debugger" ? handleExecute : () => { isRunning ? setIsRunning(false) : handleExecute(); }}>
-              {isRunning ? "Stop" : "Execute"} &nbsp;
+            <button id="execute" onClick={() => { isRunning ? setIsRunning(false) : handleExecute(); }}>
+              {isRunning ? "Stop" : "Execute"}&nbsp;
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={`lucide lucide-code ${isRunning ? "rotate-animation" : ""}`}>
                 <polyline points="16 18 22 12 16 6" />
                 <polyline points="8 6 2 12 8 18" />
               </svg>
             </button>
-            <button onClick={handleNext} disabled={currentStep >= debuggedQueue.length - 1} className="forward">
+            <button onClick={handleNext} disabled={currentStep >= trace.length - 1} className="forward">
               Next&nbsp;
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right">
                 <path d="m9 18 6-6-6-6" />
               </svg>
             </button>
-            <button onClick={handleLast} disabled={currentStep === debuggedQueue.length} className="forward">
+            <button onClick={handleLast} disabled={currentStep === trace.length} className="forward">
               Last&nbsp;
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevrons-right">
                 <path d="m6 17 5-5-5-5" />
@@ -616,13 +681,13 @@ const BubbleSort = () => {
               />
             ) : (
               <ReactFlowProvider>
-                <ReactFlow 
+                <ReactFlow
                   nodes={nodes}
                   edges={edges}
                   onNodesChange={onNodesChange}
                   fitView
                 >
-                  <FlowController currentStep={currentStep} nodes={nodes} />
+                  <FlowController currentStep={currentStep} nodes={nodes} trace={trace} />
                   <Controls />
                   <Background variant="dots" gap={12} size={1} />
                 </ReactFlow>
@@ -646,10 +711,27 @@ const BubbleSort = () => {
             overflowX: "auto"
           }}
         >
-          {Trace && Array.isArray(Trace) && Trace[currentStep] ? (
+          {selectedTrace ? (
             <div>
-              <h3>Step {currentStep}</h3>
-              <pre>{JSON.stringify(Trace[currentStep], null, 2)}</pre>
+              <h3>Step {selectedTrace.step}</h3>
+              <p><strong>Event:</strong> {selectedTrace.event}</p>
+              <p><strong>Function:</strong> {selectedTrace.function}</p>
+              <p>
+                <strong>Arguments:</strong>{" "}
+                {typeof selectedTrace.arguments === "object"
+                  ? JSON.stringify(selectedTrace.arguments, null, 2)
+                  : selectedTrace.arguments}
+              </p>
+              {selectedTrace.note && (
+                <p>
+                  <strong>Note:</strong> {selectedTrace.note}
+                </p>
+              )}
+              {selectedTrace.returnValue !== "N/A" && (
+                <p>
+                  <strong>Return Value:</strong> {selectedTrace.returnValue}
+                </p>
+              )}
             </div>
           ) : (
             <p>Variable Space</p>
@@ -660,4 +742,4 @@ const BubbleSort = () => {
   );
 };
 
-export default BubbleSort;
+export default RecursionDebugger;

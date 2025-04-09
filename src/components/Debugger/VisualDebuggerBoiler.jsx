@@ -535,6 +535,8 @@ const handleExecute = useCallback(async () => {
     await identifyProblemAndRoute(code);
 
     // 3. Ensure we are on the correct path before fetching
+    
+   
     if (location.pathname === `/debugger/${problemType}/${specificType}`) {
       try {
         // 4. POST the code to your backend

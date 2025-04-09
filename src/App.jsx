@@ -9,6 +9,7 @@ import BubbleSort from "../src/pages/Sort/BubbleSort.jsx";
 import InsertionSort from "./pages/Sort/InsertionSort.jsx";
 import QuickSort from "./pages/Sort/QuickSort.jsx";
 import SelectionSort from "./pages/Sort/SelectionSort.jsx";
+import Recursion from "./pages/Recurrsion/recursion.jsx";
 import "./App.css";
 
 // 🔹 Lazy Load Pages for Performance Optimization
@@ -30,6 +31,7 @@ const routesConfig = [
   { path: "/debugger/sorting/insertionsort", element: <InsertionSort />, protected: true},
   { path: "/debugger/sorting/quicksort", element: <QuickSort />, protected: true},
   { path: "/debugger/sorting/selectionsort", element: <SelectionSort />, protected: true},
+  { path: "/debugger/recursion/main", element: <Recursion />, protected: true},
 ];
 
 const Layout = () => {
