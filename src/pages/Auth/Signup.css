@@ -1,0 +1,772 @@
+/* Signup.css */
+.signup-container {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Left Section - Signup Form */
+.signup-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5vw;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 1;
+}
+
+.signup-form-container {
+  width: 100%;
+  max-width: 35vw;
+  padding: 1.5vw;
+  opacity: 1;
+  transform: translateY(0);
+  will-change: transform, opacity;
+}
+
+.signup-logo, .signup-logo-left {
+  width: 4vw;
+  height: auto;
+  margin-bottom: 1.5vw;
+  display: block;
+  will-change: transform, opacity;
+}
+
+.signup-form {
+  width: 100%;
+}
+
+.signup-form a {
+  display: inline-block;
+}
+
+.signup-form h2 {
+  font-size: 2vw;
+  font-weight: 500;
+  color: #1d1d1d;
+  margin-bottom: 0.4vw;
+  will-change: transform, opacity;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 1.5vw;
+  will-change: transform, opacity;
+}
+
+/* Input Container Styles */
+.input-container {
+  position: relative;
+  margin: 2.8vw 0;
+  width: 100%;
+  will-change: transform, opacity;
+}
+
+.input-container input[type="text"],
+.input-container input[type="email"],
+.input-container input[type="password"] {
+  font-size: 0.9vw;
+  width: 100%;
+  border: none;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  border-bottom: 0.08vw solid #ccc;
+  padding: 0.5vw;
+  padding-right: 2vw;
+  background-color: transparent;
+  outline: none;
+  color: #333;
+}
+
+.input-container .label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #666;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  font-size: 0.9vw;
+}
+
+.input-container input:focus ~ .label,
+.input-container input:valid ~ .label {
+  top: -1.2vw;
+  font-size: 0.8vw;
+  color: #3F79DA;
+}
+
+.input-container .underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 0.08vw;
+  width: 100%;
+  background-color: #3F79DA;
+  transform: scaleX(0);
+  transition: all 0.3s ease;
+}
+
+.input-container input:focus ~ .underline,
+.input-container input:valid ~ .underline {
+  transform: scaleX(1);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 1vw;
+  transition: color 0.3s ease;
+}
+
+.password-toggle svg {
+  width: 2vw;
+  height: 1.2vw;
+  color: #3F79DA;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+.password-toggle:hover svg {
+  transform: scale(1.1);
+  color: #2c5aa0;
+}
+
+.password-toggle:active svg {
+  transform: scale(0.95);
+}
+
+/* Add animation for the eye icon */
+@keyframes eyeAnimation {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.password-toggle svg.lucide-eye-icon {
+  animation: eyeAnimation 0.5s ease-in-out;
+}
+
+/* Add animation for the eye-closed icon */
+@keyframes eyeClosedAnimation {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.password-toggle svg.lucide-eye-closed-icon {
+  animation: eyeClosedAnimation 0.5s ease-in-out;
+}
+
+.signup-button-container {
+  width: 100%;
+  display: flex;
+  place-content: center;
+  will-change: transform, opacity;
+}
+
+.signup-button {
+  width: 30%;
+  padding: 0.6vw;
+  background: #3F79DA;
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  font-size: 0.9vw;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signup-button:hover {
+  background: #2c5aa0;
+}
+
+.signup-button.disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.signup-button.disabled:hover {
+  background: #6c757d;
+  transform: none;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.2vw 0;
+  color: #666;
+  will-change: transform, opacity, scale;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 0.08vw solid #e1e1e1;
+}
+
+.divider span {
+  padding: 0 0.8vw;
+}
+
+.social-login {
+  display: flex;
+  gap: 0.8vw;
+  margin-bottom: 1.3vw;
+  will-change: transform, opacity;
+}
+
+.social-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 2.4vw;
+  padding: 0.3vw;
+  border: 0.08vw solid #e1e1e1;
+  border-radius: 2rem;
+  background: transparent;
+  color: rgba(0,0,0,0.8);
+  font-size: 0.9vw;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.social-button:hover {
+  background: #f5f5f5;
+}
+
+.social-button svg {
+  font-size: 1vw;
+}
+
+.google img, .github img {
+  width: 1.5vw;
+  height: 1.5vw;
+}
+
+/* Right Section - Vanta.js Background */
+.vanta-section {
+  flex: 1;
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  view-transition-name: vanta-section;
+  isolation: isolate;
+  transition: opacity 0.3s ease;
+}
+
+.logo-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  mix-blend-mode: screen;
+  view-transition-name: logo-wrapper;
+  will-change: transform, opacity;
+}
+
+.signup-logo {
+  width: 12vw;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  view-transition-name: main-logo;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  animation: bounceIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, logoFloat 6s ease-in-out infinite 0.4s;
+  backface-visibility: hidden;
+  pointer-events: none;
+  -webkit-backface-visibility: hidden;
+}
+
+.signup-logo.duplicate {
+  opacity: 0.4;
+  filter: blur(0.12vw);
+  transform: translate(-49%, -49%);
+  view-transition-name: duplicate-logo;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  animation: bounceIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, logoFloat 6s ease-in-out infinite 0.4s;
+  backface-visibility: hidden;
+  pointer-events: none;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Add animation for the logo */
+@keyframes logoFloat {
+  0% {
+    transform: translate(-50%, -50%);
+  }
+  50% {
+    transform: translate(-50%, -52%);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}
+
+.signup-logo {
+  animation: logoFloat 6s ease-in-out infinite;
+}
+
+.signup-logo.duplicate:nth-child(1) {
+  animation: logoFloat 6s ease-in-out infinite 0.5s;
+}
+
+.signup-logo.duplicate:nth-child(2) {
+  animation: logoFloat 6s ease-in-out infinite 1s;
+}
+
+.signup-logo.duplicate:nth-child(3) {
+  animation: logoFloat 6s ease-in-out infinite 1.5s;
+}
+
+.signup-logo.duplicate:nth-child(4) {
+  animation: logoFloat 6s ease-in-out infinite 2s;
+}
+
+/* Add smooth transition for the Vanta effect */
+.vanta-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  transition: background 0.5s ease;
+  z-index: 1;
+}
+
+.vanta-section:hover::before {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Add view transition styles */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.logo-wrapper {
+  animation: none;
+}
+
+.signup-logo {
+  animation: logoFloat 6s ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.signup-logo.duplicate {
+  animation: logoFloat 6s ease-in-out infinite;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.error-container {
+  display: flex;
+  align-items: center;
+  gap: 0.8vw;
+  background-color: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.2);
+  border-radius: 0.5vw;
+  padding: 0.5vw 1.2vw;
+  margin: 0.5vw 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.error-icon {
+  width: 1.2vw;
+  height: 1.2vw;
+  color: #FF3B30;
+  flex-shrink: 0;
+}
+
+.error-message {
+  color: #FF3B30;
+  font-size: 0.9vw;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Add a subtle shake animation for errors */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.error-container {
+  animation: errorShake 0.4s ease-in-out;
+}
+
+.existing-account {
+  width: 100%;
+  display: flex;
+  font-size: 0.85vw;
+  justify-content: center;
+  color: rgba(0,0,0,0.6);
+  will-change: transform, opacity;
+}
+
+.login-link {
+  background: none;
+  border: none;
+  color: #3F79DA;
+  cursor: pointer;
+  font-size: 0.9vw;
+  padding: 0;
+  margin-left: 0.3vw;
+  transition: color 0.3s ease;
+}
+
+.signup-logo.large {
+  width: 20vw;
+  height: auto;
+  margin-bottom: 2vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  mix-blend-mode: screen;
+}
+
+.login-link:hover {
+  color: #2c5aa0;
+  text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .signup-container {
+    flex-direction: column;
+  }
+
+  .vanta-section {
+    display: none;
+  }
+
+  .signup-form-section {
+    padding: 0.8vw;
+  }
+
+  .signup-form-container {
+    padding: 0.8vw;
+    max-width: 70vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .social-login {
+    flex-direction: column;
+  }
+}
+
+/* Add a class for when the section is transitioning */
+.vanta-section.transitioning {
+  opacity: 0;
+}
+
+@keyframes bounceOut {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.3) rotate(-270deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3) rotate(-270);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.signup-logo {
+  width: 12vw;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  view-transition-name: main-logo;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  animation: bounceIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, logoFloat 6s ease-in-out infinite 0.4s;
+  backface-visibility: hidden;
+  pointer-events: none;
+  -webkit-backface-visibility: hidden;
+}
+
+.signup-logo.duplicate {
+  opacity: 0.4;
+  filter: blur(0.12vw);
+  transform: translate(-49%, -49%);
+  view-transition-name: duplicate-logo;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+  animation: bounceIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards, logoFloat 6s ease-in-out infinite 0.4s;
+  backface-visibility: hidden;
+  pointer-events: none;
+  -webkit-backface-visibility: hidden;
+}
+
+.social-button.github {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid #333;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.social-button.github::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  background: #24292F;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 0;
+}
+
+.social-button.github:hover {
+  color: #fff;
+}
+
+.social-button.github:hover::before {
+  transform: translateX(0);
+}
+
+.social-button.github img {
+  position: relative;
+  z-index: 2;
+  filter: none;
+  transition: filter 0.3s ease;
+}
+
+.social-button.github:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.social-button.github span {
+  position: relative;
+  z-index: 2;
+}
+
+.social-button.google {
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid #4285F4;
+  color: #4285F4;
+  transition: all 0.3s ease;
+}
+
+.social-button.google::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #4285F4;
+  background-size: 200% 200%;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 0;
+  border-radius: 0.5rem;
+  animation: gradientShift 4s linear infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.social-button.google:hover {
+  color: #fff;
+  border-color: transparent;
+}
+
+.social-button.google:hover::before {
+  transform: translateX(0);
+}
+
+.social-button.google img {
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.social-button.google:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.social-button.google span {
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.social-button.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.social-button.loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+.social-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+/* Button animations */
+@keyframes buttonBounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.signup-button,
+.social-button {
+  transition: all 0.3s ease;
+}
+
+.signup-button:active,
+.social-button:active {
+  animation: buttonBounce 0.3s ease;
+}
+
+/* Hover effect only for main submit button */
+.signup-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.signup-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Disable hover and active states when button is disabled or loading */
+.signup-button.disabled:hover,
+.social-button.disabled:hover,
+.signup-button.loading:hover,
+.social-button.loading:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.signup-button.disabled:active,
+.social-button.disabled:active,
+.signup-button.loading:active,
+.social-button.loading:active {
+  animation: none;
+}

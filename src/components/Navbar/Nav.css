@@ -1,0 +1,145 @@
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Logo Section */
+.logo-section {
+    flex: 1.2;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: clamp(1.5rem, 2vw, 2rem);
+    margin-left: 0.5rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.3rem, 0.5vw, 0.5rem);
+    text-decoration: none;
+}
+
+.logo span {
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.logo img {
+    width: clamp(1.2rem, 1.5vw, 1.5rem);
+}
+
+/* Main Navigation Links */
+.main-nav-links {
+    flex: 1.6;
+    display: flex;
+    justify-content: center;
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+}
+
+.main-nav-links a {
+    position: relative;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0 clamp(0.4rem, 0.7vw, 0.7rem);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.15rem, 0.25vw, 0.25rem);
+    white-space: nowrap;
+}
+
+/* Auth Links */
+.auth-links {
+    flex: 1.2;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: clamp(1.5rem, 2vw, 2rem);
+}
+
+.auth-links a {
+    position: relative;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0 clamp(0.4rem, 0.7vw, 0.7rem);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.15rem, 0.25vw, 0.25rem);
+    white-space: nowrap;
+}
+
+.navbar svg {
+    width: clamp(1rem, 1.2vw, 1.2rem);
+    height: clamp(1rem, 1.2vw, 1.2rem);
+    stroke: rgba(255, 255, 255, 0.9);
+}
+
+.main-nav-links a:hover,
+.auth-links a:hover {
+    color: #ffffff;
+}
+
+#login, #logout {
+    background: #1a6eff;
+    color: #FFFAFA;
+    padding: clamp(0.3rem, 0.4vw, 0.4rem) clamp(1rem, 1.4vw, 1.4rem);
+    text-decoration: none;
+    border: none;
+    border-radius: clamp(1.2rem, 1.5vw, 1.5rem);
+    transform: scale(0.95);
+    transition: all 0.2s ease-out;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+    white-space: nowrap;
+    min-width: fit-content;
+}
+
+#login:hover, #logout:hover {
+    background: #0056d7;
+}
+
+#logout {
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+    cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem;
+    }
+    
+    body {
+        padding-top: 60px;
+    }
+    
+    .logo-section {
+        padding-right: 1rem;
+    }
+    
+    .auth-links {
+        padding-left: 1rem;
+    }
+    
+    .main-nav-links {
+        gap: 0.5rem;
+    }
+    
+    .main-nav-links a,
+    .auth-links a {
+        padding: 0 0.5rem;
+    }
+    
+    #login, #logout {
+        padding: 0.3rem 1rem;
+    }
+}

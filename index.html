@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A0F1C" />
+    <meta name="description" content="CodeStream - Interactive Algorithm Visualization and Learning Platform" />
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CodeStream" />
+    <meta property="og:description" content="Interactive Algorithm Visualization and Learning Platform" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://codestream.com" />
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" href="/logo2.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="modulepreload" href="/src/main.jsx" />
+    <link rel="preload" href="/src/assets/js/main.js" as="script" />
+    <link rel="preload" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" as="style" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    
+    <title>CodeStream - Interactive Algorithm Visualization</title>
+    
+    <!-- Three.js and Vanta.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js" defer></script>
+  </head>
+  <body>
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0A0F1C;
+        color: white;
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 20px;
+        text-align: center;
+      ">
+        <div>
+          <h1 style="font-size: 24px; margin-bottom: 16px;">JavaScript Required</h1>
+          <p style="color: #94A3B8; margin-bottom: 16px;">
+            CodeStream requires JavaScript to function properly. Please enable JavaScript in your browser settings to continue.
+          </p>
+        </div>
+      </div>
+    </noscript>
+    
+    <div id="root"></div>
+    
+    <!-- PostHog Analytics -->
+    <script>
+      !(function (t, e) {
+        var o, n, p, r;
+        e.__SV ||
+          ((window.posthog = e),
+          (e._i = []),
+          (e.init = function (i, s, a) {
+            function g(t, e) {
+              var o = e.split(".");
+              2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                (t[e] = function () {
+                  t.push(
+                    [e].concat(
+                      Array.prototype.slice.call(
+                        arguments,
+                        0,
+                      ),
+                    ),
+                  );
+                });
+            }
+            ((p = t.createElement("script")).type = "text/javascript"),
+              (p.crossOrigin = "anonymous"),
+              (p.async = !0),
+              (p.src =
+                s.api_host.replace(
+                  ".i.posthog.com",
+                  "-assets.i.posthog.com",
+                ) + "/static/array.js"),
+              (r =
+                t.getElementsByTagName(
+                  "script",
+                )[0]).parentNode.insertBefore(p, r);
+            var u = e;
+            for (
+              void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                u.people = u.people || [],
+                u.toString = function (t) {
+                  var e = "posthog";
+                  return (
+                    "posthog" !== a && (e += "." + a),
+                    t || (e += " (stub)"),
+                    e
+                  );
+                },
+                u.people.toString = function () {
+                  return u.toString(1) + ".people (stub)";
+                },
+                o =
+                  "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
+                    " ",
+                  ),
+                n = 0;
+              n < o.length;
+              n++
+            )
+              g(u, o[n]);
+            e._i.push([i, s, a]);
+          }),
+          (e.__SV = 1));
+      })(document, window.posthog || []);
+      posthog.init("phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE", {
+        api_host: "https://us.i.posthog.com",
+        person_profiles: "identified_only",
+        capture_pageview: true,
+        capture_pageleave: true,
+        autocapture: true,
+        loaded: function(posthog) {
+          posthog.startSessionRecording();
+        }
+      });
+    </script>
+    
+    <!-- Application Scripts -->
+    <script type="module" src="/src/main.jsx"></script>
+    <script src="./src/assets/js/scrollrevealmin.js" defer></script>
+    <script src="./src/assets/js/main.js" defer></script>
+  </body>
+</html>

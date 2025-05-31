@@ -1,0 +1,1051 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.react-flow__panel {
+  display: none;
+}
+
+/* Common style for loop lines */
+.condition, .increment, .assignment {
+  font-family: monospace;
+  margin: 4px 0;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* Style for the loop condition line */
+.condition {
+  background-color: #FFFAFA;
+  color: #006064;
+}
+
+/* Style for the loop increment line */
+.increment {
+  background-color: #FFFAFA;
+  color: #1b5e20;
+}
+
+/* Style for the loop assignment line */
+.assignment {
+  background-color: #FFFAFA;
+  color: #e65100;
+}
+
+/* .container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+} */
+
+/* Loader */
+.loader {
+  width: 48px;
+  height: 48px;
+  position: relative;
+  margin: auto;
+  top: 45%;
+}
+
+.monaco-editor .margin-view-overlays .current-line-exact-margin {
+  border: none;
+}
+
+.loader:before {
+  content: '';
+  width: 48px;
+  height: 5px;
+  background: #97bdff;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  border-radius: 50%;
+  animation: shadow324 0.5s linear infinite;
+}
+
+.loader:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: #3F79DA;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  animation: jump7456 0.5s linear infinite;
+}
+
+@keyframes jump7456 {
+  15% {
+    border-bottom-right-radius: 3px;
+  }
+  25% {
+    transform: translateY(9px) rotate(22.5deg);
+  }
+  50% {
+    transform: translateY(18px) scale(1, .9) rotate(45deg);
+    border-bottom-right-radius: 40px;
+  }
+  75% {
+    transform: translateY(9px) rotate(67.5deg);
+  }
+  100% {
+    transform: translateY(0) rotate(90deg);
+  }
+}
+
+@keyframes shadow324 {
+  0%, 100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.2, 1);
+  }
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  height: calc(100vh - 4rem);
+  position: relative;
+  width: calc(99.85% - 1rem);
+  margin: 0.5rem;
+  overflow: hidden;
+  top: 4rem;
+  transition: none;
+}
+
+/* Sections */
+.section {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  background: transparent;
+  border-radius: 0.8rem;
+  transition: none;
+}
+
+.section.transition-enabled {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#visual-debugger {
+  background-color: #fff;
+  transition: none;
+  position: relative;
+  height: 100%;
+}
+
+#visual-debugger.transition-enabled {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#visual-debugger .react-flow {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#visual-debugger .react-flow__viewport {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#visual-debugger .react-flow__container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#visual-debugger .react-flow__renderer {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ensure the flow content maintains its size during transitions */
+#visual-debugger > div {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative;
+}
+
+#variable-space {
+  margin-right: 1rem;
+  transition: none;
+  opacity: var(--variable-space-opacity, 1);
+}
+
+#variable-space.transition-enabled {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: var(--variable-space-opacity, 1);
+}
+
+/* Code Editor Section */
+#code-editor {
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding-top: 0;
+  background-color: #FFF;
+  transform: scale(1);
+  transition: transform 0.5s ease-out;
+}
+
+.slider {
+  display: none;
+}
+
+/* Custom border for Monaco Editor lines */
+.monaco-editor .view-line {
+  border: 2px solid #FFFFFE; 
+}
+
+.fullscreen-active {
+  transform: scale(1.05);
+  width: 100vw;
+  height: 100vh;
+}
+
+.editor {
+  flex-grow: 1;
+  padding: 10px;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  border-radius: 10px;
+  height: 99.5%;
+}
+
+.monaco-editor-toolbar {
+  display: flex;
+  width: 99%;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  transform: translateX(-0.9rem);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 1rem;
+}
+
+.editor-button {
+  position: relative;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  padding: 0.4rem;
+  background: transparent;
+  color: rgba(0, 0, 0, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+  border: 1px solid transparent;
+}
+
+.editor-button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: rgba(0, 0, 0, 0.7);
+  transition: all 0.2s ease-out;
+}
+
+.editor-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.editor-button:hover {
+  background-color: rgba(206, 224, 255, 0.8);
+  border-color: rgba(63, 121, 218, 0.2);
+  transform: translateY(-1px);
+}
+
+.editor-button:hover svg {
+  color: #3F79DA;
+  transform: scale(1.1);
+}
+
+.editor-button:active {
+  transform: translateY(0);
+  background-color: rgba(206, 224, 255, 0.9);
+}
+
+.editor-button.active {
+  background-color: rgba(206, 224, 255, 0.9);
+  border-color: rgba(63, 121, 218, 0.3);
+  color: #3F79DA;
+}
+
+.editor-button.active svg {
+  color: #3F79DA;
+}
+
+/* Tooltip improvements */
+.tooltip {
+  position: absolute;
+  top: -20px;
+  opacity: 0;
+  background-color: #3F79DA;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-out;
+  pointer-events: none;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tooltip::before {
+  position: absolute;
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #3F79DA;
+  transform: rotate(45deg);
+  bottom: -4px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.editor-button:hover .tooltip {
+  top: -35px;
+  opacity: 1;
+  transition-delay: 0.3s;
+}
+
+/* Add a subtle divider between button groups */
+.toolbar-divider {
+  width: 1px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 0 0.5rem;
+}
+
+/* Add a subtle highlight effect for active buttons */
+.editor-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.editor-button:hover::after {
+  opacity: 1;
+}
+
+/* Add a subtle pulse animation for important buttons */
+.editor-button.important {
+  animation: subtle-pulse 2s infinite;
+}
+
+@keyframes subtle-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(63, 121, 218, 0.2);
+  }
+  70% {
+    box-shadow: 0 0 0 4px rgba(63, 121, 218, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(63, 121, 218, 0);
+  }
+}
+
+/* Add a loading state for buttons */
+.editor-button.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.editor-button.loading svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Add a success state for buttons */
+.editor-button.success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+}
+
+.editor-button.success svg {
+  color: #10b981;
+}
+
+/* Add an error state for buttons */
+.editor-button.error {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+}
+
+.editor-button.error svg {
+  color: #ef4444;
+}
+
+#react-flow-fullscreen {
+  position: relative;
+  left: 1rem;
+  width: 2rem;
+  height: 2rem;
+  margin-top: -0.5rem;
+  margin-right: 0.55rem;
+  margin-left: auto;
+}
+
+/* Buttons */
+.execution-controls {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 0.85rem;
+}
+
+.control-button {
+  padding: 0.4rem 1.25rem;
+  background: #3F79DA;
+  color: #FFFAFA;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 14px;
+  border-radius: 20px;
+  transition: background 0.3s ease-out;
+}
+
+.control-button:hover {
+  background: #cee0ff;
+  color: #3F79DA;
+}
+
+#execute {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  color: #3F79DA;
+}
+
+.rotate-animation {
+  animation: rotateAnimation 1.5s ease infinite;
+}
+
+@keyframes rotateAnimation {
+	from {transform: rotateY(45deg);}
+	to {transform: rotateY(225deg);}
+}
+
+#execute:hover {
+  background: #c5daff;
+}
+
+/* Resizer */
+.resizer {
+  width: 3.5px;
+  background: transparent;
+  cursor: ew-resize;
+  height: 97%;
+  margin: 0 0.1rem;
+  margin-top: 0.6rem;
+  border-radius: 2rem;
+  transition: none;
+}
+
+.resizer:hover {
+  background: #aeaeae;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 5%;
+  }
+  .nav-links {
+    display: none;
+  }
+  .main-content {
+    flex-direction: column;
+  }
+  .section {
+    width: 100% !important;
+    height: 33%;
+  }
+  .editor {
+    height: 98.5%;
+  }
+  .resizer {
+    height: 5px;
+    width: 100%;
+    cursor: ns-resize;
+  }
+}
+
+.highlight-line {
+  background-color: rgba(255, 220, 100, 0.4) !important;
+  border-left: 3px solid orange;
+}
+
+.tree-container {
+  transform: scaleY(-1);
+}
+
+.tree-container * {
+  transform: scaleY(-1);
+}
+
+.error-node {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 300px;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ff4d4f;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.error-icon {
+  width: 20px;
+  height: 20px;
+  color: #ff4d4f;
+}
+
+.error-message {
+  color: #333;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.error-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.error-bullet {
+  color: #ff4d4f;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.error-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f6ffed;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  color: #52c41a;
+  font-size: 13px;
+}
+
+.tip-icon {
+  font-size: 16px;
+}
+
+.default-node {
+  color: #c5daff;
+  background-color: #840a0a;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.sorted-array-node {
+  background-color: #e6e6c8;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.highlighted-node {
+  background-color: #16c525;
+}
+
+/* Remove all transition properties from the bottom of the file */
+.section {
+  transition: none;
+}
+
+.section.transition-enabled {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-content {
+  transition: none;
+}
+
+.main-content.transition-enabled {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.resizer {
+  transition: none;
+}
+
+.resizer:last-of-type {
+  opacity: var(--resizer-opacity, 1);
+}
+
+#variable-space {
+  transition: none;
+}
+
+#variable-space.transition-enabled {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: var(--variable-space-opacity, 1);
+}
+
+#visual-debugger {
+  transition: none;
+}
+
+#visual-debugger.transition-enabled {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Features Styles */
+.visual-debugger-graph {
+  background-color: #0F172A;
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.main-visualization {
+  position: relative;
+  background-color: rgba(15, 23, 42, 0.5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.enhanced-features {
+  background-color: rgba(15, 23, 42, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Timeline Styles */
+.timeline-container {
+  background-color: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.timeline-container .ant-slider {
+  margin: 0;
+}
+
+.timeline-container .ant-slider-rail {
+  background-color: rgba(148, 163, 184, 0.1);
+}
+
+.timeline-container .ant-slider-track {
+  background-color: #10B981;
+}
+
+.timeline-container .ant-slider-handle {
+  border-color: #10B981;
+}
+
+/* Metrics Styles */
+.metrics-container {
+  background-color: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.metric-item {
+  background-color: rgba(15, 23, 42, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+}
+
+/* Multi-View Styles */
+.multi-view-container {
+  background-color: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.view-content {
+  background-color: rgba(15, 23, 42, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  min-height: 200px;
+}
+
+/* Learning Features Styles */
+.learning-features {
+  background-color: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.quiz-container {
+  background-color: rgba(15, 23, 42, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+/* Memory and Call Stack Views */
+.memory-view,
+.callstack-view {
+  background-color: rgba(15, 23, 42, 0.3);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.memory-item,
+.callstack-item {
+  background-color: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Glass Effect */
+.glass-pro {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.enhanced-features > * {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .metrics-container .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .enhanced-features {
+    height: auto;
+    max-height: 300px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .enhanced-features > * {
+    animation: none;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .glass-pro {
+    background-color: #000;
+    border: 2px solid #fff;
+  }
+  
+  .metric-item,
+  .memory-item,
+  .callstack-item {
+    border: 2px solid #fff;
+  }
+}
+
+/* Feature Toolbar Styles */
+.feature-toolbar {
+  background-color: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.feature-button {
+  position: relative;
+  transition: all 0.2s ease-in-out;
+}
+
+.feature-button:hover {
+  transform: translateY(-2px);
+}
+
+.feature-button.active {
+  background-color: #10B981;
+  color: white;
+}
+
+/* Tooltip styles for feature buttons */
+.feature-button .ant-tooltip-inner {
+  background-color: rgba(15, 23, 42, 0.9);
+  color: #E2E8F0;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for feature buttons */
+@keyframes buttonPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.feature-button:active {
+  animation: buttonPop 0.2s ease-in-out;
+}
+
+/* Responsive styles for feature toolbar */
+@media (max-width: 768px) {
+  .feature-toolbar {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    top: auto;
+    flex-wrap: wrap;
+    max-width: calc(100% - 2rem);
+    justify-content: center;
+  }
+
+  .feature-button {
+    padding: 0.5rem;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .feature-toolbar {
+    border: 2px solid #fff;
+  }
+
+  .feature-button {
+    border: 1px solid #fff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .feature-button {
+    transition: none;
+  }
+
+  .feature-button:hover {
+    transform: none;
+  }
+
+  .feature-button:active {
+    animation: none;
+  }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* ReactFlow container styles */
+.react-flow-container {
+  border: none !important;
+  outline: none !important;
+}
+
+.react-flow-container * {
+  border: none !important;
+  outline: none !important;
+}
+
+/* ReactFlow controls styles */
+.react-flow-controls {
+  border: none !important;
+  outline: none !important;
+}
+
+.react-flow-controls * {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Node styles */
+.react-flow__node {
+  border: none !important;
+  outline: none !important;
+  cursor: grab !important;
+  user-select: none !important;
+  touch-action: none !important;
+}
+
+.react-flow__node:active {
+  cursor: grabbing !important;
+}
+
+.react-flow__node * {
+  border: none !important;
+  outline: none !important;
+  user-select: none !important;
+  touch-action: none !important;
+}
+
+/* Ensure the node content is not selectable */
+.react-flow__node .react-flow__handle {
+  cursor: grab !important;
+  user-select: none !important;
+  touch-action: none !important;
+}
+
+/* Ensure the node content is not selectable */
+.react-flow__node .react-flow__handle:active {
+  cursor: grabbing !important;
+}
+
+/* Edge styles */
+.react-flow__edge {
+  border: none !important;
+  outline: none !important;
+}
+
+.react-flow__edge * {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Override ReactFlow's default styles */
+.react-flow__viewport {
+  border: none !important;
+  outline: none !important;
+}
+
+.react-flow__renderer {
+  border: none !important;
+  outline: none !important;
+}
+
+.react-flow__background {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Custom node styles */
+.custom-node {
+  background-color: var(--flow-node-background);
+  color: var(--flow-node-text);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Custom edge styles */
+.custom-edge {
+  stroke: var(--flow-edge-color);
+  stroke-width: 2;
+  transition: all 0.3s ease;
+}
+
+/* Custom controls styles */
+.custom-controls {
+  background-color: var(--flow-controls-background);
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Custom background styles */
+.custom-background {
+  background-color: var(--flow-background);
+  transition: all 0.3s ease;
+}

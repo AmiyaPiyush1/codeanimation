@@ -1,0 +1,378 @@
+/* Ultra-Modern Interactive Elements */
+.interactive-element {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Add a container class for scroll-based components */
+/* .container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+} */
+
+/* Ensure all scroll-based components have proper positioning */
+.scroll-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure intersection observer targets have proper positioning */
+.intersection-target {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+  
+  .interactive-element::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(124, 124, 243, 0.1), transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+  }
+  
+  .interactive-element:hover::before {
+    left: 100%;
+  }
+  
+  .interactive-element:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.05);
+  }
+  
+  .interactive-card {
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow, filter;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  
+  .interactive-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124, 124, 243, 0.08) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .interactive-card:hover::after {
+    opacity: 1;
+  }
+  
+  .interactive-card:hover {
+    transform: translateY(-8px) rotateX(5deg);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 30px rgba(124, 124, 243, 0.15);
+  }
+  
+  /* Ultra-Modern Glass Effect */
+  .landing-container .glass-pro {
+    background: rgba(248, 250, 252, 0.03);
+    backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(248, 250, 252, 0.08);
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .landing-container .glass-pro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(124, 124, 243, 0.1) 0%, transparent 50%, rgba(34, 211, 238, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: -1;
+  }
+  
+  .landing-container .glass-pro:hover::before {
+    opacity: 1;
+  }
+  
+  /* Ultra-Modern Code Styling */
+  .code-block {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(124, 124, 243, 0.2);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: text;
+  }
+  
+  .code-block::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124, 124, 243, 0.6), transparent);
+    animation: shimmer 3s linear infinite;
+  }
+  
+  /* Ultra-Modern Gradient Text */
+  .gradient-text {
+    background: linear-gradient(135deg, #7C7CF3 0%, #22D3EE 50%, #10B981 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 8s ease-in-out infinite;
+    position: relative;
+    cursor: text;
+  }
+  
+  /* Ultra-Modern Button Styles */
+  .btn-primary {
+    background: linear-gradient(135deg, #7C7CF3 0%, #22D3EE 100%);
+    border: none;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .btn-primary:hover::before {
+    left: 100%;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #6D5FEB 0%, #0891B2 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 25px -5px rgba(124, 124, 243, 0.4), 0 0 20px rgba(124, 124, 243, 0.3);
+  }
+  
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(124, 124, 243, 0.3);
+    color: #7C7CF3;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  
+  .btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(124, 124, 243, 0.1) 0%, rgba(34, 211, 238, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+  
+  .btn-secondary:hover::before {
+    opacity: 1;
+  }
+  
+  .btn-secondary:hover {
+    border-color: #7C7CF3;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(124, 124, 243, 0.2);
+  }
+  
+  /* Ultra-Modern Scroll Indicator */
+  .scroll-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #7C7CF3, #22D3EE, #10B981);
+    z-index: 1000;
+    transform-origin: left;
+    box-shadow: 0 0 10px rgba(124, 124, 243, 0.5);
+  }
+  
+  /* Floating Particles */
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 124, 243, 0.8) 0%, transparent 70%);
+    animation: particle-float 6s ease-in-out infinite;
+  }
+  
+  .particle:nth-child(odd) {
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.8) 0%, transparent 70%);
+    animation-delay: -2s;
+  }
+  
+  .particle:nth-child(3n) {
+    background: radial-gradient(circle, rgba(159, 122, 234, 0.8) 0%, transparent 70%);
+    animation-delay: -4s;
+  }
+  
+  /* Ultra-Modern Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #7C7CF3, #22D3EE);
+    border-radius: 4px;
+    border: 1px solid rgba(124, 124, 243, 0.3);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #6D5FEB, #0891B2);
+    box-shadow: 0 0 10px rgba(124, 124, 243, 0.5);
+  }
+  
+  /* Ultra-Modern Selection */
+  ::selection {
+    background: rgba(124, 124, 243, 0.3);
+    color: #F8FAFC;
+    text-shadow: 0 0 8px rgba(124, 124, 243, 0.5);
+  }
+  
+  /* Ultra-Modern Focus States */
+  .landing-container button:focus,
+  .landing-container a:focus {
+    outline: 2px solid #7C7CF3;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(124, 124, 243, 0.2);
+  }
+  
+  /* Performance Optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  .will-change-opacity {
+    will-change: opacity;
+  }
+  
+  /* Ultra-Modern Loading States */
+  .loading-shimmer {
+    background: linear-gradient(90deg, rgba(248, 250, 252, 0.1) 25%, rgba(124, 124, 243, 0.2) 50%, rgba(248, 250, 252, 0.1) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Magnetic Effect */
+  .magnetic {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .magnetic:hover {
+    animation: magnetic 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  /* Parallax Elements */
+  .parallax {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+  }
+  
+  /* Morphing Shapes */
+  .morph-shape {
+    animation: morph 6s ease-in-out infinite;
+    filter: blur(1px);
+  }
+  
+  /* Breathing Animation */
+  .breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+  
+  /* Floating Animation Variants */
+  .float-1 {
+    animation: float-subtle 4s ease-in-out infinite;
+    animation-delay: 0s;
+  }
+  
+  .float-2 {
+    animation: float-reverse 5s ease-in-out infinite;
+    animation-delay: -1s;
+  }
+  
+  .float-3 {
+    animation: float-subtle 6s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+  
+  /* Ultra-Modern Responsive Typography */
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+      cursor: auto; /* Restore cursor on mobile */
+    }
+  }
+  
+  /* Ultra-Modern Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* Ultra-Modern Glow Effects */
+  .glow-on-hover {
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .glow-on-hover:hover {
+    filter: drop-shadow(0 0 20px rgba(124, 124, 243, 0.6));
+  }
+  
+  /* Neural Network Lines */
+  .neural-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124, 124, 243, 0.6), transparent);
+    animation: pulse-soft 3s ease-in-out infinite;
+  }
+  
+  /* Advanced Backdrop Effects */
+  .backdrop-modern {
+    backdrop-filter: blur(20px) saturate(180%) contrast(120%);
+    background: rgba(248, 250, 252, 0.02);
+    border: 1px solid rgba(248, 250, 252, 0.1);
+    cursor: pointer;
+  }
