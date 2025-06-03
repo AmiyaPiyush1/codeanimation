@@ -29,6 +29,30 @@ const Hero = () => {
   const [comparisonCount, setComparisonCount] = useState(0);
   const [swapCount, setSwapCount] = useState(0);
 
+  // Add state for tag rotation and mouse position
+  const [tagRotation, setTagRotation] = useState({ x: 0, y: 0 });
+  const [tagMousePosition, setTagMousePosition] = useState({ x: 0, y: 0 });
+
+  // Add mouse event handlers
+  const handleTagMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setTagMousePosition({ x, y });
+    
+    // Calculate rotation based on mouse position
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+    setTagRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleTagMouseLeave = () => {
+    setTagRotation({ x: 0, y: 0 });
+    setTagMousePosition({ x: 0, y: 0 });
+  };
+
   const codeLines = [
     'function visualizeAlgorithm(data) {',
     '  const sorted = bubbleSort(data);',
@@ -120,11 +144,11 @@ const Hero = () => {
   useEffect(() => {
     const sr = ScrollReveal({
       origin: 'bottom',
-      distance: '40px',
-      duration: 600,
+      distance: '60px',
+      duration: 1200,
       delay: 0,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      reset: false,
+      reset: true,
       mobile: true,
       viewFactor: 0.2,
       beforeReveal: (el) => {
@@ -135,113 +159,115 @@ const Hero = () => {
       beforeReset: (el) => {
         el.style.visibility = 'hidden';
         el.style.opacity = '0';
-        el.style.transform = 'translateY(40px) scale(0.98) rotate(1deg)';
+        el.style.transform = 'translateY(60px) scale(0.95) rotate(2deg)';
       }
     });
 
-    // Main content sections
-    sr.reveal(contentRef.current, {
-      delay: 0,
-      distance: '30px',
-      duration: 500,
-      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'left',
-      scale: 0.98,
-      opacity: 0,
-      rotate: { y: 3, z: 1 }
-    });
-
-    sr.reveal(codeEditorRef.current, {
-      delay: 50,
-      distance: '40px',
-      duration: 600,
-      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'right',
-      scale: 0.98,
-      opacity: 0,
-      rotate: { y: -3, z: -1 }
-    });
-
-    // Left content elements
+    // Enhanced Header section animations with ultra-smooth effects
     sr.reveal(badgeRef.current, {
       delay: 0,
       distance: '30px',
-      duration: 500,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
-      scale: 0.98,
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 5, z: 1 }
+      rotate: { x: 5, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(headlinesRef.current, {
-      delay: 50,
+      delay: 100,
       distance: '40px',
-      duration: 600,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'left',
-      scale: 0.98,
+      origin: 'top',
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 3, y: 1 }
+      rotate: { x: 3, y: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(descriptionRef.current, {
-      delay: 100,
-      distance: '35px',
-      duration: 600,
-      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'left',
-      scale: 0.98,
-      opacity: 0,
-      rotate: { x: 2 }
-    });
-
-    // CTAs and Stats
-    sr.reveal(ctaRef.current, {
-      delay: 150,
-      distance: '40px',
-      duration: 600,
-      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'bottom',
-      scale: 0.98,
-      opacity: 0,
-      rotate: { y: 3, z: 1 }
-    });
-
-    sr.reveal(statsRef.current, {
       delay: 200,
-      distance: '40px',
-      duration: 600,
+      distance: '35px',
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'bottom',
-      interval: 50,
-      scale: 0.98,
+      origin: 'top',
+      scale: 0.95,
       opacity: 0,
-      rotate: { y: 3, z: 1 }
+      rotate: { x: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // Code editor elements
+    // Enhanced CTA section animation with ultra-smooth effect
+    sr.reveal(ctaRef.current, {
+      delay: 300,
+      distance: '40px',
+      duration: 1200,
+      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+      origin: 'bottom',
+      scale: 0.95,
+      opacity: 0,
+      rotate: { y: 3, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
+    });
+
+    // Enhanced Image animation with ultra-smooth effect
     sr.reveal(visualizationRef.current, {
       delay: 150,
-      distance: '40px',
-      duration: 600,
+      distance: '50px',
+      duration: 1500,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'bottom',
-      scale: 0.98,
+      origin: 'right',
+      scale: 0.95,
       opacity: 0,
-      rotate: { y: 3, z: 1 }
+      rotate: { y: 5, z: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateX(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // Scroll indicator
-    sr.reveal(scrollIndicatorRef.current, {
-      delay: 250,
-      distance: '25px',
-      duration: 500,
+    // Enhanced Stats animation with staggered effect
+    sr.reveal(statsRef.current, {
+      delay: 400,
+      distance: '40px',
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
-      scale: 0.98,
+      interval: 100,
+      scale: 0.95,
       opacity: 0,
-      rotate: { y: 3, z: 1 }
+      rotate: { y: 3, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     return () => {
@@ -296,16 +322,150 @@ const Hero = () => {
           {/* Ultra-Modern Badge */}
           <motion.div
             ref={badgeRef}
-            className="relative inline-flex items-center gap-3 px-6 py-3 rounded-full backdrop-modern border border-navy-400/20 interactive-element group overflow-hidden"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-pro border border-blue-500/20 mb-8 interactive-element group relative overflow-hidden"
+            style={{
+              background: "rgba(15, 23, 42, 0.3)",
+              backdropFilter: "blur(10px)",
+              transform: `perspective(1000px) rotateX(${tagRotation.x}deg) rotateY(${tagRotation.y}deg)`,
+              transformStyle: "preserve-3d"
+            }}
+            onMouseMove={handleTagMouseMove}
+            onMouseLeave={handleTagMouseLeave}
             whileHover={{
-              scale: 1.02,
+              borderColor: "rgba(124, 124, 243, 0.4)",
               boxShadow: "0 0 30px rgba(124, 124, 243, 0.2)",
-              borderColor: "rgba(124, 124, 243, 0.3)",
-              transition: { duration: 0.4 }
+              background: "rgba(15, 23, 42, 0.4)",
+              transition: { 
+                type: "spring",
+                stiffness: 400,
+                damping: 25,
+                mass: 1
+              }
             }}
           >
-            {/* Content */}
-            <div className="relative flex items-center gap-3">
+            {/* Interactive Border Container */}
+            <div className="absolute inset-0 rounded-full pointer-events-none">
+              {/* Base Border */}
+              <div className="absolute inset-0 rounded-full" />
+              
+              {/* Interactive Border Glow */}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: '1px solid transparent',
+                  background: 'transparent',
+                  maskImage: `
+                    radial-gradient(
+                      200px circle at ${tagMousePosition.x}px ${tagMousePosition.y}px,
+                      black 20%,
+                      transparent 80%
+                    )
+                  `,
+                  WebkitMaskImage: `
+                    radial-gradient(
+                      200px circle at ${tagMousePosition.x}px ${tagMousePosition.y}px,
+                      black 20%,
+                      transparent 80%
+                    )
+                  `,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <div 
+                  className="absolute inset-0 rounded-full border border-blue-400/50"
+                  style={{
+                    boxShadow: '0 0 15px rgba(124, 124, 243, 0.3)',
+                    opacity: 1,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                />
+              </motion.div>
+            </div>
+
+            {/* Enhanced Background Effects */}
+            <motion.div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100"
+              style={{
+                background: `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+              animate={{
+                background: [
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`,
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.2), transparent 70%)`,
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`
+                ]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+
+            {/* Enhanced Neural Network Pattern */}
+            <motion.div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-[0.05]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(124, 124, 243, 0.4) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(124, 124, 243, 0.4) 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px',
+                transform: `translateZ(-1px) rotateX(${tagRotation.x * 0.5}deg) rotateY(${tagRotation.y * 0.5}deg)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+              animate={{
+                backgroundPosition: [
+                  "0px 0px",
+                  "10px 10px",
+                  "0px 0px"
+                ]
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+
+            {/* Enhanced Floating Particles */}
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full opacity-0 group-hover:opacity-100"
+                style={{
+                  width: `${Math.random() * 2 + 1}px`,
+                  height: `${Math.random() * 2 + 1}px`,
+                  background: `rgba(124, 124, 243, ${Math.random() * 0.2 + 0.1})`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  willChange: "transform",
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: `translateZ(${Math.random() * 20}px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`
+                }}
+                animate={{
+                  y: [0, -8, 0],
+                  opacity: [0.1, 0.3, 0.1],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 2 + Math.random(),
+                  repeat: Infinity,
+                  ease: [0.4, 0, 0.2, 1],
+                  delay: i * 0.4,
+                }}
+              />
+            ))}
+
+            {/* Enhanced Content */}
+            <div 
+              className="relative flex items-center gap-3"
+              style={{
+                transform: `translateZ(20px) rotateX(${tagRotation.x * 0.2}deg) rotateY(${tagRotation.y * 0.2}deg)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+            >
               <motion.div
                 animate={{ 
                   rotate: [0, 360],
@@ -313,19 +473,31 @@ const Hero = () => {
                 }}
                 transition={{ 
                   rotate: { duration: 6, repeat: Infinity, ease: "linear" },
-                  scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" }
+                  scale: { duration: 1.5, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }
                 }}
                 whileHover={{
-                  scale: 1.3,
                   rotate: 180,
-                  transition: { duration: 0.2 }
+                  transition: { 
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 15,
+                    mass: 0.8
+                  }
+                }}
+                style={{
+                  transform: `translateZ(30px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`,
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
                 }}
               >
-                <Sparkles className="w-5 h-5 text-navy-400" />
+                <Sparkles className="w-5 h-5 text-blue-400" />
               </motion.div>
 
               <motion.span 
-                className="text-sm font-medium text-slate-300 group-hover:text-navy-300 transition-colors duration-300"
+                className="text-sm font-medium text-slate-300 group-hover:text-blue-300"
+                style={{
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: `translateZ(25px) rotateX(${tagRotation.x * 0.2}deg) rotateY(${tagRotation.y * 0.2}deg)`
+                }}
                 animate={{
                   textShadow: [
                     "0 0 0px rgba(124, 124, 243, 0)",
@@ -336,21 +508,73 @@ const Hero = () => {
                 transition={{
                   duration: 2,
                   repeat: Infinity,
-                  ease: "easeInOut"
+                  ease: [0.4, 0, 0.2, 1]
+                }}
+                whileHover={{
+                  textShadow: "0 0 15px rgba(124, 124, 243, 0.5)",
+                  transition: { 
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 15,
+                    mass: 0.8
+                  }
                 }}
               >
                 AI-Powered Learning Platform
               </motion.span>
             </div>
+
+            {/* Enhanced Hover Effect Border */}
+            <motion.div
+              className="absolute inset-0 rounded-full border border-blue-400/0"
+              style={{
+                backgroundColor: "rgba(124, 124, 243, 0)",
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: `translateZ(10px) rotateX(${tagRotation.x * 0.1}deg) rotateY(${tagRotation.y * 0.1}deg)`
+              }}
+              whileHover={{
+                backgroundColor: "rgba(124, 124, 243, 0.1)",
+                borderColor: "rgba(124, 124, 243, 0.3)",
+                boxShadow: "0 0 30px rgba(124, 124, 243, 0.3)",
+                scale: 1.05,
+                transition: { 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 1
+                }
+              }}
+            />
+
+            {/* Enhanced Hover Glow Effect */}
+            <motion.div
+              className="absolute inset-0 rounded-full opacity-0"
+              style={{
+                backgroundColor: "rgba(124, 124, 243, 0)",
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: `translateZ(5px) rotateX(${tagRotation.x * 0.05}deg) rotateY(${tagRotation.y * 0.05}deg)`
+              }}
+              whileHover={{
+                opacity: 0.1,
+                backgroundColor: "rgba(124, 124, 243, 0.5)",
+                transition: { 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 1
+                }
+              }}
+            />
           </motion.div>
 
           {/* Headlines */}
           <div ref={headlinesRef} className="space-y-8">
             <motion.h1
-              className="text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight"
+              className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight tracking-tight"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.4 }}
+              style={{ willChange: 'transform, opacity' }}
             >
               <motion.span 
                 className="relative inline-block text-slate-100"
@@ -358,6 +582,10 @@ const Hero = () => {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.5 }}
                 whileHover={{ scale: 1.02 }}
+                style={{ 
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)'
+                }}
               >
                 <span className="relative z-10">Master</span>
               </motion.span>
@@ -370,6 +598,10 @@ const Hero = () => {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.6 }}
                 whileHover={{ scale: 1.02 }}
+                style={{ 
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)'
+                }}
               >
                 <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-navy-400 via-navy-300 to-navy-400">
                   Data Structures
@@ -384,6 +616,10 @@ const Hero = () => {
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.7 }}
                 whileHover={{ scale: 1.02 }}
+                style={{ 
+                  willChange: 'transform, opacity',
+                  transform: 'translateZ(0)'
+                }}
               >
                 <span className="relative z-10">& Algorithms</span>
               </motion.span>
@@ -394,12 +630,17 @@ const Hero = () => {
           <motion.div
             ref={descriptionRef}
             className="text-lg text-slate-400 max-w-2xl leading-relaxed"
+            style={{ willChange: 'transform, opacity' }}
           >
             Transform complex algorithms into intuitive visualizations. Get AI-powered explanations 
             and master programming concepts through{" "}
             <motion.span 
               className="relative inline-block text-navy-300 font-semibold"
               whileHover={{ scale: 1.05 }}
+              style={{ 
+                willChange: 'transform',
+                transform: 'translateZ(0)'
+              }}
             >
               <span className="relative z-10">immersive learning</span>
             </motion.span>.
@@ -568,9 +809,18 @@ const Hero = () => {
           {/* Code Editor Window */}
           <motion.div
             className="relative code-block p-6 interactive-card shadow-floating"
+            style={{
+              background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              border: "1px solid rgba(255, 255, 255, 0.05)",
+              boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)"
+            }}
             whileHover={{ 
-              y: -6, 
               rotateY: 2,
+              background: "linear-gradient(135deg, rgba(15, 23, 42, 0.5), rgba(30, 41, 59, 0.5))",
+              borderColor: "rgba(255, 255, 255, 0.1)",
+              boxShadow: "0 0 30px rgba(59, 130, 246, 0.1), inset 0 0 15px rgba(255, 255, 255, 0.08)",
               transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
             }}
           >
@@ -609,7 +859,7 @@ const Hero = () => {
               <div className="absolute inset-0 bg-[linear-gradient(rgba(124,124,243,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(124,124,243,0.03)_1px,transparent_1px)] bg-[size:20px_20px] [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_70%)]" />
               
               {/* Line Numbers Background */}
-              <div className="absolute left-0 top-0 bottom-0 w-8 bg-slate-900/50 border-r border-slate-700/30" />
+              <div className="absolute left-0 top-0 bottom-0 w-8 bg-slate-900/30 border-r border-slate-700/20" />
 
               {codeLines.map((line, index) => (
                 <motion.div 
@@ -689,6 +939,13 @@ const Hero = () => {
             <motion.div
               ref={visualizationRef}
               className="mt-6 p-6 backdrop-modern rounded-xl border border-navy-400/10 relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255, 255, 255, 0.05)",
+                boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)"
+              }}
             >
               <div className="relative z-10">
                 <div className="text-xs text-navy-400 mb-3 flex items-center justify-between">

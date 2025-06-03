@@ -780,11 +780,7 @@ const Signup = () => {
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 0.5 }}
                   >
-                    <img 
-                      src="/github-mark.svg" 
-                      alt="GitHub" 
-                      className="w-full h-full object-contain invert"
-                    />
+                    <Github className="w-5 h-5 text-slate-200" />
                   </motion.div>
                   <span className="font-medium relative z-10">Continue with GitHub</span>
                 </motion.button>

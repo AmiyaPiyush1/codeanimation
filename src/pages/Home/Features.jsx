@@ -69,12 +69,12 @@ const Features = () => {
     const sr = ScrollReveal({
       origin: 'bottom',
       distance: '60px',
-      duration: 800,
+      duration: 1200,
       delay: 0,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
       reset: true,
       mobile: true,
-      viewFactor: 0.1,
+      viewFactor: 0.2,
       beforeReveal: (el) => {
         el.style.visibility = 'visible';
         el.style.opacity = '1';
@@ -87,63 +87,93 @@ const Features = () => {
       }
     });
 
-    // Header section animations with enhanced effects
+    // Enhanced Header section animations with ultra-smooth effects
     sr.reveal(badgeRef.current, {
       delay: 0,
       distance: '30px',
-      duration: 600,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
-      scale: 0.9,
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 10, z: 2 }
+      rotate: { x: 5, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(titleRef.current, {
-      delay: 50,
+      delay: 100,
       distance: '40px',
-      duration: 700,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
       scale: 0.95,
       opacity: 0,
-      rotate: { x: 5, y: 2 }
+      rotate: { x: 3, y: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(descriptionRef.current, {
-      delay: 100,
+      delay: 200,
       distance: '35px',
-      duration: 600,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
       scale: 0.95,
       opacity: 0,
-      rotate: { x: 3 }
+      rotate: { x: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // Features grid animations with staggered effect
+    // Enhanced Features grid animations with staggered effect
     sr.reveal(gridRef.current, {
       delay: 150,
       distance: '50px',
-      duration: 800,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
-      interval: 50,
+      interval: 100,
       scale: 0.95,
       opacity: 0,
-      rotate: { y: 5, z: 2 }
+      rotate: { y: 5, z: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // CTA section animation with enhanced effect
+    // Enhanced CTA section animation with ultra-smooth effect
     sr.reveal(ctaRef.current, {
-      delay: 200,
+      delay: 300,
       distance: '40px',
-      duration: 700,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
       scale: 0.95,
       opacity: 0,
-      rotate: { y: 5, x: 2 }
+      rotate: { y: 3, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     return () => {
@@ -222,7 +252,6 @@ const Features = () => {
             onMouseMove={handleTagMouseMove}
             onMouseLeave={handleTagMouseLeave}
             whileHover={{
-              scale: 1.02,
               borderColor: "rgba(124, 124, 243, 0.4)",
               boxShadow: "0 0 30px rgba(124, 124, 243, 0.2)",
               background: "rgba(15, 23, 42, 0.4)",
@@ -367,7 +396,6 @@ const Features = () => {
                   scale: { duration: 1.5, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }
                 }}
                 whileHover={{
-                  scale: 1.3,
                   rotate: 180,
                   transition: { 
                     type: "spring",
@@ -403,7 +431,6 @@ const Features = () => {
                   ease: [0.4, 0, 0.2, 1]
                 }}
                 whileHover={{
-                  scale: 1.05,
                   textShadow: "0 0 15px rgba(124, 124, 243, 0.5)",
                   transition: { 
                     type: "spring",
@@ -415,38 +442,6 @@ const Features = () => {
               >
                 Powerful Features
               </motion.span>
-
-              <motion.div
-                className="w-2 h-2 bg-emerald-400 rounded-full"
-                style={{
-                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
-                  transform: `translateZ(30px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`
-                }}
-                animate={{ 
-                  scale: [1, 1.3, 1],
-                  opacity: [1, 0.6, 1],
-                  boxShadow: [
-                    "0 0 0px rgba(16, 185, 129, 0)",
-                    "0 0 10px rgba(16, 185, 129, 0.5)",
-                    "0 0 0px rgba(16, 185, 129, 0)"
-                  ]
-                }}
-                transition={{ 
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: [0.4, 0, 0.2, 1]
-                }}
-                whileHover={{
-                  scale: 1.5,
-                  boxShadow: "0 0 20px rgba(16, 185, 129, 0.8)",
-                  transition: { 
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 15,
-                    mass: 0.8
-                  }
-                }}
-              />
             </div>
 
             {/* Enhanced Hover Effect Border */}
@@ -493,15 +488,49 @@ const Features = () => {
           </motion.div>
 
           <h2 ref={titleRef} className="text-4xl lg:text-5xl xl:text-6xl font-bold mb-6">
-            <span className="text-slate-100">Everything You Need to</span>
+            <motion.span 
+              className="relative inline-block text-slate-100"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ scale: 1.02 }}
+              style={{ 
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)'
+              }}
+            >
+              <span className="relative z-10">Powerful</span>
+            </motion.span>
+
             <br />
-            <span className="gradient-text">Excel in Programming</span>
+
+            <motion.span 
+              className="relative inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+              style={{ 
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)'
+              }}
+            >
+              <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-navy-400 via-navy-300 to-navy-400">
+                Features
+              </span>
+            </motion.span>
           </h2>
 
-          <p ref={descriptionRef} className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Comprehensive tools and features designed to accelerate your learning journey 
-            and help you master complex programming concepts with confidence.
-          </p>
+          <motion.p 
+            ref={descriptionRef} 
+            className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            style={{ willChange: 'transform, opacity' }}
+          >
+            Discover the tools and features that make learning algorithms and data structures engaging and effective.
+          </motion.p>
         </div>
 
         {/* Features Grid */}
@@ -520,10 +549,21 @@ const Features = () => {
               onMouseLeave={handleMouseLeave}
             >
               <motion.div
-                className="relative h-full p-6 rounded-xl bg-gradient-to-b from-slate-900/50 to-slate-900/30 backdrop-blur-sm overflow-hidden"
+                className="relative h-full p-6 rounded-xl overflow-hidden"
                 style={{
+                  background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
                   transformStyle: "preserve-3d",
                   willChange: "transform"
+                }}
+                whileHover={{
+                  background: "linear-gradient(135deg, rgba(15, 23, 42, 0.25), rgba(30, 41, 59, 0.25))",
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  boxShadow: "0 0 30px rgba(59, 130, 246, 0.05), inset 0 0 15px rgba(255, 255, 255, 0.04)",
+                  transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
                 }}
               >
                 {/* Interactive Border Container */}
@@ -595,9 +635,17 @@ const Features = () => {
                 >
                   {/* Enhanced Icon Container */}
                   <motion.div
-                    className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/10 to-blue-600/10 p-2.5"
+                    className="w-12 h-12 rounded-lg p-2.5"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1))",
+                      border: "1px solid rgba(59, 130, 246, 0.1)",
+                      backdropFilter: "blur(4px)",
+                      WebkitBackdropFilter: "blur(4px)"
+                    }}
                     whileHover={{
-                      scale: 1.05,
+                      background: "linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.15))",
+                      borderColor: "rgba(59, 130, 246, 0.2)",
+                      boxShadow: "0 0 15px rgba(59, 130, 246, 0.1)",
                       transition: {
                         type: "spring",
                         stiffness: 400,
@@ -617,7 +665,6 @@ const Features = () => {
                         ease: [0.4, 0, 0.2, 1]
                       }}
                       whileHover={{
-                        scale: 1.1,
                         rotate: 5,
                         transition: {
                           type: "spring",
@@ -667,10 +714,23 @@ const Features = () => {
                   {/* Enhanced Interactive CTA */}
                   <motion.div
                     className="flex items-center gap-2 text-sm font-medium text-blue-400 opacity-0 group-hover:opacity-100 transition-all duration-500 cursor-pointer"
+                    whileHover={{
+                      x: 4,
+                      transition: {
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 15,
+                        mass: 0.8
+                      }
+                    }}
                   >
-                    <span>
-                      Learn More
-                    </span>
+                    <span>Learn More</span>
+                    <motion.div
+                      animate={{ x: [0, 4, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </motion.div>
                   </motion.div>
                 </div>
 
@@ -681,7 +741,6 @@ const Features = () => {
                     background: "linear-gradient(to bottom right, rgba(124, 124, 243, 0.05), transparent, rgba(16, 185, 129, 0.05))"
                   }}
                   whileHover={{
-                    scale: 1.02,
                     transition: {
                       type: "spring",
                       stiffness: 300,
@@ -793,7 +852,6 @@ const Features = () => {
               transition: "all 0.3s ease"
             }}
             whileHover={{
-              scale: 1.02,
               borderColor: "rgba(124, 124, 243, 0.3)",
               boxShadow: "0 0 20px rgba(124, 124, 243, 0.1)",
               transition: { duration: 0.3 }

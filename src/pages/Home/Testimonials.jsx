@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Quote, Users, Award, TrendingUp, CheckCircle } from 'lucide-react';
 import ScrollReveal from 'scrollreveal';
@@ -13,14 +13,38 @@ const Testimonials = () => {
   const testimonialsRef = useRef(null);
   const ctaRef = useRef(null);
 
+  // Add state for tag rotation and mouse position
+  const [tagRotation, setTagRotation] = useState({ x: 0, y: 0 });
+  const [tagMousePosition, setTagMousePosition] = useState({ x: 0, y: 0 });
+
+  // Add mouse event handlers
+  const handleTagMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setTagMousePosition({ x, y });
+    
+    // Calculate rotation based on mouse position
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+    setTagRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleTagMouseLeave = () => {
+    setTagRotation({ x: 0, y: 0 });
+    setTagMousePosition({ x: 0, y: 0 });
+  };
+
   useEffect(() => {
     const sr = ScrollReveal({
       origin: 'bottom',
-      distance: '40px',
-      duration: 600,
+      distance: '60px',
+      duration: 1200,
       delay: 0,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-      reset: false,
+      reset: true,
       mobile: true,
       viewFactor: 0.2,
       beforeReveal: (el) => {
@@ -31,80 +55,97 @@ const Testimonials = () => {
       beforeReset: (el) => {
         el.style.visibility = 'hidden';
         el.style.opacity = '0';
-        el.style.transform = 'translateY(40px) scale(0.98) rotate(1deg)';
+        el.style.transform = 'translateY(60px) scale(0.95) rotate(2deg)';
       }
     });
 
-    // Header section animations
+    // Enhanced Header section animations with ultra-smooth effects
     sr.reveal(badgeRef.current, {
       delay: 0,
       distance: '30px',
-      duration: 500,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
-      scale: 0.98,
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 5, z: 1 }
+      rotate: { x: 5, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(titleRef.current, {
-      delay: 50,
+      delay: 100,
       distance: '40px',
-      duration: 600,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
-      scale: 0.98,
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 3, y: 1 }
+      rotate: { x: 3, y: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(descriptionRef.current, {
-      delay: 100,
+      delay: 200,
       distance: '35px',
-      duration: 600,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
-      scale: 0.98,
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 2 }
+      rotate: { x: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // Testimonials grid animations
+    // Enhanced Testimonials grid animations with staggered effect
     sr.reveal(testimonialsRef.current, {
       delay: 150,
-      distance: '40px',
-      duration: 600,
-      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'bottom',
-      interval: 50,
-      scale: 0.98,
-      opacity: 0,
-      rotate: { y: 3, z: 1 }
-    });
-
-    // Stats section animations
-    sr.reveal(statsRef.current, {
-      delay: 200,
-      distance: '40px',
-      duration: 600,
+      distance: '50px',
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
       interval: 100,
-      scale: 0.98,
+      scale: 0.95,
       opacity: 0,
-      rotate: { y: 3, z: 1 }
+      rotate: { y: 5, z: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // CTA section animation
+    // Enhanced CTA section animation with ultra-smooth effect
     sr.reveal(ctaRef.current, {
-      delay: 200,
+      delay: 300,
       distance: '40px',
-      duration: 600,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
-      scale: 0.98,
+      scale: 0.95,
       opacity: 0,
-      rotate: { y: 3, z: 1 }
+      rotate: { y: 3, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     return () => {
@@ -183,29 +224,295 @@ const Testimonials = () => {
         <div ref={headerRef} className="text-center mb-16">
           <motion.div
             ref={badgeRef}
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-pro border border-emerald-500/20 mb-8 interactive-element"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-pro border border-blue-500/20 mb-8 interactive-element group relative overflow-hidden"
+            style={{
+              background: "rgba(15, 23, 42, 0.3)",
+              backdropFilter: "blur(10px)",
+              transform: `perspective(1000px) rotateX(${tagRotation.x}deg) rotateY(${tagRotation.y}deg)`,
+              transformStyle: "preserve-3d"
+            }}
+            onMouseMove={handleTagMouseMove}
+            onMouseLeave={handleTagMouseLeave}
             whileHover={{
-              scale: 1.02,
-              borderColor: "rgba(16, 185, 129, 0.4)",
-              boxShadow: "0 0 30px rgba(16, 185, 129, 0.2)",
-              transition: { duration: 0.3 }
+              borderColor: "rgba(124, 124, 243, 0.4)",
+              boxShadow: "0 0 30px rgba(124, 124, 243, 0.2)",
+              background: "rgba(15, 23, 42, 0.4)",
+              transition: { 
+                type: "spring",
+                stiffness: 400,
+                damping: 25,
+                mass: 1
+              }
             }}
           >
-            <Quote className="w-5 h-5 text-emerald-400" />
-            <span className="text-sm font-medium text-slate-300">Success Stories</span>
+            {/* Interactive Border Container */}
+            <div className="absolute inset-0 rounded-full pointer-events-none">
+              {/* Base Border */}
+              <div className="absolute inset-0 rounded-full" />
+              
+              {/* Interactive Border Glow */}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: '1px solid transparent',
+                  background: 'transparent',
+                  maskImage: `
+                    radial-gradient(
+                      200px circle at ${tagMousePosition.x}px ${tagMousePosition.y}px,
+                      black 20%,
+                      transparent 80%
+                    )
+                  `,
+                  WebkitMaskImage: `
+                    radial-gradient(
+                      200px circle at ${tagMousePosition.x}px ${tagMousePosition.y}px,
+                      black 20%,
+                      transparent 80%
+                    )
+                  `,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <div 
+                  className="absolute inset-0 rounded-full border border-blue-400/50"
+                  style={{
+                    boxShadow: '0 0 15px rgba(124, 124, 243, 0.3)',
+                    opacity: 1,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                />
+              </motion.div>
+            </div>
+
+            {/* Enhanced Background Effects */}
+            <motion.div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100"
+              style={{
+                background: `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+              animate={{
+                background: [
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`,
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.2), transparent 70%)`,
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`
+                ]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+
+            {/* Enhanced Neural Network Pattern */}
+            <motion.div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-[0.05]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(124, 124, 243, 0.4) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(124, 124, 243, 0.4) 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px',
+                transform: `translateZ(-1px) rotateX(${tagRotation.x * 0.5}deg) rotateY(${tagRotation.y * 0.5}deg)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+              animate={{
+                backgroundPosition: [
+                  "0px 0px",
+                  "10px 10px",
+                  "0px 0px"
+                ]
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+
+            {/* Enhanced Floating Particles */}
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full opacity-0 group-hover:opacity-100"
+                style={{
+                  width: `${Math.random() * 2 + 1}px`,
+                  height: `${Math.random() * 2 + 1}px`,
+                  background: `rgba(124, 124, 243, ${Math.random() * 0.2 + 0.1})`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  willChange: "transform",
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: `translateZ(${Math.random() * 20}px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`
+                }}
+                animate={{
+                  y: [0, -8, 0],
+                  opacity: [0.1, 0.3, 0.1],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 2 + Math.random(),
+                  repeat: Infinity,
+                  ease: [0.4, 0, 0.2, 1],
+                  delay: i * 0.4,
+                }}
+              />
+            ))}
+
+            {/* Enhanced Content */}
+            <div 
+              className="relative flex items-center gap-3"
+              style={{
+                transform: `translateZ(20px) rotateX(${tagRotation.x * 0.2}deg) rotateY(${tagRotation.y * 0.2}deg)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+            >
+              <motion.div
+                animate={{ 
+                  rotate: [0, 360],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  rotate: { duration: 6, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 1.5, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }
+                }}
+                whileHover={{
+                  rotate: 180,
+                  transition: { 
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 15,
+                    mass: 0.8
+                  }
+                }}
+                style={{
+                  transform: `translateZ(30px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`,
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+                }}
+              >
+                <Quote className="w-5 h-5 text-blue-400" />
+              </motion.div>
+
+              <motion.span 
+                className="text-sm font-medium text-slate-300 group-hover:text-blue-300"
+                style={{
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: `translateZ(25px) rotateX(${tagRotation.x * 0.2}deg) rotateY(${tagRotation.y * 0.2}deg)`
+                }}
+                animate={{
+                  textShadow: [
+                    "0 0 0px rgba(124, 124, 243, 0)",
+                    "0 0 10px rgba(124, 124, 243, 0.3)",
+                    "0 0 0px rgba(124, 124, 243, 0)"
+                  ]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: [0.4, 0, 0.2, 1]
+                }}
+                whileHover={{
+                  textShadow: "0 0 15px rgba(124, 124, 243, 0.5)",
+                  transition: { 
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 15,
+                    mass: 0.8
+                  }
+                }}
+              >
+                Testimonials
+              </motion.span>
+            </div>
+
+            {/* Enhanced Hover Effect Border */}
+            <motion.div
+              className="absolute inset-0 rounded-full border border-blue-400/0"
+              style={{
+                backgroundColor: "rgba(124, 124, 243, 0)",
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: `translateZ(10px) rotateX(${tagRotation.x * 0.1}deg) rotateY(${tagRotation.y * 0.1}deg)`
+              }}
+              whileHover={{
+                backgroundColor: "rgba(124, 124, 243, 0.1)",
+                borderColor: "rgba(124, 124, 243, 0.3)",
+                boxShadow: "0 0 30px rgba(124, 124, 243, 0.3)",
+                scale: 1.05,
+                transition: { 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 1
+                }
+              }}
+            />
+
+            {/* Enhanced Hover Glow Effect */}
+            <motion.div
+              className="absolute inset-0 rounded-full opacity-0"
+              style={{
+                backgroundColor: "rgba(124, 124, 243, 0)",
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: `translateZ(5px) rotateX(${tagRotation.x * 0.05}deg) rotateY(${tagRotation.y * 0.05}deg)`
+              }}
+              whileHover={{
+                opacity: 0.1,
+                backgroundColor: "rgba(124, 124, 243, 0.5)",
+                transition: { 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 1
+                }
+              }}
+            />
           </motion.div>
 
           <h2 ref={titleRef} className="text-4xl lg:text-5xl xl:text-6xl font-bold mb-6">
-            <span className="text-slate-100">Trusted by</span>{" "}
-            <span className="gradient-text">Developers</span>
+            <motion.span 
+              className="relative inline-block text-slate-100"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ scale: 1.02 }}
+              style={{ 
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)'
+              }}
+            >
+              <span className="relative z-10">Success Stories</span>
+            </motion.span>
+
             <br />
-            <span className="text-slate-100">Worldwide</span>
+
+            <motion.span 
+              className="relative inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+              style={{ 
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)'
+              }}
+            >
+              <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-navy-400 via-navy-300 to-navy-400">
+                From Our Students
+              </span>
+            </motion.span>
           </h2>
 
-          <p ref={descriptionRef} className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of developers who have accelerated their careers and 
-            deepened their understanding of algorithms with CodeStream.
-          </p>
+          <motion.p 
+            ref={descriptionRef} 
+            className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            style={{ willChange: 'transform, opacity' }}
+          >
+            Hear from our students who have transformed their careers through our interactive learning platform.
+          </motion.p>
         </div>
 
         {/* Professional Stats */}
@@ -213,12 +520,27 @@ const Testimonials = () => {
           {stats.map((stat, index) => (
             <motion.div
               key={index}
-              whileHover={{ y: -3, scale: 1.01 }}
-              className="text-center p-6 glass-pro rounded-2xl border border-slate-700/50 hover:border-blue-500/30 interactive-card"
+              className="text-center p-6 glass-pro rounded-2xl border border-slate-700/50 hover:border-blue-500/30 interactive-card transition-all duration-300 ease-in-out"
+              style={{
+                background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                backdropFilter: "blur(8px)",
+                WebkitBackdropFilter: "blur(8px)",
+                border: "1px solid rgba(255, 255, 255, 0.05)",
+                boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                transition: "all 0.3s ease-in-out"
+              }}
             >
               <motion.div
                 whileHover={{ rotate: 3, scale: 1.05 }}
-                className={`w-14 h-14 mx-auto mb-4 bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-3 ${stat.color} shadow-soft`}
+                className={`w-14 h-14 mx-auto mb-4 rounded-2xl p-3 ${stat.color} shadow-soft`}
+                style={{
+                  background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                  transition: "all 0.3s ease-in-out"
+                }}
               >
                 <stat.icon className="w-full h-full" />
               </motion.div>
@@ -229,44 +551,67 @@ const Testimonials = () => {
         </div>
 
         {/* Professional Testimonials Grid */}
-        <div ref={testimonialsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div ref={testimonialsRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              whileHover={{ y: -4 }}
-              className="group relative h-full"
+              className="relative h-full"
             >
               {/* Professional Testimonial Card */}
-              <div className="relative h-full p-8 glass-pro rounded-2xl border border-slate-700/50 hover:border-blue-500/30 interactive-card overflow-hidden">
-                
+              <div 
+                className="relative h-full p-8 glass-pro rounded-2xl border border-slate-700/50 interactive-card overflow-hidden transition-all duration-300 ease-in-out"
+                style={{
+                  background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                  transition: "all 0.3s ease-in-out"
+                }}
+              >
                 {/* Professional Quote Icon */}
-                <motion.div
-                  className="absolute top-6 right-6 w-8 h-8 bg-gradient-to-br from-blue-500/20 to-emerald-500/20 rounded-full flex items-center justify-center"
-                  whileHover={{ rotate: 10, scale: 1.1 }}
+                <div
+                  className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2))",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                    transition: "all 0.3s ease-in-out"
+                  }}
                 >
-                  <Quote className="w-4 h-4 text-blue-400" />
-                </motion.div>
+                  <Quote className="w-5 h-5 text-blue-400" />
+                </div>
 
                 <div className="space-y-6">
                   {/* Professional Rating */}
-                  <div className="flex gap-1">
+                  <div className="flex gap-1.5">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <motion.div
+                      <div
                         key={i}
-                        whileHover={{ scale: 1.2 }}
+                        className="transform transition-transform duration-200"
                       >
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      </motion.div>
+                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                      </div>
                     ))}
                   </div>
 
                   {/* Testimonial Content */}
-                  <p className="text-slate-300 leading-relaxed">
+                  <p className="text-slate-300 leading-relaxed text-lg font-medium">
                     "{testimonial.content}"
                   </p>
 
                   {/* Professional Impact Badge */}
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500/10 to-blue-500/10 rounded-full border border-emerald-500/20">
+                  <div 
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/20"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1))",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      transition: "all 0.3s ease-in-out"
+                    }}
+                  >
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <span className="text-sm font-medium text-emerald-400">
                       {testimonial.impact}
@@ -274,35 +619,28 @@ const Testimonials = () => {
                   </div>
 
                   {/* Professional Profile */}
-                  <div className="flex items-center gap-4 pt-4 border-t border-slate-700/50">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      className="relative"
-                    >
+                  <div className="flex items-center gap-4 pt-6 border-t border-slate-700/50">
+                    <div className="relative">
                       <img
                         src={testimonial.avatar}
                         alt={testimonial.name}
-                        className="w-14 h-14 rounded-full object-cover border-2 border-blue-500/30 interactive-element"
+                        className="w-16 h-16 rounded-full object-cover border-2 border-blue-500/30"
                       />
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </motion.div>
+                    </div>
                     
-                    <div className="flex-1">
-                      <div className="font-semibold text-slate-100">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-slate-100 text-lg mb-1">
                         {testimonial.name}
                       </div>
-                      <div className="text-sm text-slate-400">
+                      <div className="text-sm text-slate-400 mb-1">
                         {testimonial.role}
                       </div>
-                      <div className="text-xs text-blue-400 font-medium">
+                      <div className="text-sm text-blue-400 font-medium truncate">
                         {testimonial.company}
                       </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Professional Hover Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
               </div>
             </motion.div>
           ))}
@@ -314,6 +652,14 @@ const Testimonials = () => {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             className="btn-primary px-8 py-4 rounded-xl font-semibold interactive-element"
+            style={{
+              background: "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              border: "1px solid rgba(59, 130, 246, 0.3)",
+              boxShadow: "0 0 20px rgba(59, 130, 246, 0.1)",
+              transition: "all 0.3s ease-in-out"
+            }}
           >
             Join the CodeStream Community
           </motion.button>

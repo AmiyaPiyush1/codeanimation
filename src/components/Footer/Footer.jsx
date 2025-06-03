@@ -67,7 +67,7 @@ const Footer = () => {
 
   const buttonVariants = {
     hover: {
-      scale: 1.05,
+      scale: 1.02,
       transition: {
         type: "spring",
         stiffness: 400,
@@ -236,11 +236,11 @@ const Footer = () => {
                     key={index}
                     href={social.href}
                     aria-label={social.label}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    whileTap={{ scale: 0.9 }}
-                    className={`w-10 h-10 ${social.color} glass-pro border border-slate-700 hover:border-blue-500/50 rounded-xl flex items-center justify-center transition-all duration-300 interactive-element group`}
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={`w-10 h-10 ${social.color} glass-pro border border-slate-700 hover:border-blue-500/50 rounded-xl flex items-center justify-center transition-all duration-200 interactive-element group`}
                   >
-                    <social.icon className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
+                    <social.icon className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" />
                   </motion.a>
                 ))}
               </motion.div>
@@ -278,7 +278,6 @@ const Footer = () => {
                         repeatType: "reverse"
                       }}
                     >
-                      <Sparkles className="w-4 h-4 text-blue-400" />
                     </motion.div>
                   </motion.h3>
                   <ul className="space-y-4">
@@ -293,25 +292,28 @@ const Footer = () => {
                           <Link to={link.href}>
                             <motion.span
                               whileHover={{ 
-                                x: 4, 
+                                x: 1, 
                                 color: "#3B82F6",
-                                scale: 1.02
+                                scale: 1.005
                               }}
-                              className="flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-all duration-300 text-sm interactive-element group"
+                              transition={{ duration: 0.15 }}
+                              className="flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-colors duration-150 text-sm interactive-element group"
                             >
                               <span>{link.name}</span>
                               {link.isNew && (
                                 <motion.span 
                                   className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full border border-emerald-500/30"
-                                  whileHover={{ scale: 1.1 }}
+                                  whileHover={{ scale: 1.05 }}
+                                  transition={{ duration: 0.15 }}
                                 >
                                   New
                                 </motion.span>
                               )}
                               <motion.div
-                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                initial={{ x: -10 }}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                                initial={{ x: -5 }}
                                 animate={{ x: 0 }}
+                                transition={{ duration: 0.15 }}
                               >
                                 <ArrowRight className="w-4 h-4" />
                               </motion.div>
@@ -321,25 +323,28 @@ const Footer = () => {
                           <motion.a
                             href={link.href}
                             whileHover={{ 
-                              x: 4, 
+                              x: 1, 
                               color: "#3B82F6",
-                              scale: 1.02
+                              scale: 1.005
                             }}
-                            className="flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-all duration-300 text-sm interactive-element group"
+                            transition={{ duration: 0.15 }}
+                            className="flex items-center gap-2 text-slate-400 hover:text-blue-400 transition-colors duration-150 text-sm interactive-element group"
                           >
                             <span>{link.name}</span>
                             {link.isNew && (
                               <motion.span 
                                 className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full border border-emerald-500/30"
-                                whileHover={{ scale: 1.1 }}
+                                whileHover={{ scale: 1.05 }}
+                                transition={{ duration: 0.15 }}
                               >
                                 New
                               </motion.span>
                             )}
                             <motion.div
-                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                              initial={{ x: -10 }}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                              initial={{ x: -5 }}
                               animate={{ x: 0 }}
+                              transition={{ duration: 0.15 }}
                             >
                               <ExternalLink className="w-4 h-4" />
                             </motion.div>
@@ -543,28 +548,28 @@ const Footer = () => {
 
       {/* Optimized Back to Top Button */}
       <motion.button
-        initial={{ opacity: 0, scale: 0.8 }} // Changed from 0.5
+        initial={{ opacity: 0, scale: 0.9 }}
         whileInView={{ opacity: 1, scale: 1 }}
         whileHover={{ 
-          scale: 1.05, // Reduced from 1.1
-          y: -3,      // Reduced from -5
-          boxShadow: "0 0 15px rgba(59, 130, 246, 0.2)" // Reduced shadow
+          scale: 1.02,
+          y: -2,
+          boxShadow: "0 0 15px rgba(59, 130, 246, 0.2)"
         }}
         whileTap={{ scale: 0.95 }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 p-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-full text-white shadow-lg hover:shadow-blue-500/30 transition-all duration-300 z-50" // Reduced padding and shadow
+        className="fixed bottom-6 right-6 p-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-full text-white shadow-lg hover:shadow-blue-500/30 transition-all duration-200 z-50"
       >
         <motion.div
           animate={{
-            y: [0, -2, 0] // Reduced movement
+            y: [0, -1, 0]
           }}
           transition={{
-            duration: 2, // Increased duration
+            duration: 1.5,
             repeat: Infinity,
             repeatType: "reverse"
           }}
         >
-          <ChevronUp className="w-5 h-5" /> {/* Reduced size */}
+          <ChevronUp className="w-5 h-5" />
         </motion.div>
       </motion.button>
     </footer>

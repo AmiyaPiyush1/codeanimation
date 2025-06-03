@@ -43,6 +43,30 @@ const InteractiveDemo = () => {
   const [heapStructure, setHeapStructure] = useState([]);
   const [bfsQueue, setBfsQueue] = useState([]);
 
+  // Add state for tag rotation and mouse position
+  const [tagRotation, setTagRotation] = useState({ x: 0, y: 0 });
+  const [tagMousePosition, setTagMousePosition] = useState({ x: 0, y: 0 });
+
+  // Add mouse event handlers
+  const handleTagMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setTagMousePosition({ x, y });
+    
+    // Calculate rotation based on mouse position
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = (y - centerY) / 20;
+    const rotateY = (centerX - x) / 20;
+    setTagRotation({ x: rotateX, y: rotateY });
+  };
+
+  const handleTagMouseLeave = () => {
+    setTagRotation({ x: 0, y: 0 });
+    setTagMousePosition({ x: 0, y: 0 });
+  };
+
   const algorithms = [
     { id: 'bubbleSort', name: 'Bubble Sort', complexity: 'O(n²)' },
     { id: 'quickSort', name: 'Quick Sort', complexity: 'O(n log n)' },
@@ -221,50 +245,17 @@ const InteractiveDemo = () => {
     ]
   };
 
-  const features = [
-    {
-      icon: Code2,
-      title: "Multiple Algorithms",
-      description: "Visualize sorting, searching, graph traversal, and more with our comprehensive algorithm library."
-    },
-    {
-      icon: Brain,
-      title: "AI-Powered Insights",
-      description: "Get real-time explanations and optimization suggestions as you explore different algorithms."
-    },
-    {
-      icon: Eye,
-      title: "Step-by-Step Visualization",
-      description: "Watch algorithms in action with detailed step-by-step visualizations and variable tracking."
-    },
-    {
-      icon: Zap,
-      title: "Performance Metrics",
-      description: "Track time complexity, space usage, and other performance metrics in real-time."
-    },
-    {
-      icon: Share2,
-      title: "Interactive Learning",
-      description: "Modify parameters and see how they affect algorithm behavior in real-time."
-    },
-    {
-      icon: BookOpen,
-      title: "Educational Resources",
-      description: "Access detailed explanations, use cases, and best practices for each algorithm."
-    }
-  ];
-
   // Configure ScrollReveal animations
   useEffect(() => {
     const sr = ScrollReveal({
       origin: 'bottom',
       distance: '60px',
-      duration: 800,
+      duration: 1200,
       delay: 0,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
       reset: true,
       mobile: true,
-      viewFactor: 0.1,
+      viewFactor: 0.2,
       beforeReveal: (el) => {
         el.style.visibility = 'visible';
         el.style.opacity = '1';
@@ -277,75 +268,92 @@ const InteractiveDemo = () => {
       }
     });
 
-    // Header section animations with enhanced effects
+    // Enhanced Header section animations with ultra-smooth effects
     sr.reveal(badgeRef.current, {
       delay: 0,
       distance: '30px',
-      duration: 600,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
-      scale: 0.9,
+      scale: 0.95,
       opacity: 0,
-      rotate: { x: 10, z: 2 }
+      rotate: { x: 5, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(titleRef.current, {
-      delay: 50,
+      delay: 100,
       distance: '40px',
-      duration: 700,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
       scale: 0.95,
       opacity: 0,
-      rotate: { x: 5, y: 2 }
+      rotate: { x: 3, y: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     sr.reveal(descriptionRef.current, {
-      delay: 100,
+      delay: 200,
       distance: '35px',
-      duration: 600,
+      duration: 1000,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'top',
       scale: 0.95,
       opacity: 0,
-      rotate: { x: 3 }
+      rotate: { x: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // Demo section animations with enhanced effects
+    // Enhanced Demo section animations with staggered effect
     sr.reveal(demoRef.current, {
       delay: 150,
       distance: '50px',
-      duration: 800,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
       scale: 0.95,
       opacity: 0,
-      rotate: { y: 5, z: 2 }
+      rotate: { y: 5, z: 2 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
-    // Controls section animations with enhanced effects
-    sr.reveal(controlsRef.current, {
-      delay: 200,
+    // Enhanced CTA section animation with ultra-smooth effect
+    sr.reveal(ctaRef.current, {
+      delay: 300,
       distance: '40px',
-      duration: 700,
+      duration: 1200,
       easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
       origin: 'bottom',
       scale: 0.95,
       opacity: 0,
-      rotate: { y: 5, x: 2 }
-    });
-
-    // Features section animations with enhanced effects
-    sr.reveal(featuresRef.current, {
-      delay: 250,
-      distance: '40px',
-      duration: 700,
-      easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-      origin: 'bottom',
-      interval: 50,
-      scale: 0.95,
-      opacity: 0,
-      rotate: { y: 5, z: 2 }
+      rotate: { y: 3, z: 1 },
+      reset: true,
+      beforeReveal: (el) => {
+        el.style.transform = 'translateY(0) scale(1) rotate(0)';
+        el.style.opacity = '1';
+        el.style.transition = 'all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      }
     });
 
     return () => {
@@ -787,28 +795,295 @@ const InteractiveDemo = () => {
         <div ref={headerRef} className="text-center mb-16">
           <motion.div
             ref={badgeRef}
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-pro border border-emerald-500/20 mb-8 interactive-element"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full glass-pro border border-blue-500/20 mb-8 interactive-element group relative overflow-hidden"
+            style={{
+              background: "rgba(15, 23, 42, 0.3)",
+              backdropFilter: "blur(10px)",
+              transform: `perspective(1000px) rotateX(${tagRotation.x}deg) rotateY(${tagRotation.y}deg)`,
+              transformStyle: "preserve-3d"
+            }}
+            onMouseMove={handleTagMouseMove}
+            onMouseLeave={handleTagMouseLeave}
             whileHover={{
-              scale: 1.02,
-              borderColor: "rgba(16, 185, 129, 0.4)",
-              boxShadow: "0 0 30px rgba(16, 185, 129, 0.2)",
-              transition: { duration: 0.3 }
+              borderColor: "rgba(124, 124, 243, 0.4)",
+              boxShadow: "0 0 30px rgba(124, 124, 243, 0.2)",
+              background: "rgba(15, 23, 42, 0.4)",
+              transition: { 
+                type: "spring",
+                stiffness: 400,
+                damping: 25,
+                mass: 1
+              }
             }}
           >
-            <Monitor className="w-5 h-5 text-emerald-400" />
-            <span className="text-sm font-medium text-slate-300">Interactive Experience</span>
+            {/* Interactive Border Container */}
+            <div className="absolute inset-0 rounded-full pointer-events-none">
+              {/* Base Border */}
+              <div className="absolute inset-0 rounded-full" />
+              
+              {/* Interactive Border Glow */}
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  border: '1px solid transparent',
+                  background: 'transparent',
+                  maskImage: `
+                    radial-gradient(
+                      200px circle at ${tagMousePosition.x}px ${tagMousePosition.y}px,
+                      black 20%,
+                      transparent 80%
+                    )
+                  `,
+                  WebkitMaskImage: `
+                    radial-gradient(
+                      200px circle at ${tagMousePosition.x}px ${tagMousePosition.y}px,
+                      black 20%,
+                      transparent 80%
+                    )
+                  `,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+              >
+                <div 
+                  className="absolute inset-0 rounded-full border border-blue-400/50"
+                  style={{
+                    boxShadow: '0 0 15px rgba(124, 124, 243, 0.3)',
+                    opacity: 1,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                />
+              </motion.div>
+            </div>
+
+            {/* Enhanced Background Effects */}
+            <motion.div
+              className="absolute inset-0 opacity-0 group-hover:opacity-100"
+              style={{
+                background: `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+              animate={{
+                background: [
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`,
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.2), transparent 70%)`,
+                  `radial-gradient(circle at ${tagMousePosition.x}px ${tagMousePosition.y}px, rgba(124, 124, 243, 0.15), transparent 70%)`
+                ]
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+
+            {/* Enhanced Neural Network Pattern */}
+            <motion.div 
+              className="absolute inset-0 opacity-0 group-hover:opacity-[0.05]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(124, 124, 243, 0.4) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(124, 124, 243, 0.4) 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px',
+                transform: `translateZ(-1px) rotateX(${tagRotation.x * 0.5}deg) rotateY(${tagRotation.y * 0.5}deg)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+              animate={{
+                backgroundPosition: [
+                  "0px 0px",
+                  "10px 10px",
+                  "0px 0px"
+                ]
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+
+            {/* Enhanced Floating Particles */}
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute rounded-full opacity-0 group-hover:opacity-100"
+                style={{
+                  width: `${Math.random() * 2 + 1}px`,
+                  height: `${Math.random() * 2 + 1}px`,
+                  background: `rgba(124, 124, 243, ${Math.random() * 0.2 + 0.1})`,
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  willChange: "transform",
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: `translateZ(${Math.random() * 20}px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`
+                }}
+                animate={{
+                  y: [0, -8, 0],
+                  opacity: [0.1, 0.3, 0.1],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 2 + Math.random(),
+                  repeat: Infinity,
+                  ease: [0.4, 0, 0.2, 1],
+                  delay: i * 0.4,
+                }}
+              />
+            ))}
+
+            {/* Enhanced Content */}
+            <div 
+              className="relative flex items-center gap-3"
+              style={{
+                transform: `translateZ(20px) rotateX(${tagRotation.x * 0.2}deg) rotateY(${tagRotation.y * 0.2}deg)`,
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+              }}
+            >
+              <motion.div
+                animate={{ 
+                  rotate: [0, 360],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{ 
+                  rotate: { duration: 6, repeat: Infinity, ease: "linear" },
+                  scale: { duration: 1.5, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }
+                }}
+                whileHover={{
+                  rotate: 180,
+                  transition: { 
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 15,
+                    mass: 0.8
+                  }
+                }}
+                style={{
+                  transform: `translateZ(30px) rotateX(${tagRotation.x * 0.3}deg) rotateY(${tagRotation.y * 0.3}deg)`,
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)"
+                }}
+              >
+                <Code className="w-5 h-5 text-blue-400" />
+              </motion.div>
+
+              <motion.span 
+                className="text-sm font-medium text-slate-300 group-hover:text-blue-300"
+                style={{
+                  transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                  transform: `translateZ(25px) rotateX(${tagRotation.x * 0.2}deg) rotateY(${tagRotation.y * 0.2}deg)`
+                }}
+                animate={{
+                  textShadow: [
+                    "0 0 0px rgba(124, 124, 243, 0)",
+                    "0 0 10px rgba(124, 124, 243, 0.3)",
+                    "0 0 0px rgba(124, 124, 243, 0)"
+                  ]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: [0.4, 0, 0.2, 1]
+                }}
+                whileHover={{
+                  textShadow: "0 0 15px rgba(124, 124, 243, 0.5)",
+                  transition: { 
+                    type: "spring",
+                    stiffness: 400,
+                    damping: 15,
+                    mass: 0.8
+                  }
+                }}
+              >
+                Interactive Demo
+              </motion.span>
+            </div>
+
+            {/* Enhanced Hover Effect Border */}
+            <motion.div
+              className="absolute inset-0 rounded-full border border-blue-400/0"
+              style={{
+                backgroundColor: "rgba(124, 124, 243, 0)",
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: `translateZ(10px) rotateX(${tagRotation.x * 0.1}deg) rotateY(${tagRotation.y * 0.1}deg)`
+              }}
+              whileHover={{
+                backgroundColor: "rgba(124, 124, 243, 0.1)",
+                borderColor: "rgba(124, 124, 243, 0.3)",
+                boxShadow: "0 0 30px rgba(124, 124, 243, 0.3)",
+                scale: 1.05,
+                transition: { 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 1
+                }
+              }}
+            />
+
+            {/* Enhanced Hover Glow Effect */}
+            <motion.div
+              className="absolute inset-0 rounded-full opacity-0"
+              style={{
+                backgroundColor: "rgba(124, 124, 243, 0)",
+                transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: `translateZ(5px) rotateX(${tagRotation.x * 0.05}deg) rotateY(${tagRotation.y * 0.05}deg)`
+              }}
+              whileHover={{
+                opacity: 0.1,
+                backgroundColor: "rgba(124, 124, 243, 0.5)",
+                transition: { 
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 25,
+                  mass: 1
+                }
+              }}
+            />
           </motion.div>
 
           <h2 ref={titleRef} className="text-4xl lg:text-5xl xl:text-6xl font-bold mb-6">
-            <span className="text-slate-100">Try</span>{" "}
-            <span className="gradient-text">CodeStream</span>{" "}
-            <span className="text-slate-100">Live</span>
+            <motion.span 
+              className="relative inline-block text-slate-100"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ scale: 1.02 }}
+              style={{ 
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)'
+              }}
+            >
+              <span className="relative z-10">Try It</span>
+            </motion.span>
+
+            <br />
+
+            <motion.span 
+              className="relative inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+              style={{ 
+                willChange: 'transform, opacity',
+                transform: 'translateZ(0)'
+              }}
+            >
+              <span className="relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-navy-400 via-navy-300 to-navy-400">
+                Interactive Demo
+              </span>
+            </motion.span>
           </h2>
 
-          <p ref={descriptionRef} className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
-            Experience the power of visual learning. Watch algorithms come to life 
-            with real-time step-by-step execution and interactive controls.
-          </p>
+          <motion.p 
+            ref={descriptionRef} 
+            className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            style={{ willChange: 'transform, opacity' }}
+          >
+            Experience our interactive learning platform firsthand. Try our demo and see how we make learning to code engaging and effective.
+          </motion.p>
         </div>
 
         {/* Demo Interface */}
@@ -816,6 +1091,14 @@ const InteractiveDemo = () => {
           <motion.div
             whileHover={{ y: -3 }}
             className="code-block rounded-3xl overflow-hidden interactive-card"
+            style={{
+              background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+              backdropFilter: "blur(8px)",
+              WebkitBackdropFilter: "blur(8px)",
+              border: "1px solid rgba(255, 255, 255, 0.05)",
+              boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+              transition: "all 0.3s ease-in-out"
+            }}
           >
             {/* Professional Header */}
             <div className="flex items-center justify-between p-6 border-b border-slate-700/50 bg-slate-900/50">
@@ -832,7 +1115,13 @@ const InteractiveDemo = () => {
                 <select 
                   value={selectedAlgorithm}
                   onChange={handleAlgorithmChange}
-                  className="bg-slate-800 border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-slate-300 focus:border-blue-500 focus:outline-none interactive-element"
+                  className="bg-slate-800/50 border border-blue-500/30 rounded-lg px-3 py-2 text-sm text-slate-300 focus:border-blue-500 focus:outline-none interactive-element backdrop-blur-sm"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    transition: "all 0.3s ease-in-out"
+                  }}
                 >
                   {algorithms.map((algo) => (
                     <option key={algo.id} value={algo.id} className="bg-slate-800">
@@ -845,6 +1134,12 @@ const InteractiveDemo = () => {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="p-2 glass-pro border border-blue-500/30 rounded-lg hover:border-blue-500 transition-all duration-300 interactive-element"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    transition: "all 0.3s ease-in-out"
+                  }}
                 >
                   <Settings className="w-4 h-4 text-blue-400" />
                 </motion.button>
@@ -859,7 +1154,16 @@ const InteractiveDemo = () => {
                   <span className="font-semibold text-slate-300">Algorithm Implementation</span>
                 </div>
                 
-                <div className="code-block p-4 bg-slate-900/70">
+                <div className="code-block p-4 bg-slate-900/70 rounded-xl"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                    transition: "all 0.3s ease-in-out"
+                  }}
+                >
                   <div className="font-code text-sm space-y-2">
                     {algorithmCode[selectedAlgorithm].map((line, index) => (
                       <motion.div
@@ -887,6 +1191,14 @@ const InteractiveDemo = () => {
                     whileTap={{ scale: 0.98 }}
                     onClick={handlePlayPause}
                     className="flex items-center gap-2 btn-primary px-6 py-3 rounded-lg font-medium interactive-element"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      border: "1px solid rgba(59, 130, 246, 0.3)",
+                      boxShadow: "0 0 20px rgba(59, 130, 246, 0.1)",
+                      transition: "all 0.3s ease-in-out"
+                    }}
                   >
                     {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                     {isPlaying ? 'Pause' : 'Execute'}
@@ -897,6 +1209,12 @@ const InteractiveDemo = () => {
                     whileTap={{ scale: 0.98 }}
                     onClick={resetDemo}
                     className="p-3 glass-pro border border-slate-600 rounded-lg hover:border-slate-500 transition-all duration-300 interactive-element"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      transition: "all 0.3s ease-in-out"
+                    }}
                   >
                     <RotateCcw className="w-4 h-4 text-slate-400" />
                   </motion.button>
@@ -915,9 +1233,18 @@ const InteractiveDemo = () => {
                   <span className="font-semibold text-slate-300">Live Visualization</span>
                 </div>
 
+                {/* Update the visualization containers with glass effect */}
+                <div className="code-block p-6 bg-slate-900/70 mb-6 rounded-xl"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                    backdropFilter: "blur(8px)",
+                    WebkitBackdropFilter: "blur(8px)",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                    transition: "all 0.3s ease-in-out"
+                  }}
+                >
                 {selectedAlgorithm === 'dfsTraversal' || selectedAlgorithm === 'bfsTraversal' ? (
-                  <div className="code-block p-6 bg-slate-900/70 mb-6">
-                    <div className="text-xs text-slate-500 mb-4 text-center">Graph Visualization</div>
                     <div className="relative h-64 flex items-center justify-center">
                       {/* Draw edges */}
                       {graphEdges.map((edge, index) => {
@@ -985,11 +1312,8 @@ const InteractiveDemo = () => {
                           ))}
                         </div>
                       )}
-                    </div>
                   </div>
                 ) : selectedAlgorithm === 'mergeSort' ? (
-                  <div className="code-block p-6 bg-slate-900/70 mb-6">
-                    <div className="text-xs text-slate-500 mb-4 text-center">Merge Sort Visualization</div>
                     <div className="space-y-6">
                       {/* Original Array */}
                       <div>
@@ -1109,13 +1433,10 @@ const InteractiveDemo = () => {
                           {currentStep === 2 && "Sorting: Recursively sorting the left subarray"}
                           {currentStep === 3 && "Sorting: Recursively sorting the right subarray"}
                           {currentStep === 4 && "Merging: Combining sorted subarrays in order"}
-                        </div>
                       </div>
                     </div>
                   </div>
                 ) : selectedAlgorithm === 'heapSort' ? (
-                  <div className="code-block p-6 bg-slate-900/70 mb-6">
-                    <div className="text-xs text-slate-500 mb-4 text-center">Heap Sort Visualization</div>
                     <div className="flex flex-col items-center">
                       {/* Heap Structure */}
                       <div className="relative w-full h-48">
@@ -1222,7 +1543,6 @@ const InteractiveDemo = () => {
                             </motion.div>
                           );
                         })}
-                      </div>
                     </div>
                   </div>
                 ) : (
@@ -1272,6 +1592,7 @@ const InteractiveDemo = () => {
                     </div>
                   </>
                 )}
+                </div>
 
                 {/* Step Information */}
                 <div className="space-y-4">
@@ -1286,6 +1607,14 @@ const InteractiveDemo = () => {
                   
                   <motion.div
                     className="glass-pro p-4 rounded-xl border border-slate-700/50"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(15, 23, 42, 0.4), rgba(30, 41, 59, 0.4))",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      boxShadow: "0 0 20px rgba(0, 0, 0, 0.1), inset 0 0 10px rgba(255, 255, 255, 0.05)",
+                      transition: "all 0.3s ease-in-out"
+                    }}
                     animate={{
                       borderColor: activeOperation ? 'rgba(16, 185, 129, 0.3)' : 'rgba(148, 163, 184, 0.1)'
                     }}
@@ -1332,7 +1661,7 @@ const InteractiveDemo = () => {
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                  <div className="w-full bg-slate-800/50 rounded-full h-2 overflow-hidden backdrop-blur-sm">
                     <motion.div
                       className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 rounded-full"
                       style={{ width: `${((currentStep + 1) / demoSteps[selectedAlgorithm].length) * 100}%` }}
@@ -1343,47 +1672,6 @@ const InteractiveDemo = () => {
               </div>
             </div>
           </motion.div>
-        </div>
-
-        {/* Features Grid */}
-        <div ref={featuresRef} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              className="group relative"
-              whileHover={{ y: -3 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Feature Card */}
-              <motion.div
-                className="relative p-6 glass-pro rounded-xl border border-slate-700/50 hover:border-blue-500/30 interactive-card"
-                whileHover={{
-                  boxShadow: "0 0 30px rgba(124, 124, 243, 0.1)",
-                  borderColor: "rgba(124, 124, 243, 0.3)",
-                  transition: { duration: 0.3 }
-                }}
-              >
-                {/* Feature content */}
-                <div className="flex items-start gap-4">
-                  <motion.div
-                    whileHover={{ scale: 1.03, rotate: 3 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 p-3 shadow-blue-glow"
-                  >
-                    <feature.icon className="w-full h-full text-white" />
-                  </motion.div>
-                  <div className="flex-1 space-y-3">
-                    <h3 className="text-xl font-semibold text-slate-100 group-hover:text-blue-300 transition-colors duration-300">
-                      {feature.title}
-                    </h3>
-                    <p className="text-slate-400 leading-relaxed">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          ))}
         </div>
 
         {/* Bottom CTA */}

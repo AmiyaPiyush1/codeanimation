@@ -7,13 +7,101 @@
   --background: #0f172a;
 }
 
-html {
-  background-color: var(--background);
-  scroll-behavior: smooth;
-  scroll-padding-top: 80px; /* Adjust based on your navbar height */
+/* Modern Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 4px;
+  margin: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, 
+    rgba(59, 130, 246, 0.2),
+    rgba(59, 130, 246, 0.3)
+  );
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, 
+    rgba(59, 130, 246, 0.3),
+    rgba(59, 130, 246, 0.4)
+  );
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Firefox Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.2) rgba(15, 23, 42, 0.05);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera when not hovering */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom scrollbar for specific containers */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(59, 130, 246, 0.2) rgba(15, 23, 42, 0.05);
+  overflow: overlay;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 3px;
+  margin: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, 
+    rgba(59, 130, 246, 0.2),
+    rgba(59, 130, 246, 0.3)
+  );
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, 
+    rgba(59, 130, 246, 0.3),
+    rgba(59, 130, 246, 0.4)
+  );
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Smooth scrolling for the entire page */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  background-color: var(--background);
+}
+
+/* Optimize scrolling performance */
 body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
   margin: 0;
   min-height: 100vh;
   background-color: var(--background);
@@ -57,4 +145,28 @@ code {
 
 .monaco-editor .current-line {
   border-color: transparent !important;
+}
+
+/* Add subtle scrollbar animation */
+@keyframes scrollbarFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+::-webkit-scrollbar-thumb {
+  animation: scrollbarFade 0.3s ease-in-out;
+}
+
+/* Add hover effect for scrollbar track */
+::-webkit-scrollbar-track:hover {
+  background: rgba(15, 23, 42, 0.08);
+}
+
+/* Add active state for scrollbar thumb */
+::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(to bottom, 
+    rgba(59, 130, 246, 0.4),
+    rgba(59, 130, 246, 0.5)
+  );
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
