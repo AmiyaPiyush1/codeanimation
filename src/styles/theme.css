@@ -1,0 +1,112 @@
+:root {
+  /* Default theme colors */
+  --color-primary: #3b82f6;
+  --color-secondary: #10b981;
+  --color-accent: #8b5cf6;
+  --color-background: #0f172a;
+  --color-text: #f8fafc;
+  --font-size-base: 16px;
+}
+
+/* Apply theme variables to the entire app */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+}
+
+/* Theme utility classes */
+.bg-primary {
+  background-color: var(--color-primary) !important;
+}
+
+.text-primary {
+  color: var(--color-primary) !important;
+}
+
+.border-primary {
+  border-color: var(--color-primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary) !important;
+}
+
+.text-secondary {
+  color: var(--color-secondary) !important;
+}
+
+.border-secondary {
+  border-color: var(--color-secondary) !important;
+}
+
+.bg-accent {
+  background-color: var(--color-accent) !important;
+}
+
+.text-accent {
+  color: var(--color-accent) !important;
+}
+
+.border-accent {
+  border-color: var(--color-accent) !important;
+}
+
+/* Interactive states */
+.hover\:bg-primary:hover {
+  background-color: var(--color-primary) !important;
+}
+
+.hover\:text-primary:hover {
+  color: var(--color-primary) !important;
+}
+
+.hover\:border-primary:hover {
+  border-color: var(--color-primary) !important;
+}
+
+/* Focus states */
+.focus\:border-primary:focus {
+  border-color: var(--color-primary) !important;
+}
+
+.focus\:ring-primary:focus {
+  --tw-ring-color: var(--color-primary) !important;
+}
+
+/* Active states */
+.active\:bg-primary:active {
+  background-color: var(--color-primary) !important;
+}
+
+/* Gradients */
+.bg-gradient-primary {
+  background-image: linear-gradient(to right, var(--color-primary), var(--color-secondary)) !important;
+}
+
+.bg-gradient-accent {
+  background-image: linear-gradient(to right, var(--color-accent), var(--color-primary)) !important;
+}
+
+/* Font sizes */
+.text-sm {
+  font-size: calc(var(--font-size-base) * 0.875) !important;
+}
+
+.text-base {
+  font-size: var(--font-size-base) !important;
+}
+
+.text-lg {
+  font-size: calc(var(--font-size-base) * 1.125) !important;
+}
+
+.text-xl {
+  font-size: calc(var(--font-size-base) * 1.25) !important;
+}
+
+/* Code editor theme */
+.monaco-editor {
+  --vscode-editor-background: var(--color-background) !important;
+  --vscode-editor-foreground: var(--color-text) !important;
+} 

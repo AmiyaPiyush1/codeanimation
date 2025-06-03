@@ -1,0 +1,137 @@
+.error-boundary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.error-boundary-content {
+  max-width: 800px;
+  width: 100%;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-boundary h2 {
+  color: #dc3545;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.error-message {
+  margin-bottom: 2rem;
+}
+
+.error-message p {
+  color: #6c757d;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.error-details {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+.error-type {
+  color: #dc3545;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.error-stack {
+  margin-top: 1rem;
+}
+
+.error-stack pre {
+  background-color: #2d2d2d;
+  color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.component-stack {
+  margin-top: 1rem;
+}
+
+.component-stack h4 {
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.error-actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.reload-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.reload-button:hover {
+  background-color: #0056b3;
+}
+
+.details-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.details-button:hover {
+  background-color: #545b62;
+}
+
+.copy-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.copy-button:hover {
+  background-color: #218838;
+}
+
+.support-message {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .error-boundary {
+    padding: 1rem;
+  }
+  
+  .error-boundary-content {
+    padding: 1.5rem;
+  }
+  
+  .error-actions {
+    flex-direction: column;
+  }
+  
+  .error-actions button {
+    width: 100%;
+  }
+} 

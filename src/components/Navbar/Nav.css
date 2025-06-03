@@ -1,0 +1,289 @@
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: transparent;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Logo Section */
+.logo-section {
+    flex: 1.2;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: clamp(1.5rem, 2vw, 2rem);
+    margin-left: 0.5rem;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.3rem, 0.5vw, 0.5rem);
+    text-decoration: none;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.logo span {
+    font-size: clamp(1rem, 1.2vw, 1.2rem);
+    font-weight: 600;
+    color: #ffffff;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.logo img {
+    width: clamp(1.2rem, 1.5vw, 1.5rem);
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Main Navigation Links */
+.main-nav-links {
+    flex: 1.6;
+    display: flex;
+    justify-content: center;
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.main-nav-links a {
+    position: relative;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0 clamp(0.4rem, 0.7vw, 0.7rem);
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.15rem, 0.25vw, 0.25rem);
+    white-space: nowrap;
+    will-change: transform, color;
+    transform: translateZ(0);
+}
+
+/* Auth Links */
+.auth-links {
+    flex: 1.2;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: clamp(1.5rem, 2vw, 2rem);
+    gap: 1rem;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.auth-links .flex {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Auth Buttons Container */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    padding: 0.2rem;
+    border-radius: 2rem;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.05);
+    will-change: transform, opacity;
+    transform: translateZ(0);
+}
+
+/* Auth Buttons */
+#login, #signup, #logout {
+    position: relative;
+    padding: clamp(0.4rem, 0.5vw, 0.5rem) clamp(1.2rem, 1.6vw, 1.6rem);
+    text-decoration: none;
+    border-radius: clamp(1.2rem, 1.5vw, 1.5rem);
+    transform: scale(0.95) translateZ(0);
+    transition: all 0.2s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(0.8rem, 0.9vw, 0.9rem);
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: fit-content;
+    cursor: pointer;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    letter-spacing: 0.02em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    color: #FFFAFA;
+    will-change: transform, opacity;
+}
+
+#login, #logout {
+    background: linear-gradient(135deg, #4f46e5 0%, #2563eb 100%);
+    color: #FFFAFA;
+    border: none;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+#signup {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+    color: #FFFAFA;
+    border: 1px solid rgba(79, 70, 229, 0.5);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+#login:hover, #signup:hover, #logout:hover {
+    transform: scale(1) translateZ(0);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.2),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+#login:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #1d4ed8 100%);
+}
+
+#signup:hover {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+    border-color: rgba(79, 70, 229, 0.7);
+}
+
+#login:active, #signup:active, #logout:active {
+    transform: scale(0.95) translateZ(0);
+    transition: all 0.1s ease;
+}
+
+#login::before, #signup::before, #logout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    transform: translateX(-100%) translateZ(0);
+    transition: transform 0.4s ease;
+    will-change: transform;
+}
+
+#login:hover::before, #signup:hover::before, #logout:hover::before {
+    transform: translateX(100%) translateZ(0);
+}
+
+#login::after, #signup::after, #logout::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15),
+        rgba(255, 255, 255, 0.1)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    will-change: opacity;
+}
+
+#login:hover::after, #signup:hover::after, #logout:hover::after {
+    opacity: 1;
+}
+
+.navbar svg {
+    width: clamp(1rem, 1.2vw, 1.2rem);
+    height: clamp(1rem, 1.2vw, 1.2rem);
+    stroke: rgba(255, 255, 255, 0.9);
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.main-nav-links a:hover,
+.auth-links a:hover {
+    color: #ffffff;
+}
+
+/* Optimize animations for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .navbar,
+    .logo-section,
+    .logo,
+    .main-nav-links,
+    .auth-links,
+    .auth-buttons,
+    #login,
+    #signup,
+    #logout {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .navbar {
+        padding: 0.8rem;
+    }
+    
+    body {
+        padding-top: 60px;
+    }
+    
+    .logo-section {
+        padding-right: 1rem;
+    }
+    
+    .auth-links {
+        padding-left: 1rem;
+        gap: 0.5rem;
+    }
+    
+    .auth-buttons {
+        gap: 0.5rem;
+        padding: 0.1rem;
+    }
+    
+    .main-nav-links {
+        gap: 0.5rem;
+    }
+    
+    .main-nav-links a,
+    .auth-links a {
+        padding: 0 0.5rem;
+    }
+    
+    #login, #signup, #logout {
+        padding: 0.3rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
