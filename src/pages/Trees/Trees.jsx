@@ -3,9 +3,9 @@ import MonacoEditor from '@monaco-editor/react';
 import axios from 'axios';
 import * as d3 from 'd3';
 import { useCodeSharing } from '../../hooks/useCodeSharing';
-import './graph.css';
+import './Trees.css';
 
-const GraphMat = () => {
+const Trees = () => {
   const [code, setCode]       = useState(localStorage.getItem('code') || 'Write Your code here...');
   const [trace, setTrace]     = useState([]);            // full trace from API
   const [step, setStep]       = useState(0);             // current step index
@@ -22,13 +22,15 @@ const GraphMat = () => {
   const handleExecute = async () => {
     setLoader(true);
     localStorage.setItem('code', code);
+    console.log(code)
     try {
       const response = await axios.post(
-        'http://localhost:3000/debugger/graphs/main',
+        'http://localhost:3000/debugger/trees/main',
         { codeInput: code },
         { headers: { 'Content-Type': 'application/json' } }
       );
       const traceVal = response.data.trace || [];
+      console.log(traceVal)
       setTrace(traceVal);
       setStep(0);
     } catch (error) {
@@ -56,99 +58,79 @@ const GraphMat = () => {
   }, [trace, step]);
 
   function drawGraph(adjacencyList, visitedArr) {
-    const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
+  const svg = d3.select(svgRef.current);
+  svg.selectAll('*').remove();
 
-    const width  = svgRef.current.clientWidth  || 400;
-    const height = svgRef.current.clientHeight || 400;
+  const width = svgRef.current.clientWidth || 600;
+  const height = svgRef.current.clientHeight || 600;
 
-    // Build nodes and links
-    const nodesSet = new Set();
-    Object.entries(adjacencyList).forEach(([src, targets]) => {
-      nodesSet.add(src.toString());
-      targets.forEach(t => nodesSet.add(t.toString()));
-    });
-    const nodes = Array.from(nodesSet).map(id => ({ id }));
-    const links = [];
-    Object.entries(adjacencyList).forEach(([src, targets]) => {
-      targets.forEach(t => {
-        links.push({ source: src.toString(), target: t.toString() });
-      });
-    });
-
-    // Create a Set of the currently visited node IDs
-    const visitedSet = new Set(
-      visitedArr
-        .map((v, i) => (v === 'V' ? nodes[i]?.id : null))
-        .filter(Boolean)
-    );
-
-    // Force simulation
-    const simulation = d3.forceSimulation(nodes)
-      .force('link',   d3.forceLink(links).id(d => d.id).distance(100))
-      .force('charge', d3.forceManyBody().strength(-300))
-      .force('center', d3.forceCenter(width / 2, height / 2));
-
-    const link = svg.append('g')
-      .attr('stroke',      '#999')
-      .attr('stroke-opacity', 0.6)
-      .selectAll('line')
-      .data(links)
-      .join('line')
-      .attr('stroke-width', 2)
-      .attr('stroke',       'orange');
-
-    const node = svg.append('g')
-      .attr('stroke',      '#fff')
-      .attr('stroke-width', 1.5)
-      .selectAll('circle')
-      .data(nodes)
-      .join('circle')
-      .attr('r',    12)
-      .attr('fill', d => visitedSet.has(d.id) ? 'lightgreen' : 'gray')
-      .call(drag(simulation));
-
-    const label = svg.append('g')
-      .selectAll('text')
-      .data(nodes)
-      .join('text')
-      .text(d => d.id)
-      .attr('font-size', 12)
-      .attr('dy',        4)
-      .attr('dx',       -6)
-      .attr('pointer-events', 'none');
-
-    simulation.on('tick', () => {
-      link
-        .attr('x1', d => d.source.x)
-        .attr('y1', d => d.source.y)
-        .attr('x2', d => d.target.x)
-        .attr('y2', d => d.target.y);
-
-      node
-        .attr('cx', d => d.x)
-        .attr('cy', d => d.y);
-
-      label
-        .attr('x', d => d.x)
-        .attr('y', d => d.y);
-    });
-
-    function drag(sim) {
-      return d3.drag()
-        .on('start', (event, d) => {
-          if (!event.active) sim.alphaTarget(0.3).restart();
-          d.fx = d.x; d.fy = d.y;
-        })
-        .on('drag',  (event, d) => {
-          d.fx = event.x; d.fy = event.y;
-        })
-        .on('end',   (event, d) => {
-          if (!event.active) sim.alphaTarget(0);
-          d.fx = null; d.fy = null;
-        });
-    }
+  if (!adjacencyList || Object.keys(adjacencyList).length === 0) {
+    svg.append("text")
+      .attr("x", width / 2)
+      .attr("y", height / 2)
+      .attr("text-anchor", "middle")
+      .text("No tree to display.");
+    return;
   }
+
+  // Convert adjacencyList to hierarchy for d3.tree
+  function buildTree(nodeId) {
+    if (nodeId === undefined || nodeId === null) return { name: "?" };
+    const children = (adjacencyList[nodeId] || []).map(childId => buildTree(childId));
+    return {
+      name: nodeId.toString(),
+      children: children
+    };
+  }
+
+  const rootId = Object.keys(adjacencyList)[0]; // safely pick first node
+  const treeData = buildTree(rootId);
+  const hierarchyData = d3.hierarchy(treeData);
+
+  const treeLayout = d3.tree().size([width - 40, height - 200]);
+  const root = treeLayout(hierarchyData);
+
+  const g = svg.append('g').attr('transform', 'translate(20,20)');
+
+  // Links
+  g.selectAll('line')
+    .data(root.links())
+    .enter()
+    .append('line')
+    .attr('x1', d => d.source.x)
+    .attr('y1', d => d.source.y)
+    .attr('x2', d => d.target.x)
+    .attr('y2', d => d.target.y)
+    .attr('stroke', 'orange')
+    .attr('stroke-width', 2);
+
+  // Nodes
+  const visitedSet = new Set(
+    visitedArr.map((v, i) => (v === 'V' ? i.toString() : null)).filter(Boolean)
+  );
+
+  const node = g.selectAll('g.node')
+    .data(root.descendants())
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .attr('transform', d => `translate(${d.x},${d.y})`);
+
+  node.append('circle')
+    .attr('r', 12)
+    .attr('fill', d => visitedSet.has(d.data.name) ? 'lightgreen' : 'gray')
+    .attr('stroke', '#333')
+    .attr('stroke-width', 1.5);
+
+  node.append('text')
+    .attr('dy', 4)
+    .attr('x', d => -6)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.name)
+    .style('font-size', '12px')
+    .style('fill', '#000');
+}
+
 
   const currentVisited = trace[step]?.visited || [];
   const currentQueue = trace[step]?.queue || [];
@@ -284,4 +266,4 @@ const GraphMat = () => {
   );
 };
 
-export default GraphMat;
+export default Trees;

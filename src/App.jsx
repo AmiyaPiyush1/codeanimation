@@ -36,7 +36,9 @@ import TermsOfService from './pages/Legal/TermsOfService';
 import CookieSettings from './pages/Legal/CookieSettings';
 import HelpCenter from './pages/Legal/HelpCenter';
 import Profile from './pages/Profile/Profile';
+import Trees from "./pages/Trees/Trees.jsx";
 import { ThemeProvider } from './context/ThemeContext';
+import LL from "./pages/LinkedList/LL.jsx";
 import './styles/theme.css';
 
 // Lazy Loaded Pages
@@ -123,6 +125,19 @@ const routesConfig = [
     element: <GraphMat />, 
     protected: true,
     title: "Graph Algorithms"
+  },
+
+  { 
+    path: "/debugger/trees/main", 
+    element: <Trees />, 
+    protected: true,
+    title: "Trees"
+  },
+  { 
+    path: "/debugger/LinkedList/main", 
+    element: <LL />, 
+    protected: true,
+    title: "Trees"
   },
 
   // Legal Routes

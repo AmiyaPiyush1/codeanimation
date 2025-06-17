@@ -163,7 +163,9 @@ const Login = () => {
         
         // Add a small delay before navigation to allow success animation to play
         setTimeout(() => {
-          navigate('/', { replace: true });
+          console.log("1");
+          navigate('/debugger', { replace: true });
+          console.log("2");
         }, 1500);
       }
     } catch (err) {
