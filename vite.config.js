@@ -43,14 +43,9 @@ export default defineConfig(({ mode }) => {
         },
       },
       // Minify in production
-      minify: isProduction ? 'terser' : false,
-      // Terser options
-      terserOptions: {
-        compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
-        },
-      },
+      minify: isProduction, // uses esbuild automatically
+esbuild: { drop: ['console', 'debugger'] }
+
     },
 
     // Development server configuration
