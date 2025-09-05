@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Dynamically get backend URL from environment variables
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://code-backend-89a2.onrender.com";
 
   // Utility function to handle API errors
   const handleApiError = (error, customMessage = 'An error occurred') => {

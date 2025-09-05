@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => {
       // Configure proxy for API requests
       proxy: {
         '/api': {
-          target: 'http://localhost:3000',
+          target: 'https://code-backend-89a2.onrender.com',
           changeOrigin: true,
           secure: false,
         },

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuration constants
 const CONFIG = {
-  BASE_URL: import.meta.env.VITE_BACKEND_URL || "http://localhost:3000",
+  BASE_URL: import.meta.env.VITE_BACKEND_URL || "https://code-backend-89a2.onrender.com",
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000, // 1 second
@@ -40,7 +40,7 @@ const analytics = {
 const axiosInstance = axios.create({
   baseURL: CONFIG.BASE_URL,
   timeout: CONFIG.TIMEOUT,
-  withCredentials: true,
+  withCredentials: false,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -62,10 +62,6 @@ const axiosInstance = axios.create({
       analytics.requests.get(requestId).downloadProgress = percentCompleted;
     }
   },
-  // Add CORS configuration
-  withCredentials: true,
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
 // Request queue processor
