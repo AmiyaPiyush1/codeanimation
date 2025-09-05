@@ -158,14 +158,26 @@ const Login = () => {
         // Update auth context with user data directly from login response
         setUser(response.data.data.user);
         
+        // Check 2FA status after login
+        try {
+          const twoFactorResponse = await axiosInstance.get('/api/auth/2fa/status');
+          if (twoFactorResponse.data.success) {
+            // Update user data with 2FA status
+            setUser(prev => ({
+              ...prev,
+              twoFactorEnabled: twoFactorResponse.data.data.isEnabled
+            }));
+          }
+        } catch (error) {
+          console.error('Failed to check 2FA status after login:', error);
+        }
+        
         // Show success animation
         setLoginSuccess(true);
         
         // Add a small delay before navigation to allow success animation to play
         setTimeout(() => {
-          console.log("1");
-          navigate('/debugger', { replace: true });
-          console.log("2");
+          navigate('/', { replace: true });
         }, 1500);
       }
     } catch (err) {
@@ -200,7 +212,8 @@ const Login = () => {
         setError("Unable to connect to the server. Please check your internet connection.");
         setLoading(false);
       } else {
-        setError(err.response?.data?.error || err.message || "Login failed. Please try again later");
+        // For any other error, show a generic error message
+        setError("Invalid email or password");
         setLoading(false);
       }
     } finally {
@@ -254,7 +267,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/auth/forgot-password`, {
+      const response = await axios.post(`${BACKEND_URL}/api/auth/reset-password`, {
         email: resetEmail.trim()
       });
 
@@ -445,12 +458,87 @@ const Login = () => {
     <div className="min-h-screen w-full flex bg-slate-950">
       {/* Left Section - Login Form */}
       <motion.div 
-        className="w-full lg:w-1/2 p-8 lg:p-12 flex items-center justify-center bg-gradient-to-b from-navy-850/95 via-navy-900/95 to-navy-950 relative before:absolute before:inset-0 before:bg-gradient-to-b before:from-purple-500/15 before:via-purple-500/8 before:to-transparent before:pointer-events-none after:absolute after:inset-0 after:bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] after:from-purple-500/8 after:via-transparent after:to-transparent after:pointer-events-none"
+        className="w-full lg:w-1/2 p-8 lg:p-12 flex items-center justify-center relative overflow-hidden"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -50 }}
         transition={{ duration: 0.5 }}
       >
+        {/* Enhanced Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-navy-850/95 to-navy-950">
+          {/* Base gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-navy-850/95 to-navy-950" />
+          
+          {/* Animated gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-500/15 via-purple-500/8 to-transparent opacity-50 animate-gradient-shift" />
+          
+          {/* Radial gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-500/8 via-transparent to-transparent opacity-70" />
+          
+          {/* Animated mesh gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-500/10 via-transparent to-transparent opacity-30 animate-pulse" />
+          
+          {/* Glowing orbs */}
+          <div className="absolute inset-0 overflow-hidden">
+            {[...Array(3)].map((_, i) => (
+              <motion.div
+                key={`orb-${i}`}
+                className="absolute w-96 h-96 rounded-full bg-purple-500/5 blur-3xl"
+                initial={{
+                  x: `${Math.random() * 100}%`,
+                  y: `${Math.random() * 100}%`,
+                  scale: Math.random() * 0.5 + 0.5
+                }}
+                animate={{
+                  x: [
+                    `${Math.random() * 100}%`,
+                    `${Math.random() * 100}%`,
+                    `${Math.random() * 100}%`,
+                    `${Math.random() * 100}%`
+                  ],
+                  y: [
+                    `${Math.random() * 100}%`,
+                    `${Math.random() * 100}%`,
+                    `${Math.random() * 100}%`,
+                    `${Math.random() * 100}%`
+                  ],
+                  scale: [
+                    Math.random() * 0.5 + 0.5,
+                    Math.random() * 0.5 + 0.5,
+                    Math.random() * 0.5 + 0.5,
+                    Math.random() * 0.5 + 0.5
+                  ]
+                }}
+                transition={{
+                  duration: Math.random() * 20 + 30,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.33, 0.66, 1]
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Animated grid lines */}
+          <div className="absolute inset-0">
+            <svg className="absolute inset-0 w-full h-full opacity-10">
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(139, 92, 246, 0.2)" strokeWidth="0.5"/>
+              </pattern>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+
+          {/* Animated noise texture */}
+          <div className="absolute inset-0 opacity-5 mix-blend-overlay">
+            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-50 animate-noise" />
+          </div>
+
+          {/* Animated border glow */}
+          <div className="absolute inset-0 border border-purple-500/10 rounded-lg animate-border-glow" />
+        </div>
+
+        {/* Content */}
         <motion.div 
           className="w-full max-w-md relative z-10"
           variants={containerVariants}
@@ -602,15 +690,107 @@ const Login = () => {
                     <AnimatePresence mode="wait">
                       {error && (
                         <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm backdrop-blur-sm mb-14"
+                          initial={{ opacity: 0, y: -10, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: "auto" }}
+                          exit={{ opacity: 0, y: -10, height: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg backdrop-blur-sm mb-6 relative overflow-hidden group"
                         >
-                          {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                          {/* Error background effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-red-500/0 via-red-500/5 to-red-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+                          
+                          {/* Error icon and message container */}
+                          <div className="flex items-center gap-3 relative z-10">
+                            <motion.div
+                              initial={{ scale: 0, rotate: -180 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ 
+                                type: "spring",
+                                damping: 15,
+                                stiffness: 300,
+                                delay: 0.1
+                              }}
+                              className="flex-shrink-0"
+                            >
+                              <svg 
+                                className="w-5 h-5 text-red-400" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path 
+                                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2" 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round"
+                                />
+                                <path 
+                                  d="M12 8V12" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2" 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round"
+                                />
+                                <path 
+                                  d="M12 16H12.01" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2" 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </motion.div>
+                            
+                            <div className="flex-1">
+                              <motion.p 
+                                className="text-sm text-red-400 font-medium"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.2 }}
+                              >
+                                {error}
+                              </motion.p>
+                              {error === "Invalid email or password" && (
+                                <motion.p 
+                                  className="text-xs text-red-400/70 mt-1"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  transition={{ delay: 0.3 }}
+                                >
+                                  Please check your credentials and try again
+                                </motion.p>
+                              )}
+                            </div>
+                            
+                            <motion.button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setError('');
+                              }}
+                              className="text-red-400/70 hover:text-red-400 transition-colors duration-200 p-1 rounded-lg hover:bg-red-500/10"
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              type="button"
+                            >
+                              <svg 
+                                className="w-4 h-4" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                strokeWidth="2" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round"
+                              >
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                              </svg>
+                            </motion.button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
             
                     <motion.div 
                       className={`relative group transition-all duration-300 ease-out ${email ? 'mb-8' : 'mb-6'}`}
@@ -633,7 +813,7 @@ const Login = () => {
                 required 
                 autoComplete="email"
                 name="email"
-                className="w-full px-4 py-3.5 bg-navy-900/50 border border-navy-700/50 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 ease-out peer placeholder-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(139,92,246,0.1)] focus:shadow-[0_0_0_2px_rgba(139,92,246,0.2)] autofill:bg-navy-900/50 backdrop-blur-sm"
+                className="w-full px-4 py-3.5 bg-navy-900/50 border border-navy-700/50 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 ease-out peer placeholder-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(139,92,246,0.1)] focus:shadow-[0_0_0_2px_rgba(139,92,246,0.2)] autofill:bg-navy-900/50 backdrop-blur-sm [&:not(:placeholder-shown)]:border-purple-500/50 [&:not(:placeholder-shown)]:shadow-[0_0_0_2px_rgba(139,92,246,0.2)]"
                 placeholder=" "
               />
                         <label htmlFor="email" className={`absolute left-4 px-1.5 text-sm font-medium bg-navy-900/50 text-slate-300/90 transition-all duration-300 ease-out backdrop-blur-sm rounded-md shadow-[0_0_0_1px_rgba(255,255,255,0.05)] ${email ? '-top-3.5 text-sm' : 'top-3.5 text-base text-slate-500'} peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-purple-400 peer-focus:shadow-[0_0_0_1px_rgba(139,92,246,0.2)]`}>Email</label>
@@ -661,7 +841,7 @@ const Login = () => {
                 required 
                 autoComplete="current-password"
                 name="password"
-                className="w-full px-4 py-3.5 bg-navy-900/50 border border-navy-700/50 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 ease-out peer placeholder-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(139,92,246,0.1)] focus:shadow-[0_0_0_2px_rgba(139,92,246,0.2)] autofill:bg-navy-900/50 backdrop-blur-sm"
+                className="w-full px-4 py-3.5 bg-navy-900/50 border border-navy-700/50 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all duration-300 ease-out peer placeholder-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(139,92,246,0.1)] focus:shadow-[0_0_0_2px_rgba(139,92,246,0.2)] autofill:bg-navy-900/50 backdrop-blur-sm [&:not(:placeholder-shown)]:border-purple-500/50 [&:not(:placeholder-shown)]:shadow-[0_0_0_2px_rgba(139,92,246,0.2)]"
                 placeholder=" "
               />
                         <label htmlFor="password" className={`absolute left-4 px-1.5 text-sm font-medium bg-navy-900/50 text-slate-300/90 transition-all duration-300 ease-out backdrop-blur-sm rounded-md shadow-[0_0_0_1px_rgba(255,255,255,0.05)] ${password ? '-top-3.5 text-sm' : 'top-3.5 text-base text-slate-500'} peer-focus:-top-3.5 peer-focus:text-sm peer-focus:text-purple-400 peer-focus:shadow-[0_0_0_1px_rgba(139,92,246,0.2)]`}>Password</label>
@@ -847,22 +1027,91 @@ const Login = () => {
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
+                        {/* Enhanced gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-                        {loading ? (
-                          <motion.div className="flex items-center justify-center gap-2">
+                        
+                        {/* Glowing orb effect */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-indigo-500/20 to-violet-500/20 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                        </div>
+
+                        {/* Ripple effect container */}
+                        <div className="absolute inset-0 overflow-hidden rounded-xl">
+                          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/5 to-purple-500/0 translate-y-[100%] group-hover:translate-y-[-100%] transition-transform duration-1000"></div>
+                        </div>
+
+                        {/* Button content */}
+                        <div className="relative flex items-center justify-center gap-2">
+                          {loading ? (
+                            <motion.div 
+                              className="flex items-center justify-center gap-2"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                            >
+                              <motion.div
+                                className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                              />
+                              <span>Signing In...</span>
+                            </motion.div>
+                          ) : (
                             <motion.div
-                              className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full"
-                              animate={{ rotate: 360 }}
-                              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                            <span>Signing In...</span>
-                          </motion.div>
-                        ) : (
-                          <>
-                            <LogIn className="w-5 h-5 inline-block mr-2" />
-                            Sign In
-                          </>
-                        )}
+                              className="flex items-center justify-center gap-2"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                            >
+                              <motion.div
+                                className="relative"
+                                whileHover={{ rotate: 360 }}
+                                transition={{ duration: 0.5 }}
+                              >
+                                <LogIn className="w-5 h-5" />
+                                <div className="absolute inset-0 bg-purple-400/20 rounded-full blur-md animate-pulse"></div>
+                              </motion.div>
+                              <span className="relative">
+                                Sign In
+                                <motion.span
+                                  className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-purple-400/50"
+                                  whileHover={{ width: "100%" }}
+                                  transition={{ duration: 0.3 }}
+                                />
+                              </span>
+                            </motion.div>
+                          )}
+                        </div>
+
+                        {/* Success checkmark animation */}
+                        <AnimatePresence>
+                          {loginSuccess && (
+                            <motion.div
+                              className="absolute inset-0 flex items-center justify-center bg-green-500/20"
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <motion.svg
+                                className="w-6 h-6 text-green-400"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                initial={{ pathLength: 0 }}
+                                animate={{ pathLength: 1 }}
+                                transition={{ duration: 0.5, ease: "easeInOut" }}
+                              >
+                                <motion.path
+                                  d="M20 6L9 17L4 12"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </motion.svg>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </motion.button>
             </motion.div>
 
@@ -946,7 +1195,11 @@ const Login = () => {
                         <motion.button 
                   type="button" 
                           className="text-purple-400 hover:text-purple-300 font-medium transition-colors duration-200"
-                  onClick={() => handleNavigation('/signup')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleNavigation('/signup');
+                  }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                 >
@@ -1075,14 +1328,20 @@ const Login = () => {
                     transform: `scale(${1 + i * 0.2})`
                   }}
                   animate={{
-                    scale: [1 + i * 0.2, 1.2 + i * 0.2, 1 + i * 0.2],
-                    opacity: [0.1, 0.2, 0.1]
+                    scale: [
+                      1 + i * 0.2,
+                      1.2 + i * 0.2,
+                      1 + i * 0.2,
+                      1.2 + i * 0.2,
+                      1 + i * 0.2
+                    ],
+                    opacity: [0.1, 0.2, 0.1, 0.2, 0.1]
                   }}
                   transition={{
-                    duration: 4,
+                    duration: 8,
                     repeat: Infinity,
                     ease: "easeInOut",
-                    delay: i * 0.5
+                    times: [0, 0.25, 0.5, 0.75, 1]
                   }}
                 />
               ))}
@@ -1101,13 +1360,27 @@ const Login = () => {
                     opacity: Math.random() * 0.3 + 0.1
                   }}
                   animate={{
-                    y: [null, Math.random() * 100 + '%'],
-                    opacity: [null, Math.random() * 0.3 + 0.1]
+                    x: [
+                      `${Math.random() * 100}%`,
+                      `${Math.random() * 100}%`,
+                      `${Math.random() * 100}%`
+                    ],
+                    y: [
+                      `${Math.random() * 100}%`,
+                      `${Math.random() * 100}%`,
+                      `${Math.random() * 100}%`
+                    ],
+                    opacity: [
+                      Math.random() * 0.3 + 0.1,
+                      Math.random() * 0.3 + 0.1,
+                      Math.random() * 0.3 + 0.1
+                    ]
                   }}
                   transition={{
-                    duration: Math.random() * 10 + 10,
+                    duration: Math.random() * 15 + 20,
                     repeat: Infinity,
-                    ease: "linear"
+                    ease: "easeInOut",
+                    times: [0, 0.5, 1]
                   }}
                 />
               ))}

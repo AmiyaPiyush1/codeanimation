@@ -426,8 +426,9 @@ const RecursionDebugger = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ problem: code, language, input: "" }),
-          });
-          
+          }
+       );
+           console.log("here iss " ,response);
           if (!response.ok) {
             const errorData = await response.json();
             console.error("Backend error:", errorData);
@@ -761,9 +762,11 @@ const RecursionDebugger = () => {
       // Update variable space.
       const displayData = {
         step: nextStep,
+        matrix: activeTrace.matrix,
         event: activeTrace.event,
         function: activeTrace.func,
         arguments: activeTrace.args ? activeTrace.args : "None",
+        Current_line: activeTrace.code,
         returnValue: activeTrace.value !== undefined ? activeTrace.value : "N/A",
         note: activeTrace.note ? activeTrace.note : "",
       };
@@ -1008,44 +1011,100 @@ const RecursionDebugger = () => {
         <div className="resizer" onMouseDown={handleMouseDown("middle")}></div>
 
         {/* Variable Space Section */}
-        <div
-          className="section"
-          id="variable-space"
-          style={{
-            width: `${rightWidth}%`,
-            padding: "10px",
-            backgroundColor: "#f7f7f7",
-            borderRadius: "5px",
-            fontFamily: "monospace",
-            overflowX: "auto"
-          }}
-        >
-          {selectedTrace ? (
-            <div>
-              <h3>Step {selectedTrace.step}</h3>
-              <p><strong>Event:</strong> {selectedTrace.event}</p>
-              <p><strong>Function:</strong> {selectedTrace.function}</p>
-              <p>
-                <strong>Arguments:</strong>{" "}
-                {typeof selectedTrace.arguments === "object"
-                  ? JSON.stringify(selectedTrace.arguments, null, 2)
-                  : selectedTrace.arguments}
-              </p>
-              {selectedTrace.note && (
-                <p>
-                  <strong>Note:</strong> {selectedTrace.note}
-                </p>
-              )}
-              {selectedTrace.returnValue !== "N/A" && (
-                <p>
-                  <strong>Return Value:</strong> {selectedTrace.returnValue}
-                </p>
-              )}
-            </div>
-          ) : (
-            <p>Variable Space</p>
-          )}
+       <div
+  className="section"
+  id="variable-space"
+  style={{
+    width: `${rightWidth}%`,
+    padding: "10px",
+    backgroundColor: "#f7f7f7",
+    borderRadius: "5px",
+    fontFamily: "monospace",
+    overflowX: "auto"
+  }}
+>
+  {selectedTrace ? (
+    <div className="p-6 bg-white rounded-2xl shadow-lg space-y-4 border border-gray-200">
+      <h3 className="text-xl font-bold text-indigo-600">Step {selectedTrace.step}</h3>
+
+      <div className="space-y-2">
+        <div>
+          <span className="font-semibold text-gray-700">Event:</span>{" "}
+          <span className="text-gray-900">{selectedTrace.event}</span>
         </div>
+
+        <div>
+          <span className="font-semibold text-gray-700">Function:</span>{" "}
+          <span className="text-gray-900">{selectedTrace.function}</span>
+        </div>
+
+        {selectedTrace.Current_line && (
+          <div>
+            <span className="font-semibold text-gray-700">Current Line:</span>
+            <pre className="mt-1 bg-gray-100 text-gray-800 text-sm p-3 rounded-md whitespace-pre-wrap">
+              {Array.isArray(selectedTrace.Current_line)
+                ? selectedTrace.Current_line.join("\n")
+                : selectedTrace.Current_line}
+            </pre>
+          </div>
+        )}
+
+        <div>
+          <span className="font-semibold text-gray-700">Arguments:</span>
+          <pre className="mt-1 bg-gray-50 text-gray-800 text-sm p-3 rounded-md overflow-x-auto">
+            {typeof selectedTrace.arguments === "object"
+              ? JSON.stringify(selectedTrace.arguments, null, 2)
+              : selectedTrace.arguments}
+          </pre>
+        </div>
+
+        {selectedTrace.note && (
+          <div>
+            <span className="font-semibold text-gray-700">Note:</span>{" "}
+            <span className="text-gray-800">{selectedTrace.note}</span>
+          </div>
+        )}
+
+        {selectedTrace.matrix && Array.isArray(selectedTrace.matrix) && (
+  <div className="mt-4">
+    <div className="font-semibold text-gray-700 mb-2">Matrix:</div>
+    <div className="inline-block border rounded overflow-hidden">
+      {selectedTrace.matrix.map((row, rowIndex) => (
+        <div key={rowIndex} className="flex">
+          {row.map((cell, colIndex) => {
+            const isVisited = typeof cell === "string" && cell.startsWith("*");
+
+            return (
+              <div
+                key={colIndex}
+                className={`w-10 h-10 flex items-center justify-center border text-sm font-mono ${
+                  isVisited ? "bg-green-300 text-black" : "bg-white text-gray-900"
+                }`}
+              >
+                {cell}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
+        {selectedTrace.returnValue !== "N/A" && (
+          <div>
+            <span className="font-semibold text-gray-700">Return Value:</span>{" "}
+            <span className="text-green-700 font-medium">{selectedTrace.returnValue}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  ) : (
+    <div className="text-gray-500 italic text-sm">Variable Space</div>
+  )}
+</div>
+
       </div>
     </div>
   );

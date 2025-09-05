@@ -8,16 +8,10 @@ import ReactFlow, {
   applyNodeChanges,
   useReactFlow,
   ReactFlowProvider,
-  BaseEdge,
-  EdgeLabelRenderer,
-  getBezierPath,
 } from "reactflow";
 import dagre from "dagre";
 import "reactflow/dist/style.css";
-import "./DP.css";
-import axios from "axios";
-import { useCodeSharing } from '../../hooks/useCodeSharing';
-import Toast from '../../components/Toast';
+import "./recursion.css";
 
 // Set up the dagre graph for layout.
 const dagreGraph = new dagre.graphlib.Graph();
@@ -69,67 +63,6 @@ const FlowController = ({ currentStep, nodes, trace }) => {
   return null;
 };
 
-// Add custom edge component
-const CustomCallEdge = ({
-  id,
-  sourceX,
-  sourceY,
-  targetX,
-  targetY,
-  sourcePosition,
-  targetPosition,
-  style = {},
-  markerEnd,
-  label,
-  data
-}) => {
-  const offset = 10;
-  const [edgePath, labelX, labelY] = getBezierPath({
-    sourceX: sourceX - offset,
-    sourceY,
-    sourcePosition: "left",
-    targetX: targetX - offset,
-    targetY,
-    targetPosition: "left",
-    curvature: 0.3,
-  });
-
-  return (
-    <>
-      <BaseEdge 
-        path={edgePath} 
-        markerEnd={markerEnd} 
-        style={{
-          ...style,
-          strokeWidth: 2,
-          stroke: "#007bff"
-        }} 
-      />
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: 'absolute',
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-            background: 'white',
-            padding: '2px 4px',
-            borderRadius: '4px',
-            fontSize: 12,
-            pointerEvents: 'all',
-            zIndex: 1000
-          }}
-        >
-          {label}
-        </div>
-      </EdgeLabelRenderer>
-    </>
-  );
-};
-
-// Add edge types
-const edgeTypes = {
-  customCall: CustomCallEdge,
-};
-
 const DP = () => {
   // State and layout widths.
   const [leftWidth, setLeftWidth] = useState(33.33);
@@ -149,12 +82,9 @@ const DP = () => {
   const [language, setLanguage] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const location = useLocation();
-  const { problemType, specificType } = location.state || {};
   const editorRef = useRef(null);
   const hasRun = useRef(false);
   const [selectedTrace, setSelectedTrace] = useState(null);
-  const navigate = useNavigate();
-  const { toast, handleShare } = useCodeSharing();
 
   const detectLanguage = (code) => {
     if (/^\s*#include\s+[<"]/.test(code) || /\bint\s+main\s*\(/.test(code)) {
@@ -285,7 +215,7 @@ const DP = () => {
     }
   };
 
-  const handleShareCode = async () => {
+  const handleShare = async () => {
     if (!editorRef.current) return;
     const code = editorRef.current.getValue();
     const detectedLang = detectLanguage(code) || "txt";
@@ -369,350 +299,123 @@ const DP = () => {
     };
     isFullscreen() ? exitFullscreen() : enterFullscreen();
   };
-  const identifyProblemAndRoute = useCallback(async (code) => {
-  try {
-    // Send code to backend for problem identification
-    const response = await axios.post("http://localhost:3000/debugger/identifyproblem", {
-        problem: code
-    });
 
-    const problemType = response.data.problemType.replace(/\s+/g, '').toLowerCase().trim();  // Directly use response.data.problemType
-    const specificType = response.data.specificType.replace(/\s+/g, '').toLowerCase().trim();  // Get specificType
-
-    // Route based on both problem type and specific type
-    if (problemType === `${problemType}` && specificType === `${specificType}`) {
-      console.log("navigated",problemType)
-      navigate(`/debugger/${problemType}/${specificType}`, { state: { problemType, specificType } });
-    } else {
-      console.log("No specific handler for this problem type.");
-    }
-  } catch (error) {
-    console.error("Error identifying problem type or routing:", error);
-  }
-}, [navigate]);
   // Execution function that builds nodes and edges with default (light) style.
-  const handleExecute = useCallback(async () => {
+  const handleExecute = async () => {
     setLoader(true);
-    localStorage.setItem("code", code);
     setIsRunning(true);
-  
     try {
-      // 1. Detect Language
-      const detectedLang = detectLanguage(code);
-      if (detectedLang === "plaintext") {
-        setNodes([
-          {
-            id: "error",
-            data: { label: "Syntax Error: Unrecognized programming language." },
-            position: { x: 200, y: 200 },
-            draggable: false,
-            className: "error-node",
-          },
-        ]);
-        setEdges([]);
-        setLoader(false);
-        return;
+      const response = await fetch("http://localhost:3000/debugger/recursion/main", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problem: code, language: language, input: "" }),
+      });
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
       }
-  
-      // 2. Identify problem type and adjust routing if needed.
-      await identifyProblemAndRoute(code);
-      
-      // 3. Decide which processing branch to take.
-      // For example, if problemType is "recursion", use the recursion branch.
-      if (problemType == "dynamicprogramming" || problemType == "dynamicProgramming" || problemType == "dynamic programming" || problemType === "Dynamic Programming " || problemType === "Dynamic Programming") {
-        // Recursion-specific execution
-        try {
-          console.log("Sending request to backend with:", { problem: code, language, input: "" });
-          const response = await fetch("http://localhost:3000/debugger/dynamicprogramming/main", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ problem: code, language, input: "" }),
+      const steps = await response.json();
+      // Expected steps format: { event: "call"/"return", func, depth, args, value, note? }
+      const nodeDataById = {};
+      const newEdges = [];
+      const callStack = [];
+      let currentY = 0;
+      const colorPalette = ["#FFD700", "#ADFF2F", "#87CEFA", "#FFB6C1", "#FFA07A", "#E6E6FA"];
+
+      for (let i = 0; i < steps.length; i++) {
+        const { event, func, depth, args, value, note } = steps[i];
+        if (event === "call") {
+          const nodeId = `step-${i}`;
+          steps[i].nodeId = nodeId;
+          // Store parent id if exists.
+          if (callStack.length > 0) {
+            steps[i].parentId = callStack[callStack.length - 1];
           }
-       );
-          
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Backend error:", errorData);
-            throw new Error(errorData.error || `Server error: ${response.status}`);
-          }
-          
-          const steps = await response.json();
-          
-          // Validate the response structure
-          if (!Array.isArray(steps)) {
-            throw new Error("Invalid response format: expected an array of steps");
-          }
-          
-          console.log("Received steps from backend:", steps);
-          
-          // Expected steps format: { event: "call"/"return", func, depth, args, value, note? }
-          const nodeDataById = {};
-          const newEdges = [];
-          const callStack = [];
-          let currentY = 0;
-          const colorPalette = ["#FFD700", "#ADFF2F", "#87CEFA", "#FFB6C1", "#FFA07A", "#E6E6FA"];
-  
-          for (let i = 0; i < steps.length; i++) {
-            const { event, func, depth, args, value, note } = steps[i];
-            if (event === "call") {
-              const nodeId = `step-${i}`;
-              steps[i].nodeId = nodeId;
-              if (callStack.length > 0) {
-                steps[i].parentId = callStack[callStack.length - 1];
-              }
-              const defaultNodeStyle = {
-                border: "2px solid #333",
-                borderRadius: "8px",
-                padding: "10px",
-                background: colorPalette[depth % colorPalette.length],
-                boxShadow: "3px 3px 6px rgba(0,0,0,0.1)",
-              };
-              nodeDataById[nodeId] = {
-                id: nodeId,
-                func,
-                args,
-                depth,
-                returnValue: null,
-                yPos: currentY,
-                defaultStyle: defaultNodeStyle,
-              };
-              if (callStack.length > 0) {
-                const parentId = callStack[callStack.length - 1];
-                newEdges.push({
-                  id: `edge-call-${parentId}-${nodeId}`,
-                  source: parentId,
-                  target: nodeId,
-                  type: "customCall",
-                  label: "call",
-                  style: { 
-                    stroke: "#007bff", 
-                    strokeWidth: 2,
-                    zIndex: 1000
-                  },
-                  markerEnd: { 
-                    type: "arrowclosed", 
-                    color: "#007bff",
-                    width: 20,
-                    height: 20
-                  },
-                  animated: false,
-                  sourcePosition: "left",
-                  targetPosition: "left",
-                  sourceHandle: "left",
-                  targetHandle: "left",
-                  data: { sourcePosition: "left", targetPosition: "left" }
-                });
-              }
-              callStack.push(nodeId);
-              currentY += 150;
-            } else if (event === "return") {
-              const childId = callStack.pop();
-              if (!childId) continue;
-              steps[i].nodeId = childId;
-              if (callStack.length > 0) {
-                const parentId = callStack[callStack.length - 1];
-                steps[i].parentId = parentId;
-                newEdges.push({
-                  id: `edge-return-${childId}-${parentId}`,
-                  source: childId,
-                  target: parentId,
-                  type: "smoothstep",
-                  label: value !== undefined ? `return ${value}` : "return",
-                  style: { stroke: "#28a745", strokeWidth: 2 },
-                  markerEnd: { type: "arrowclosed", color: "#28a745" },
-                  sourcePosition: "right",
-                  targetPosition: "right",
-                  animated: false,
-                  curvature: 0.3,
-                  sourceHandle: "right",
-                  targetHandle: "right"
-                });
-              }
-              if (value !== undefined) {
-                nodeDataById[childId].returnValue = value;
-              }
-              if (note) {
-                steps[i].note = note;
-              }
-            }
-          }
-          const newNodes = Object.values(nodeDataById).map((nodeData) => {
-            const { id, func, args, depth, returnValue, yPos, defaultStyle } = nodeData;
-            const argString = args ? Object.values(args).join(", ") : "";
-            const nodeLabel = returnValue
-              ? `${func}(${argString}) => ${returnValue}`
-              : `${func}(${argString})`;
-            return {
-              id,
-              data: { label: nodeLabel },
-              position: { x: depth * 200, y: yPos },
-              sourcePosition: 'right',
-              targetPosition: 'right',
-              style: {
-                ...defaultStyle,
-                width: 200,
-                padding: '10px',
-                borderRadius: '8px',
-                border: '2px solid #333',
-                background: defaultStyle.background || '#fff'
-              },
-              connectable: true,
-              connectHandle: {
-                source: 'left',
-                target: 'left'
-              }
-            };
-          });
-          setNodes(newNodes);
-          setEdges(newEdges);
-          setTrace(steps);
-          // Reset debug step if using a step-by-step debugger.
-          setCurrentStep(0);
-        } catch (error) {
-          console.error("Execution Error:", error);
-        }
-      } else {
-        // Branch for problems like merge sort, using dynamic route parameters.
-        if (location.pathname === `/debugger/${problemType}/${specificType}`) {
-          const response = await fetch(
-            `http://localhost:3000/debugger/${problemType}/${specificType}`,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ problem: code }),
-            }
-          );
-          if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-          }
-          const data = await response.json();
-          const { inputArray, sortedArray, mergeSortTable, executionTrace } = data;
-          setTrace(executionTrace);
-          if (!inputArray || !sortedArray || !mergeSortTable) {
-            throw new Error("Invalid response format from backend.");
-          }
-  
-          // Build Nodes & Edges from mergeSortTable.
-          const backendNodes = mergeSortTable.nodes;
-          const backendEdges = mergeSortTable.edges;
-  
-          // Compute levels based on DAG dependencies.
-          const inDegree = {};
-          backendNodes.forEach((node) => {
-            inDegree[node.id] = 0;
-          });
-          backendEdges.forEach((edge) => {
-            inDegree[edge.target] = (inDegree[edge.target] || 0) + 1;
-          });
-  
-          const levelMap = {};
-          const queue = [];
-          backendNodes.forEach((node) => {
-            if (inDegree[node.id] === 0) {
-              levelMap[node.id] = 0;
-              queue.push(node.id);
-            }
-          });
-  
-          const debugSteps = [];
-          while (queue.length > 0) {
-            const currentId = queue.shift();
-            const childNodes = backendEdges
-              .filter(edge => edge.source === currentId)
-              .map(edge => edge.target);
-            backendEdges.forEach((edge) => {
-              if (edge.source === currentId) {
-                const newLevel = levelMap[currentId] + 1;
-                if (levelMap[edge.target] === undefined || newLevel > levelMap[edge.target]) {
-                  levelMap[edge.target] = newLevel;
-                }
-                if (!queue.includes(edge.target)) {
-                  queue.push(edge.target);
-                }
-              }
-            });
-            debugSteps.push({
-              processedNode: currentId,
-              childNodes,
-              currentLevelMap: { ...levelMap },
-              remainingQueue: [...queue],
-            });
-          }
-          setDebuggedQueue(debugSteps);
-  
-          // Group nodes by level for positioning.
-          const levelNodes = {};
-          backendNodes.forEach((node) => {
-            const lvl = levelMap[node.id] || 0;
-            if (!levelNodes[lvl]) levelNodes[lvl] = [];
-            levelNodes[lvl].push(node);
-          });
-  
-          const newNodes = [];
-          const newEdges = [];
-          const levelGap = 100;
-          const nodeGap = 120;
-  
-          Object.keys(levelNodes).forEach((lvlStr) => {
-            const lvl = Number(lvlStr);
-            const nodesAtLevel = levelNodes[lvl];
-            nodesAtLevel.forEach((node, idx) => {
-              let nodeClass = "default-node";
-              if (node.id.includes("_merge")) {
-                nodeClass = "merge-node";
-              } else if (node.id.includes("_div")) {
-                nodeClass = "div-node";
-              }
-              newNodes.push({
-                id: node.id,
-                data: { label: `${node.id}: ${JSON.stringify(node.state)}` },
-                position: { x: idx * nodeGap, y: lvl * levelGap },
-                draggable: false,
-                className: nodeClass,
-              });
-            });
-          });
-  
-          backendEdges.forEach((edge) => {
+          const defaultNodeStyle = {
+            border: "2px solid #333",
+            borderRadius: "8px",
+            padding: "10px",
+            background: colorPalette[depth % colorPalette.length],
+            boxShadow: "3px 3px 6px rgba(0,0,0,0.1)",
+          };
+          nodeDataById[nodeId] = {
+            id: nodeId,
+            func,
+            args,
+            depth,
+            returnValue: null,
+            yPos: currentY,
+            defaultStyle: defaultNodeStyle,
+          };
+          if (callStack.length > 0) {
+            const parentId = callStack[callStack.length - 1];
             newEdges.push({
-              id: `${edge.source}-${edge.target}`,
-              source: edge.source,
-              target: edge.target,
-              animated: true,
-              markerEnd: {
-                type: MarkerType.ArrowClosed,
-                width: 20,
-                height: 20,
-                color: "#000",
-              },
-              className: "custom-edge",
+              id: `edge-call-${parentId}-${nodeId}`,
+              source: parentId,
+              target: nodeId,
+              type: "straight",
+              label: "call",
+              style: { stroke: "#007bff", strokeWidth: 2 },
+              markerEnd: { type: "arrowclosed", color: "#007bff" },
+              defaultStyle: { stroke: "#007bff", strokeWidth: 2 },
+              animated: false,
             });
-          });
-  
-          // Optionally add a final node to display the sorted array.
-          const maxLevel = Math.max(...Object.values(levelMap));
-          newNodes.push({
-            id: "sortedArray",
-            data: { label: `Sorted Array: ${JSON.stringify(sortedArray)}` },
-            position: { x: 100, y: (maxLevel + 1) * levelGap },
-            draggable: false,
-            className: "sorted-array-node",
-          });
-  
-          setNodes(newNodes);
-          setEdges(newEdges);
+          }
+          callStack.push(nodeId);
+          currentY += 150;
+        } else if (event === "return") {
+          const childId = callStack.pop();
+          if (!childId) continue;
+          steps[i].nodeId = childId;
+          if (callStack.length > 0) {
+            const parentId = callStack[callStack.length - 1];
+            steps[i].parentId = parentId;
+            newEdges.push({
+              id: `edge-return-${childId}-${parentId}`,
+              source: childId,
+              target: parentId,
+              type: "smoothstep",
+              label: value !== undefined ? `return ${value}` : "return",
+              style: { stroke: "#28a745", strokeWidth: 2 },
+              markerEnd: { type: "arrowclosed", color: "#28a745" },
+              sourcePosition: "right",
+              targetPosition: "right",
+              defaultStyle: { stroke: "#28a745", strokeWidth: 2 },
+              animated: false,
+            });
+          }
+          if (value !== undefined) {
+            nodeDataById[childId].returnValue = value;
+          }
+          if (note) {
+            steps[i].note = note;
+          }
         }
       }
+      const newNodes = Object.values(nodeDataById).map((nodeData) => {
+        const { id, func, args, depth, returnValue, yPos, defaultStyle } = nodeData;
+        const argString = args ? Object.values(args).join(", ") : "";
+        const nodeLabel = returnValue
+          ? `${func}(${argString}) => ${returnValue}`
+          : `${func}(${argString})`;
+        return {
+          id,
+          data: { label: nodeLabel },
+          position: { x: depth * 50, y: yPos },
+          style: defaultStyle,
+          defaultStyle,
+        };
+      });
+      setNodes(newNodes);
+      setEdges(newEdges);
+      setTrace(steps);
+      setCurrentStep(0);
     } catch (error) {
-      console.error("Execution Error:", error);
+      console.error("Error fetching recursion data:", error);
     } finally {
       setLoader(false);
       setIsRunning(false);
-      setIsPaused(false);
-      setCurrentStep(-1);
     }
-  }, [code, language, identifyProblemAndRoute, location.pathname, problemType, specificType]);
-  
+  };
 
   // Updated handleNext: only update the edge connected to the active node.
   const handleNext = () => {
@@ -763,12 +466,9 @@ const DP = () => {
       // Update variable space.
       const displayData = {
         step: nextStep,
-        matrix: activeTrace.matrix,
         event: activeTrace.event,
         function: activeTrace.func,
-        DP:activeTrace.dpTable,
         arguments: activeTrace.args ? activeTrace.args : "None",
-        Current_line: activeTrace.code,
         returnValue: activeTrace.value !== undefined ? activeTrace.value : "N/A",
         note: activeTrace.note ? activeTrace.note : "",
       };
@@ -794,12 +494,11 @@ const DP = () => {
 
   return (
     <div className="container">
-      <Toast {...toast} />
       <div className="main-content">
         {/* Code Editor Section */}
         <div className="section" id="code-editor" style={{ width: `${leftWidth}%` }}>
           <div className="monaco-editor-toolbar">
-            <button className="editor-button" onClick={() => handleShare(editorRef, language)}>
+            <button className="editor-button" onClick={handleShare}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-share-2">
                 <circle cx="18" cy="5" r="3" />
                 <circle cx="6" cy="12" r="3" />
@@ -987,19 +686,6 @@ const DP = () => {
                   edges={edges}
                   onNodesChange={onNodesChange}
                   fitView
-                  edgeTypes={edgeTypes}
-                  defaultEdgeOptions={{
-                    type: 'smoothstep',
-                    sourcePosition: 'right',
-                    targetPosition: 'right',
-                    style: { strokeWidth: 2 }
-                  }}
-                  nodesDraggable={true}
-                  nodesConnectable={false}
-                  elementsSelectable={false}
-                  minZoom={0.1}
-                  maxZoom={2}
-                  defaultViewport={{ x: 0, y: 0, zoom: 1 }}
                 >
                   <FlowController currentStep={currentStep} nodes={nodes} trace={trace} />
                   <Controls />
@@ -1013,100 +699,44 @@ const DP = () => {
         <div className="resizer" onMouseDown={handleMouseDown("middle")}></div>
 
         {/* Variable Space Section */}
-       <div
-  className="section"
-  id="variable-space"
-  style={{
-    width: `${rightWidth}%`,
-    padding: "10px",
-    backgroundColor: "#f7f7f7",
-    borderRadius: "5px",
-    fontFamily: "monospace",
-    overflowX: "auto"
-  }}
->
-  {selectedTrace ? (
-    <div className="p-6 bg-white rounded-2xl shadow-lg space-y-4 border border-gray-200">
-      <h3 className="text-xl font-bold text-indigo-600">Step {selectedTrace.step}</h3>
-
-      <div className="space-y-2">
-        <div>
-          <span className="font-semibold text-gray-700">Event:</span>{" "}
-          <span className="text-gray-900">{selectedTrace.event}</span>
+        <div
+          className="section"
+          id="variable-space"
+          style={{
+            width: `${rightWidth}%`,
+            padding: "10px",
+            backgroundColor: "#f7f7f7",
+            borderRadius: "5px",
+            fontFamily: "monospace",
+            overflowX: "auto"
+          }}
+        >
+          {selectedTrace ? (
+            <div>
+              <h3>Step {selectedTrace.step}</h3>
+              <p><strong>Event:</strong> {selectedTrace.event}</p>
+              <p><strong>Function:</strong> {selectedTrace.function}</p>
+              <p>
+                <strong>Arguments:</strong>{" "}
+                {typeof selectedTrace.arguments === "object"
+                  ? JSON.stringify(selectedTrace.arguments, null, 2)
+                  : selectedTrace.arguments}
+              </p>
+              {selectedTrace.note && (
+                <p>
+                  <strong>Note:</strong> {selectedTrace.note}
+                </p>
+              )}
+              {selectedTrace.returnValue !== "N/A" && (
+                <p>
+                  <strong>Return Value:</strong> {selectedTrace.returnValue}
+                </p>
+              )}
+            </div>
+          ) : (
+            <p>Variable Space</p>
+          )}
         </div>
-
-        <div>
-          <span className="font-semibold text-gray-700">Function:</span>{" "}
-          <span className="text-gray-900">{selectedTrace.function}</span>
-        </div>
-
-        {selectedTrace.Current_line && (
-          <div>
-            <span className="font-semibold text-gray-700">Current Line:</span>
-            <pre className="mt-1 bg-gray-100 text-gray-800 text-sm p-3 rounded-md whitespace-pre-wrap">
-              {Array.isArray(selectedTrace.Current_line)
-                ? selectedTrace.Current_line.join("\n")
-                : selectedTrace.Current_line}
-            </pre>
-          </div>
-        )}
-
-        <div>
-          <span className="font-semibold text-gray-700">Arguments:</span>
-          <pre className="mt-1 bg-gray-50 text-gray-800 text-sm p-3 rounded-md overflow-x-auto">
-            {typeof selectedTrace.arguments === "object"
-              ? JSON.stringify(selectedTrace.arguments, null, 2)
-              : selectedTrace.arguments}
-          </pre>
-        </div>
-
-        {selectedTrace.note && (
-          <div>
-            <span className="font-semibold text-gray-700">Note:</span>{" "}
-            <span className="text-gray-800">{selectedTrace.note}</span>
-          </div>
-        )}
-
-        {selectedTrace.DP && Array.isArray(selectedTrace.DP) && (
-  <div className="mt-4">
-    <div className="font-semibold text-gray-700 mb-2">DP:</div>
-    <div className="inline-block border rounded overflow-hidden">
-      {selectedTrace.DP.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex">
-          {row.map((cell, colIndex) => {
-            const isVisited = typeof cell === "string" && cell.startsWith("*");
-
-            return (
-              <div
-                key={colIndex}
-                className={`w-10 h-10 flex items-center justify-center border text-sm font-mono ${
-                  isVisited ? "bg-green-300 text-black" : "bg-white text-gray-900"
-                }`}
-              >
-                {cell}
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
-
-        {selectedTrace.returnValue !== "N/A" && (
-          <div>
-            <span className="font-semibold text-gray-700">Return Value:</span>{" "}
-            <span className="text-green-700 font-medium">{selectedTrace.returnValue}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  ) : (
-    <div className="text-gray-500 italic text-sm">Variable Space</div>
-  )}
-</div>
-
       </div>
     </div>
   );
