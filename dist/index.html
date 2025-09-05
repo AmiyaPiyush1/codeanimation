@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A0F1C" />
+    <meta name="description" content="CodeStream - Interactive Algorithm Visualization and Learning Platform" />
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CodeStream" />
+    <meta property="og:description" content="Interactive Algorithm Visualization and Learning Platform" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://codestream.com" />
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/png" href="/logo2.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Preload Critical Resources -->
+    <link rel="modulepreload" href="data:text/jsx;base64,aW1wb3J0IFJlYWN0LCB7IFN0cmljdE1vZGUgfSBmcm9tICdyZWFjdCcNCmltcG9ydCB7IGNyZWF0ZVJvb3QgfSBmcm9tICdyZWFjdC1kb20vY2xpZW50Jw0KaW1wb3J0IHsgQnJvd3NlclJvdXRlciB9IGZyb20gJ3JlYWN0LXJvdXRlci1kb20nDQppbXBvcnQgeyBUb2FzdGVyIH0gZnJvbSAncmVhY3QtaG90LXRvYXN0Jw0KaW1wb3J0IHsgRXJyb3JCb3VuZGFyeSB9IGZyb20gJ3JlYWN0LWVycm9yLWJvdW5kYXJ5Jw0KaW1wb3J0ICcuL2luZGV4LmNzcycNCmltcG9ydCBBcHAgZnJvbSAnLi9BcHAuanN4Jw0KDQovLyBFcnJvciBmYWxsYmFjayBjb21wb25lbnQNCmNvbnN0IEVycm9yRmFsbGJhY2sgPSAoeyBlcnJvciwgcmVzZXRFcnJvckJvdW5kYXJ5IH0pID0+ICgNCiAgPGRpdiBjbGFzc05hbWU9Im1pbi1oLXNjcmVlbiBmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWNlbnRlciBiZy1bIzBBMEYxQ10gcC00Ij4NCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWF4LXctbWQgdy1mdWxsIGJnLW5hdnktOTAwLzUwIGJhY2tkcm9wLWJsdXIteGwgcm91bmRlZC0yeGwgcC04IGJvcmRlciBib3JkZXItd2hpdGUvMTAiPg0KICAgICAgPGgyIGNsYXNzTmFtZT0idGV4dC0yeGwgZm9udC1zZW1pYm9sZCB0ZXh0LXdoaXRlIG1iLTQiPlNvbWV0aGluZyB3ZW50IHdyb25nPC9oMj4NCiAgICAgIDxwcmUgY2xhc3NOYW1lPSJ0ZXh0LXJlZC00MDAgdGV4dC1zbSBtYi02IG92ZXJmbG93LWF1dG8gbWF4LWgtNDAiPg0KICAgICAgICB7ZXJyb3IubWVzc2FnZX0NCiAgICAgIDwvcHJlPg0KICAgICAgPGJ1dHRvbg0KICAgICAgICBvbkNsaWNrPXtyZXNldEVycm9yQm91bmRhcnl9DQogICAgICAgIGNsYXNzTmFtZT0idy1mdWxsIGJnLXB1cnBsZS01MDAgaG92ZXI6YmctcHVycGxlLTYwMCB0ZXh0LXdoaXRlIGZvbnQtbWVkaXVtIHB5LTIgcHgtNCByb3VuZGVkLWxnIHRyYW5zaXRpb24tY29sb3JzIg0KICAgICAgPg0KICAgICAgICBUcnkgYWdhaW4NCiAgICAgIDwvYnV0dG9uPg0KICAgIDwvZGl2Pg0KICA8L2Rpdj4NCikNCg0KLy8gUGVyZm9ybWFuY2UgbW9uaXRvcmluZw0KY29uc3QgcmVwb3J0RXJyb3IgPSAoZXJyb3IpID0+IHsNCiAgLy8gWW91IGNhbiBpbnRlZ3JhdGUgd2l0aCBlcnJvciB0cmFja2luZyBzZXJ2aWNlcyBoZXJlDQogIGNvbnNvbGUuZXJyb3IoJ0FwcGxpY2F0aW9uIGVycm9yOicsIGVycm9yKQ0KfQ0KDQovLyBSb290IGNvbXBvbmVudCB0byBoYW5kbGUgcHJvdmlkZXJzDQpjb25zdCBSb290ID0gKCkgPT4gew0KICByZXR1cm4gKA0KICAgIDxFcnJvckJvdW5kYXJ5DQogICAgICBGYWxsYmFja0NvbXBvbmVudD17RXJyb3JGYWxsYmFja30NCiAgICAgIG9uUmVzZXQ9eygpID0+IHdpbmRvdy5sb2NhdGlvbi5yZWxvYWQoKX0NCiAgICAgIG9uRXJyb3I9e3JlcG9ydEVycm9yfQ0KICAgID4NCiAgICAgIDxCcm93c2VyUm91dGVyPg0KICAgICAgICA8QXBwIC8+DQogICAgICAgIDxUb2FzdGVyDQogICAgICAgICAgcG9zaXRpb249InRvcC1yaWdodCINCiAgICAgICAgICB0b2FzdE9wdGlvbnM9e3sNCiAgICAgICAgICAgIGR1cmF0aW9uOiAzMDAwLA0KICAgICAgICAgICAgc3R5bGU6IHsNCiAgICAgICAgICAgICAgYmFja2dyb3VuZDogJyMxRTI5M0InLA0KICAgICAgICAgICAgICBjb2xvcjogJyNmZmYnLA0KICAgICAgICAgICAgICBib3JkZXI6ICcxcHggc29saWQgcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjEpJywNCiAgICAgICAgICAgIH0sDQogICAgICAgICAgICBzdWNjZXNzOiB7DQogICAgICAgICAgICAgIGljb25UaGVtZTogew0KICAgICAgICAgICAgICAgIHByaW1hcnk6ICcjMTBCOTgxJywNCiAgICAgICAgICAgICAgICBzZWNvbmRhcnk6ICcjZmZmJywNCiAgICAgICAgICAgICAgfSwNCiAgICAgICAgICAgIH0sDQogICAgICAgICAgICBlcnJvcjogew0KICAgICAgICAgICAgICBpY29uVGhlbWU6IHsNCiAgICAgICAgICAgICAgICBwcmltYXJ5OiAnI0VGNDQ0NCcsDQogICAgICAgICAgICAgICAgc2Vjb25kYXJ5OiAnI2ZmZicsDQogICAgICAgICAgICAgIH0sDQogICAgICAgICAgICB9LA0KICAgICAgICAgIH19DQogICAgICAgIC8+DQogICAgICA8L0Jyb3dzZXJSb3V0ZXI+DQogICAgPC9FcnJvckJvdW5kYXJ5Pg0KICApDQp9DQoNCi8vIEluaXRpYWxpemUgdGhlIGFwcGxpY2F0aW9uDQpjb25zdCBpbml0aWFsaXplQXBwID0gKCkgPT4gew0KICB0cnkgew0KICAgIGNvbnN0IHJvb3QgPSBjcmVhdGVSb290KGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290JykpDQogICAgDQogICAgcm9vdC5yZW5kZXIoDQogICAgICA8U3RyaWN0TW9kZT4NCiAgICAgICAgPFJvb3QgLz4NCiAgICAgIDwvU3RyaWN0TW9kZT4NCiAgICApDQogIH0gY2F0Y2ggKGVycm9yKSB7DQogICAgY29uc29sZS5lcnJvcignRmFpbGVkIHRvIGluaXRpYWxpemUgYXBwbGljYXRpb246JywgZXJyb3IpDQogICAgLy8gU2hvdyBhIHVzZXItZnJpZW5kbHkgZXJyb3IgbWVzc2FnZQ0KICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290JykuaW5uZXJIVE1MID0gYA0KICAgICAgPGRpdiBzdHlsZT0iDQogICAgICAgIG1pbi1oZWlnaHQ6IDEwMHZoOw0KICAgICAgICBkaXNwbGF5OiBmbGV4Ow0KICAgICAgICBhbGlnbi1pdGVtczogY2VudGVyOw0KICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsNCiAgICAgICAgYmFja2dyb3VuZDogIzBBMEYxQzsNCiAgICAgICAgY29sb3I6IHdoaXRlOw0KICAgICAgICBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOw0KICAgICAgICBwYWRkaW5nOiAyMHB4Ow0KICAgICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7DQogICAgICAiPg0KICAgICAgICA8ZGl2Pg0KICAgICAgICAgIDxoMSBzdHlsZT0iZm9udC1zaXplOiAyNHB4OyBtYXJnaW4tYm90dG9tOiAxNnB4OyI+RmFpbGVkIHRvIGxvYWQgYXBwbGljYXRpb248L2gxPg0KICAgICAgICAgIDxwIHN0eWxlPSJjb2xvcjogIzk0QTNCODsgbWFyZ2luLWJvdHRvbTogMTZweDsiPlBsZWFzZSB0cnkgcmVmcmVzaGluZyB0aGUgcGFnZSBvciBjb250YWN0IHN1cHBvcnQgaWYgdGhlIHByb2JsZW0gcGVyc2lzdHMuPC9wPg0KICAgICAgICAgIDxidXR0b24NCiAgICAgICAgICAgIG9uY2xpY2s9IndpbmRvdy5sb2NhdGlvbi5yZWxvYWQoKSINCiAgICAgICAgICAgIHN0eWxlPSINCiAgICAgICAgICAgICAgYmFja2dyb3VuZDogIzhCNUNGNjsNCiAgICAgICAgICAgICAgY29sb3I6IHdoaXRlOw0KICAgICAgICAgICAgICBib3JkZXI6IG5vbmU7DQogICAgICAgICAgICAgIHBhZGRpbmc6IDhweCAxNnB4Ow0KICAgICAgICAgICAgICBib3JkZXItcmFkaXVzOiA4cHg7DQogICAgICAgICAgICAgIGN1cnNvcjogcG9pbnRlcjsNCiAgICAgICAgICAgICAgZm9udC13ZWlnaHQ6IDUwMDsNCiAgICAgICAgICAgICINCiAgICAgICAgICA+DQogICAgICAgICAgICBSZWZyZXNoIFBhZ2UNCiAgICAgICAgICA8L2J1dHRvbj4NCiAgICAgICAgPC9kaXY+DQogICAgICA8L2Rpdj4NCiAgICBgDQogIH0NCn0NCg0KLy8gU3RhcnQgdGhlIGFwcGxpY2F0aW9uDQppbml0aWFsaXplQXBwKCkNCg==" />
+    <link rel="preload" href="data:text/javascript;base64,Lyo9PT09PT09PT09PT09PT0gU0hPVyBNRU5VID09PT09PT09PT09PT09PSovDQpjb25zdCBuYXZNZW51ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25hdi1tZW51JyksDQogICAgICBuYXZUb2dnbGUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbmF2LXRvZ2dsZScpLA0KICAgICAgbmF2Q2xvc2UgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbmF2LWNsb3NlJykNCg0KLyo9PT09PSBNRU5VIFNIT1cgPT09PT0qLw0KLyogVmFsaWRhdGUgaWYgY29uc3RhbnQgZXhpc3RzICovDQppZihuYXZUb2dnbGUpew0KICAgIG5hdlRvZ2dsZS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+ew0KICAgICAgICBuYXZNZW51LmNsYXNzTGlzdC5hZGQoJ3Nob3ctbWVudScpDQogICAgfSkNCn0NCg0KLyo9PT09PSBNRU5VIEhJRERFTiA9PT09PSovDQovKiBWYWxpZGF0ZSBpZiBjb25zdGFudCBleGlzdHMgKi8NCmlmKG5hdkNsb3NlKXsNCiAgICBuYXZDbG9zZS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsICgpID0+ew0KICAgICAgICBuYXZNZW51LmNsYXNzTGlzdC5yZW1vdmUoJ3Nob3ctbWVudScpDQogICAgfSkNCn0NCg0KLyo9PT09PT09PT09PT09PT0gUkVNT1ZFIE1FTlUgTU9CSUxFID09PT09PT09PT09PT09PSovDQpjb25zdCBuYXZMaW5rID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvckFsbCgnLm5hdl9fbGluaycpDQoNCmZ1bmN0aW9uIGxpbmtBY3Rpb24oKXsNCiAgICBjb25zdCBuYXZNZW51ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25hdi1tZW51JykNCiAgICAvLyBXaGVuIHdlIGNsaWNrIG9uIGVhY2ggbmF2X19saW5rLCB3ZSByZW1vdmUgdGhlIHNob3ctbWVudSBjbGFzcw0KICAgIG5hdk1lbnUuY2xhc3NMaXN0LnJlbW92ZSgnc2hvdy1tZW51JykNCn0NCm5hdkxpbmsuZm9yRWFjaChuID0+IG4uYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCBsaW5rQWN0aW9uKSkNCg0KLyo9PT09PT09PT09PT09PT0gU0NST0xMIFJFVkVBTCBBTklNQVRJT04gPT09PT09PT09PT09PT09Ki8NCmNvbnN0IHNyID0gU2Nyb2xsUmV2ZWFsKHsNCiAgICBkaXN0YW5jZTogJzkwcHgnLA0KICAgIGR1cmF0aW9uOiAzMDAwLA0KfSkNCg0Kc3IucmV2ZWFsKGAuaG9tZV9fZGF0YWAsIHtvcmlnaW46ICd0b3AnLCBkZWxheTogNDAwfSkNCnNyLnJldmVhbChgLmhvbWVfX2ltZ2AsIHtvcmlnaW46ICdib3R0b20nLCBkZWxheTogNjAwfSkNCnNyLnJldmVhbChgLmhvbWVfX2Zvb3RlcmAsIHtvcmlnaW46ICdib3R0b20nLCBkZWxheTogODAwfSk=" as="script" />
+    <link rel="preload" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" as="style" />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    
+    <title>CodeStream - Interactive Algorithm Visualization</title>
+    
+    <!-- Three.js and Vanta.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js" defer></script>
+    <script type="module" crossorigin src="/assets/index-CBoOZhKt.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-BeR-w33u.js">
+    <link rel="stylesheet" crossorigin href="/assets/react-vendor-Fd0xVSp_.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-Cj1_7htC.css">
+  </head>
+  <body>
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0A0F1C;
+        color: white;
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 20px;
+        text-align: center;
+      ">
+        <div>
+          <h1 style="font-size: 24px; margin-bottom: 16px;">JavaScript Required</h1>
+          <p style="color: #94A3B8; margin-bottom: 16px;">
+            CodeStream requires JavaScript to function properly. Please enable JavaScript in your browser settings to continue.
+          </p>
+        </div>
+      </div>
+    </noscript>
+    
+    <div id="root"></div>
+    
+    <!-- PostHog Analytics -->
+    <script>
+      !(function (t, e) {
+        var o, n, p, r;
+        e.__SV ||
+          ((window.posthog = e),
+          (e._i = []),
+          (e.init = function (i, s, a) {
+            function g(t, e) {
+              var o = e.split(".");
+              2 == o.length && ((t = t[o[0]]), (e = o[1])),
+                (t[e] = function () {
+                  t.push(
+                    [e].concat(
+                      Array.prototype.slice.call(
+                        arguments,
+                        0,
+                      ),
+                    ),
+                  );
+                });
+            }
+            ((p = t.createElement("script")).type = "text/javascript"),
+              (p.crossOrigin = "anonymous"),
+              (p.async = !0),
+              (p.src =
+                s.api_host.replace(
+                  ".i.posthog.com",
+                  "-assets.i.posthog.com",
+                ) + "/static/array.js"),
+              (r =
+                t.getElementsByTagName(
+                  "script",
+                )[0]).parentNode.insertBefore(p, r);
+            var u = e;
+            for (
+              void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
+                u.people = u.people || [],
+                u.toString = function (t) {
+                  var e = "posthog";
+                  return (
+                    "posthog" !== a && (e += "." + a),
+                    t || (e += " (stub)"),
+                    e
+                  );
+                },
+                u.people.toString = function () {
+                  return u.toString(1) + ".people (stub)";
+                },
+                o =
+                  "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
+                    " ",
+                  ),
+                n = 0;
+              n < o.length;
+              n++
+            )
+              g(u, o[n]);
+            e._i.push([i, s, a]);
+          }),
+          (e.__SV = 1));
+      })(document, window.posthog || []);
+      posthog.init("phc_yJW1VjHGGwmCbbrtczfqqNxgBDbhlhOWcdzcIJEOTFE", {
+        api_host: "https://us.i.posthog.com",
+        person_profiles: "identified_only",
+        capture_pageview: true,
+        capture_pageleave: true,
+        autocapture: true,
+        loaded: function(posthog) {
+          posthog.startSessionRecording();
+        }
+      });
+    </script>
+    
+    <!-- Application Scripts -->
+    <script src="./src/assets/js/scrollrevealmin.js" defer></script>
+    <script src="./src/assets/js/main.js" defer></script>
+  </body>
+</html>
