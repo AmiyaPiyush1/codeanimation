@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Configuration constants
 const CONFIG = {
-  BASE_URL: import.meta.env.VITE_BACKEND_URL || "http://localhost:3000",
+  BASE_URL: import.meta.env.VITE_BACKEND_URL || "https://code-backend-89a2.onrender.com",
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000, // 1 second
