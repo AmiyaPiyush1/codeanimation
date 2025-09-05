@@ -7,61 +7,50 @@ import autoprefixer from 'autoprefixer'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
-  
+
   return {
     plugins: [
       react({
-        // Enable Fast Refresh
         fastRefresh: true,
-        // Enable React strict mode
         jsxRuntime: 'automatic',
       }),
     ],
 
-    // Build configuration
     build: {
-      // Output directory
       outDir: 'dist',
-      // Source maps in development
       sourcemap: !isProduction,
-      // Chunk size warning limit
       chunkSizeWarningLimit: 1000,
-      // Rollup options
       rollupOptions: {
         output: {
-          // Manual chunk splitting using function form
           manualChunks: (id) => {
             if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-                return 'react-vendor';
+              if (
+                id.includes('react') ||
+                id.includes('react-dom') ||
+                id.includes('react-router-dom')
+              ) {
+                return 'react-vendor'
               }
-              if (id.includes('@radix-ui') || id.includes('class-variance-authority') || id.includes('clsx') || id.includes('tailwind-merge')) {
-                return 'ui-vendor';
+              if (
+                id.includes('@radix-ui') ||
+                id.includes('class-variance-authority') ||
+                id.includes('clsx') ||
+                id.includes('tailwind-merge')
+              ) {
+                return 'ui-vendor'
               }
             }
           },
         },
       },
-      // Minify in production
-      minify: isProduction ? 'terser' : false,
-      // Terser options
-      terserOptions: {
-        compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
-        },
-      },
+      // ✅ Use esbuild (fast, works on Vercel by default)
+      minify: isProduction ? 'esbuild' : false,
     },
 
-    // Development server configuration
     server: {
-      // Enable HMR
       hmr: true,
-      // Open browser on start
       open: true,
-      // Configure CORS
       cors: true,
-      // Configure proxy for API requests
       proxy: {
         '/api': {
           target: 'http://localhost:3000',
@@ -71,7 +60,6 @@ export default defineConfig(({ mode }) => {
       },
     },
 
-    // Resolve configuration
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src'),
@@ -84,22 +72,15 @@ export default defineConfig(({ mode }) => {
       },
     },
 
-    // CSS configuration
     css: {
-      // Enable CSS modules
       modules: {
         localsConvention: 'camelCase',
       },
-      // PostCSS configuration
       postcss: {
-        plugins: [
-          tailwindcss,
-          autoprefixer,
-        ],
+        plugins: [tailwindcss, autoprefixer],
       },
     },
 
-    // Optimize dependencies
     optimizeDeps: {
       include: [
         'react',
@@ -112,7 +93,6 @@ export default defineConfig(({ mode }) => {
       ],
     },
 
-    // Environment variables
     define: {
       'process.env.NODE_ENV': JSON.stringify(mode),
     },
