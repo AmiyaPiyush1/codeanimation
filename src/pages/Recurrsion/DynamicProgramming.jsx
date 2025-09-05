@@ -305,7 +305,7 @@ const DP = () => {
     setLoader(true);
     setIsRunning(true);
     try {
-      const response = await fetch("http://localhost:3000/debugger/recursion/main", {
+      const response = await fetch("https://code-backend-89a2.onrender.com/debugger/recursion/main", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem: code, language: language, input: "" }),

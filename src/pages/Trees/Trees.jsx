@@ -25,7 +25,7 @@ const Trees = () => {
     console.log(code)
     try {
       const response = await axios.post(
-        'http://localhost:3000/debugger/trees/main',
+        'https://code-backend-89a2.onrender.com/debugger/trees/main',
         { codeInput: code },
         { headers: { 'Content-Type': 'application/json' } }
       );

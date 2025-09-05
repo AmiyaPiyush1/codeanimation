@@ -313,7 +313,7 @@ const BubbleSort = () => {
     setIsRunning(true);
     try {
       // POST the code, input, and language to your backend endpoint.
-      const response = await fetch("http://localhost:3000/debugger/sorting/bubblesort", {
+      const response = await fetch("https://code-backend-89a2.onrender.com/debugger/sorting/bubblesort", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

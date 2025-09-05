@@ -25,7 +25,7 @@ const Signup = () => {
   const { handleGoogleCallback } = useAuth();
 
   // Dynamically get backend URL from environment variables
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000" || "https://code-backend-89a2.onrender.com";
 
   // Animation variants
   const containerVariants = {
