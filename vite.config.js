@@ -59,7 +59,7 @@ esbuild: { drop: ['console', 'debugger'] }
       // Configure proxy for API requests
       proxy: {
         '/api': {
-          target: 'https://code-backend-89a2.onrender.com',
+          target: 'https://code-backend-xruc.onrender.com',
           changeOrigin: true,
           secure: false,
         },
