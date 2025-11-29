@@ -119,7 +119,7 @@ const AIAssistant = ({ onApplyChanges }) => {
   ];
 
   // Get backend URL from environment variables
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000" || "https://code-backend-xruc.onrender.com";
 
   // Track new messages for animation
   useEffect(() => {
