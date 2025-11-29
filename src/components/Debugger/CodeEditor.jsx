@@ -5,11 +5,47 @@ import { useCodeSharing } from '../../hooks/useCodeSharing';
 import Toast from '../Toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import Draggable from 'react-draggable';
-import "./VisualDebuggerBoiler.css";  // Import the existing CSS
+import "./VisualDebuggerBoiler.css";
+
+// 1. Define the Merge Sort code constant
+const DEFAULT_CODE = `#include <bits/stdc++.h>
+using namespace std;
+
+void merge(vector<int>& arr, int l, int m, int r) {
+    vector<int> temp;
+    int i = l, j = m + 1;
+
+    while (i <= m && j <= r) {
+        if (arr[i] < arr[j]) temp.push_back(arr[i++]);
+        else temp.push_back(arr[j++]);
+    }
+
+    while (i <= m) temp.push_back(arr[i++]);
+    while (j <= r) temp.push_back(arr[j++]);
+
+    for (int k = l; k <= r; k++) arr[k] = temp[k - l];
+}
+
+void mergeSort(vector<int>& arr, int l, int r) {
+    if (l >= r) return;
+    int m = (l + r) / 2;
+
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+    merge(arr, l, m, r);
+}
+
+int main() {
+    vector<int> arr = {5, 2, 4, 7, 1, 3};
+    mergeSort(arr, 0, arr.size() - 1);
+
+    for (int x : arr) cout << x << " ";
+}`;
 
 const CodeEditor = ({ 
-  code = '', 
-  language = 'javascript', 
+  // 2. Set the default code and language here
+  code = DEFAULT_CODE, 
+  language = 'cpp', 
   onCodeChange = () => {}, 
   isReadOnly = false, 
   onEditorMount = () => {},
@@ -20,7 +56,6 @@ const CodeEditor = ({
   onFullscreen = () => {},
   copied = false,
   fullscreen = false,
-  // Execution Controls props
   handleFirst = () => {},
   handlePrev = () => {},
   handleNext = () => {},
@@ -50,18 +85,22 @@ const CodeEditor = ({
   const [showShortcuts, setShowShortcuts] = useState(false);
   const popupRef = useRef(null);
   
-  // Create separate refs for each draggable popup
   const goToLineRef = useRef(null);
   const shortcutsRef = useRef(null);
   const settingsRef = useRef(null);
 
-  // Add new state for line count
   const [totalLines, setTotalLines] = useState(0);
   const [hasScrolled, setHasScrolled] = useState(() => {
-    // Initialize from localStorage, default to false if not found
     return localStorage.getItem('toolbarHasScrolled') === 'true';
   });
   const toolbarRef = useRef(null);
+
+  // 3. Add this Effect to force update parent state on mount if code is empty
+  useEffect(() => {
+    if (!code || code.trim() === '') {
+      onCodeChange(DEFAULT_CODE);
+    }
+  }, []); // Runs once on mount
 
   const handleEditorDidMount = (editor) => {
     editorRef.current = editor;
@@ -69,7 +108,6 @@ const CodeEditor = ({
     onEditorMount(editor);
     setTotalLines(editor.getModel().getLineCount());
 
-    // Add id and name to the textarea element
     const textarea = editor.getContainerDomNode().querySelector('textarea');
     if (textarea) {
       textarea.id = 'monaco-editor-textarea';
@@ -77,9 +115,10 @@ const CodeEditor = ({
     }
   };
 
+  // ... (Rest of your component logic remains exactly the same) ...
+
   useEffect(() => {
     if (editorRef.current) {
-      // Force Monaco Editor to re-layout when fullscreen state changes
       editorRef.current.layout();
     }
   }, [fullscreen]);
@@ -168,7 +207,6 @@ const CodeEditor = ({
     setEditorSettings(newSettings);
   };
 
-  // Download code as file
   const handleDownload = () => {
     const blob = new Blob([code], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -181,7 +219,6 @@ const CodeEditor = ({
     URL.revokeObjectURL(url);
   };
 
-  // Upload code from file
   const handleUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -194,7 +231,6 @@ const CodeEditor = ({
     reader.readAsText(file);
   };
 
-  // Print code
   const handlePrint = () => {
     const printWindow = window.open('', '', 'width=800,height=600');
     printWindow.document.write(`<pre style='font-family:monospace;font-size:14px;'>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`);
@@ -202,7 +238,6 @@ const CodeEditor = ({
     printWindow.print();
   };
 
-  // Enhanced go to line handler
   const handleGoToLine = () => {
     if (editorRef.current && goToLineValue) {
       const line = parseInt(goToLineValue, 10);
@@ -216,7 +251,6 @@ const CodeEditor = ({
     }
   };
 
-  // Toggle folding
   const handleToggleFolding = () => {
     if (editorRef.current) {
       const model = editorRef.current.getModel();
@@ -229,15 +263,12 @@ const CodeEditor = ({
     }
   };
 
-  // Reset editor
   const handleReset = () => {
-    onCodeChange('');
+    onCodeChange(DEFAULT_CODE); // Changed reset to go back to Merge Sort
   };
 
-  // Add keyboard shortcuts handler
   useEffect(() => {
     const handleKeyboardShortcut = (e) => {
-      // Handle ESC key for closing popups
       if (e.key === 'Escape') {
         setShowGoToLine(false);
         setShowShortcuts(false);
@@ -245,12 +276,10 @@ const CodeEditor = ({
         return;
       }
 
-      // Don't trigger shortcuts if user is typing in an input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
         return;
       }
 
-      // Check for Ctrl/Cmd key
       const isCtrlOrCmd = e.ctrlKey || e.metaKey;
 
       if (isCtrlOrCmd) {
@@ -295,7 +324,6 @@ const CodeEditor = ({
             break;
         }
 
-        // Handle Ctrl/Cmd + Shift combinations
         if (e.shiftKey) {
           switch (e.key.toLowerCase()) {
             case 'f':
@@ -310,23 +338,19 @@ const CodeEditor = ({
         }
       }
 
-      // Handle F11 for fullscreen
       if (e.key === 'F11') {
         e.preventDefault();
         onFullscreen('code-editor');
       }
     };
 
-    // Add keyboard event listener
     document.addEventListener('keydown', handleKeyboardShortcut);
 
-    // Cleanup
     return () => {
       document.removeEventListener('keydown', handleKeyboardShortcut);
     };
   }, [onUndo, onRedo, handleFormat, handleDownload, handlePrint, onFullscreen, handleExecute]);
 
-  // Update keyboard shortcuts list with categories
   const keyboardShortcuts = [
     {
       category: "File Operations",
@@ -366,7 +390,6 @@ const CodeEditor = ({
     }
   ];
 
-  // Reorganized toolbar groups with Core in the middle
   const toolbarGroups = [
     {
       name: "Share",
@@ -556,7 +579,6 @@ const CodeEditor = ({
     }
   ];
 
-  // Add click outside handler
   useEffect(() => {
     function handleClickOutside(event) {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -573,7 +595,6 @@ const CodeEditor = ({
     };
   }, []);
 
-  // Add scroll tracking
   useEffect(() => {
     const toolbar = toolbarRef.current;
     if (!toolbar) return;
@@ -589,7 +610,6 @@ const CodeEditor = ({
     return () => toolbar.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Add mouse wheel handler
   useEffect(() => {
     const toolbar = toolbarRef.current;
     if (!toolbar) return;
@@ -597,7 +617,6 @@ const CodeEditor = ({
     const handleWheel = (e) => {
       e.preventDefault();
       toolbar.scrollLeft += e.deltaY;
-      // Update scroll state when using mouse wheel
       if (toolbar.scrollLeft > 0) {
         setHasScrolled(true);
         localStorage.setItem('toolbarHasScrolled', 'true');
@@ -608,7 +627,6 @@ const CodeEditor = ({
     return () => toolbar.removeEventListener('wheel', handleWheel);
   }, []);
 
-  // Add mouse drag handler
   useEffect(() => {
     const toolbar = toolbarRef.current;
     if (!toolbar) return;
@@ -633,9 +651,8 @@ const CodeEditor = ({
       if (!isDragging) return;
       e.preventDefault();
       const x = e.pageX - toolbar.offsetLeft;
-      const walk = (x - startX) * 2; // Scroll speed multiplier
+      const walk = (x - startX) * 2;
       toolbar.scrollLeft = scrollLeft - walk;
-      // Update scroll state when dragging
       if (toolbar.scrollLeft > 0) {
         setHasScrolled(true);
         localStorage.setItem('toolbarHasScrolled', 'true');
@@ -674,7 +691,7 @@ const CodeEditor = ({
         accept=".js,.ts,.py,.java,.cpp,.txt,.json,.md,.html,.css"
         onChange={handleUpload}
       />
-      {/* Enhanced Toolbar with horizontal scroll */}
+      
       <div className="sticky top-0 z-30 w-full bg-[#10172a]/95 border-b border-slate-700/60 shadow-lg rounded-t-xl">
         <div className="relative w-full overflow-hidden">
           <div 
@@ -722,7 +739,7 @@ const CodeEditor = ({
               </React.Fragment>
             ))}
           </div>
-          {/* Scroll indicator */}
+          
           <AnimatePresence>
             {!hasScrolled && (
               <motion.div
@@ -747,13 +764,14 @@ const CodeEditor = ({
           </AnimatePresence>
         </div>
       </div>
-      {/* Wrapper div for MonacoEditor */}
+      
       <div className="flex-1 overflow-hidden relative">
         <MonacoEditor
           className="w-full h-full p-2.5 rounded-lg bg-[#0F172A]/90 backdrop-blur-sm shadow-inner"
           style={{ backgroundColor: '#0F172A' }}
           language={language}
-          placeholder="Write your code here..."
+          // Placeholder updated
+          placeholder=""
           value={code}
           onChange={onCodeChange}
           id="monaco-code-editor"
@@ -829,7 +847,6 @@ const CodeEditor = ({
           }}
         />
 
-        {/* Go to Line Modal */}
         <AnimatePresence>
           {showGoToLine && (
             <div className="absolute inset-0 z-[100]">
@@ -955,7 +972,6 @@ const CodeEditor = ({
           )}
         </AnimatePresence>
 
-        {/* Keyboard Shortcuts Modal */}
         <AnimatePresence>
           {showShortcuts && (
             <div className="absolute inset-0 z-[100]">
@@ -1045,7 +1061,6 @@ const CodeEditor = ({
           )}
         </AnimatePresence>
 
-        {/* Settings Dropdown */}
         <AnimatePresence>
           {showSettings && (
             <div className="absolute inset-0 z-[100]">
@@ -1177,7 +1192,6 @@ const CodeEditor = ({
           )}
         </AnimatePresence>
 
-        {/* Add a semi-transparent overlay when any popup is open */}
         <AnimatePresence>
           {(showGoToLine || showShortcuts || showSettings) && (
             <motion.div
@@ -1195,11 +1209,9 @@ const CodeEditor = ({
           )}
         </AnimatePresence>
       </div>
-      {!code && (
-        <div className="absolute top-16 left-16 font-mono text-sm text-slate-400/70">
-          // Write your code here
-        </div>
-      )}
+      
+      {/* "Write your code here" removed because default code is present */}
+      
       <ExecutionControls
         onFirst={handleFirst}
         onPrev={handlePrev}
@@ -1216,4 +1228,4 @@ const CodeEditor = ({
   );
 };
 
-export default CodeEditor; 
+export default CodeEditor;
