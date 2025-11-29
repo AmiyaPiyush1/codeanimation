@@ -104,7 +104,6 @@ const Login = () => {
       e.stopPropagation();
     }
     
-    // Clear previous errors and set loading state
     setError('');
     setTwoFactorError('');
     setLoading(true);
