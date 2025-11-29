@@ -352,7 +352,7 @@ const DP = () => {
     setLoader(true);
     setIsRunning(true);
     try {
-      const response = await fetch("https://code-backend-89a2.onrender.com/debugger/dynamicprogramming/main", {
+      const response = await fetch("https://code-backend-xruc.onrender.com/debugger/dynamicprogramming/main", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ problem: code, language: language, input: "" }),

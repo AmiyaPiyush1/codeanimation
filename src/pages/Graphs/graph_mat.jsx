@@ -24,7 +24,7 @@ const GraphMat = () => {
     localStorage.setItem('code', code);
     try {
       const response = await axios.post(
-        'https://code-backend-89a2.onrender.com/debugger/graphs/main',
+        'https://code-backend-xruc.onrender.com/debugger/graphs/main',
         { codeInput: code },
         { headers: { 'Content-Type': 'application/json' } }
       );

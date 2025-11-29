@@ -633,7 +633,7 @@ const VisualDebuggerBoiler = ({ onChatMessage }) => {
         localStorage.removeItem('isRunning');
 
         // Make the API call to stop execution
-        const response = await axios.post("https://code-backend-89a2.onrender.com/stop-execution", {}, {
+        const response = await axios.post("https://code-backend-xruc.onrender.com/stop-execution", {}, {
           headers: {
             'Content-Type': 'application/json'
           },
@@ -684,7 +684,7 @@ const VisualDebuggerBoiler = ({ onChatMessage }) => {
   const identifyProblemAndRoute = useCallback(async (code) => {
     try {
       // Send code to backend for problem identification
-      const response = await axios.post("https://code-backend-89a2.onrender.com/debugger/identifyproblem", {
+      const response = await axios.post("https://code-backend-xruc.onrender.com/debugger/identifyproblem", {
         problem: code
       });
 
@@ -812,7 +812,7 @@ const VisualDebuggerBoiler = ({ onChatMessage }) => {
 
           // 4. POST the code to your backend
           const response = await fetch(
-            `https://code-backend-89a2.onrender.com/debugger/${problemType}/${specificType}`,
+            `https://code-backend-xruc.onrender.com/debugger/${problemType}/${specificType}`,
             {
               method: "POST",
               headers: { 

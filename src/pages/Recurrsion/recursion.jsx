@@ -372,7 +372,7 @@ const RecursionDebugger = () => {
   const identifyProblemAndRoute = useCallback(async (code) => {
   try {
     // Send code to backend for problem identification
-    const response = await axios.post("https://code-backend-89a2.onrender.com/debugger/identifyproblem", {
+    const response = await axios.post("https://code-backend-xruc.onrender.com/debugger/identifyproblem", {
         problem: code
     });
 
@@ -422,7 +422,7 @@ const RecursionDebugger = () => {
         // Recursion-specific execution
         try {
           console.log("Sending request to backend with:", { problem: code, language, input: "" });
-          const response = await fetch("https://code-backend-89a2.onrender.com/debugger/recursion/main", {
+          const response = await fetch("https://code-backend-xruc.onrender.com/debugger/recursion/main", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ problem: code, language, input: "" }),
@@ -573,7 +573,7 @@ const RecursionDebugger = () => {
         // Branch for problems like merge sort, using dynamic route parameters.
         if (location.pathname === `/debugger/${problemType}/${specificType}`) {
           const response = await fetch(
-            `https://code-backend-89a2.onrender.com/debugger/${problemType}/${specificType}`,
+            `https://code-backend-xruc.onrender.com/debugger/${problemType}/${specificType}`,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
