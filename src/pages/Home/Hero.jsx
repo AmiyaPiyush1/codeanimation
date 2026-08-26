@@ -703,7 +703,7 @@ const Hero = () => {
               </motion.button>
             </Link>
 
-            <motion.button
+            <motion.button onClick={() => window.open('https://go.screenpal.com/watch/cOjO6ZnwfcW', '_blank')}
               whileHover={{ 
                 scale: 1.03, 
                 y: -2,
